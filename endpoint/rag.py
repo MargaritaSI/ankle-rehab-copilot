@@ -13,6 +13,7 @@ NVIDIA Nemotron via Nebius Token Factory (see llm.py).
 from __future__ import annotations
 
 import os
+import sys
 import pathlib
 import pickle
 import re
@@ -301,8 +302,20 @@ def _paper_evidence(hits: list[dict]) -> list[dict]:
     return evidence
 
 
+def _merge_notes(main: list[dict], extra: list[dict]) -> list[dict]:
+    """Main-question notes first; sub-query notes are appended only if new. Ids renumbered."""
+    out, seen = [], set()
+    for n in main + extra:
+        if n["title"] in seen:
+            continue
+        seen.add(n["title"])
+        out.append(dict(n, id=f"KB-{len(out) + 1}"))
+    return out
+
+
 def _kb_evidence(notes: list[dict]) -> list[dict]:
     return [{"id": n["id"], "title": n["title"], "facet": n["facet"], "url": n["url"],
+             "file": n.get("file", ""), "topic": n.get("topic", ""),
              "excerpt": " ".join(n["text"].split()[:45]) + " …", "score": n["score"]}
             for n in notes]
 
@@ -445,9 +458,6 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
     a = analyze(question)
     p = profile.phase
     phase_hint = f" at week {profile.weeks} ({p['name']} phase)" if p else ""
-    kb_queries = [question, a["query_en"], a["query_en"] + phase_hint]
-    if a["query_general"]:
-        kb_queries.append(a["query_general"])
 
     if not a["in_scope"]:
         # Out of scope never goes to the web: refuse here, before any retrieval.
@@ -461,7 +471,14 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
     for pat, extra in _MECHANISM_QUERIES:
         if re.search(pat, a["query_en"] + " " + question, re.I) and extra not in subs:
             subs.append(extra)
-    notes = kb.retrieve(_model, kb_queries + subs, k=k_notes + (2 if subs else 0))
+    # Curated notes: the person's own words (and the topic-level rewrite) fill the slots. The
+    # surgery-flavoured rewrite `query_en` ("… after osteochondral autograft of the talus") is
+    # right for the papers but makes OAT notes outscore nutrition notes for a diet question —
+    # so it and the sub-queries may only ADD up to two notes, never displace the main ones.
+    note_primary = [question] + ([a["query_general"]] if a["query_general"] else [])
+    note_secondary = [a["query_en"], a["query_en"] + phase_hint] + subs
+    notes = _merge_notes(kb.retrieve(_model, note_primary, k=k_notes),
+                         kb.retrieve(_model, note_secondary, k=2))
     # a multi-part question gets more paper slots, one list per part, interleaved
     hits = retrieve_multi([a["query_en"], a["query_general"]] + subs,
                           k_papers + 2 * len(subs), tags)

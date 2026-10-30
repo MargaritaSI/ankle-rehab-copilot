@@ -37,8 +37,8 @@ for week 22, not in general.
 
 - Two knowledge tiers, labelled in the UI: **curated notes** (438 reviewed notes compiled by the
   author from published sources while recovering from this exact surgery — ranked first, but
-  explicitly *not* a clinical protocol) and **743 open-access papers** from Europe PMC / PubMed
-  Central (50,610 chunks, local FAISS).
+  explicitly *not* a clinical protocol) and **1,564 open-access papers** from Europe PMC / PubMed
+  Central (161,183 chunks, local FAISS).
 - Every factual sentence carries a source id (`[KB-3]`, `[PMC12368451]`, `[WEB-1]`); the
   evidence panel shows the excerpt and the link.
 - When sources disagree the answer has a **"Where protocols differ"** section with the range and
@@ -75,7 +75,7 @@ fast JSON calls, on for the evidence answer.
 
 The **curated tier is embedded with `Qwen/Qwen3-Embedding-8B` from Token Factory** (the notes are
 mixed Russian/English; a multilingual embedding model was the difference between "no data" and
-the exact note). The paper tier stays on a local `all-MiniLM-L6-v2` + FAISS (free, 50k chunks),
+the exact note). The paper tier stays on a local `all-MiniLM-L6-v2` + FAISS (free, 161k chunks),
 searched with the English query the Nano tier produced, plus a small lexical boost for rare
 terms.
 

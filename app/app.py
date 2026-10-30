@@ -10,6 +10,8 @@ Run:  streamlit run app/app.py      (needs NEBIUS_API_KEY in .env or the environ
 from __future__ import annotations
 
 import datetime as dt
+import json
+import re
 import pathlib
 import sys
 from urllib.parse import urlparse
@@ -17,6 +19,7 @@ from urllib.parse import urlparse
 import streamlit as st
 
 ASSETS = pathlib.Path(__file__).resolve().parent / "assets"
+ROOT = ASSETS.parent.parent
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint"))
 import llm  # noqa: E402
 import rag  # noqa: E402
@@ -46,22 +49,64 @@ ui.inject()
 
 
 # ----------------------------------------------------------------- helpers
+_PERSONAL = {"author_experience", "ocd_talus_rehab", "ocd_talus"}
+
+
+@st.cache_resource(show_spinner=False)
+def _paper_types() -> dict:
+    try:
+        return json.loads((ROOT / "endpoint" / "paper_types.json").read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+_PT_KEY = {"guideline": "pt_guideline", "review": "pt_review", "abstract": "pt_abstract", "study": "pt_study"}
+
+
+def paper_type(pmcid: str, title: str) -> str:
+    """Publication type (Europe PMC metadata, tool/fetch_paper_types.py); title heuristic as fallback."""
+    known = _paper_types().get(pmcid)
+    if known in _PT_KEY:
+        return L[_PT_KEY[known]]
+    t = (title or "").lower()
+    if re.search(r"abstracts?\b|congress|proceedings|annual meeting|symposium", t):
+        return L["pt_abstract"]
+    if re.search(r"systematic review|meta-analys|\breview\b|umbrella", t):
+        return L["pt_review"]
+    if (re.search(r"guidelines?\b|consensus (statement|on|for)|international consensus|delphi|"
+                  r"position statement|recommendations\b|protocol", t)
+            and not re.search(r"study protocol|trial protocol|protocol for a|adherence|compliance|"
+                                r"efficacy|effects? of|case series|outcomes?|randomi|trial|cohort|implementation|enhancing", t)):
+        return L["pt_guideline"]
+    return L["pt_study"]
+
+
+def note_kind(n: dict) -> str:
+    if n.get("file") in _PERSONAL or n.get("topic") in _PERSONAL:
+        return L["nk_personal"]
+    if not (n.get("url") or "").strip():
+        return L["nk_summary"]
+    return L["curated"]
+
+
 def render_sources(ev: dict):
     notes, papers, webs = ev.get("notes", []), ev.get("papers", []), ev.get("web", [])
     total = len(notes) + len(papers) + len(webs)
     if not total:
         return
     ui.section_heading(L["sources_h"], total)
+    with st.expander(L["legend_h"]):
+        st.markdown(L["legend"])
     if notes:
         with st.expander(L["src_notes"].format(n=len(notes)), expanded=True):
             ui.source_grid([{
-                "id": n["id"], "title": n["title"], "kind": L["curated"], "chips": [n.get("facet")],
+                "id": n["id"], "title": n["title"], "kind": note_kind(n), "chips": [n.get("facet")],
                 "excerpt": n["excerpt"], "link_label": L["source"], "url": n.get("url"),
             } for n in notes])
     if papers:
         with st.expander(L["src_papers"].format(n=len(papers)), expanded=not notes):
             ui.source_grid([{
-                "id": e["id"], "title": e["title"], "kind": f"{L['paper']} · {e.get('year', '')}",
+                "id": e["id"], "title": e["title"], "kind": f"{L['paper']} · {paper_type(e['id'], e['title'])} · {e.get('year', '')}",
                 "chips": e.get("tags", []), "excerpt": e["excerpt"], "link_label": L["open_pmc"], "url": e.get("url"),
             } for e in papers])
     if webs:

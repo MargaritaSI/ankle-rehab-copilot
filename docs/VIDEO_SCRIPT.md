@@ -16,7 +16,7 @@ anchored to this."
 **0:35–1:25 — Ask (flagship)**
 Click preset *Swelling after standing* → Ask. While it runs: "Nemotron Nano on Nebius Token
 Factory checks the question is in scope and rewrites it for search; two tiers are searched — my
-curated notes and 743 open-access papers; Nemotron Super writes the answer with reasoning on."
+curated notes and 1,564 open-access papers; Nemotron Super writes the answer with reasoning on."
 Show the answer: the four sections, the `[PMC…]` ids, open *Open-access papers*, click one link.
 Point at the footer: "two Nemotron calls, nine seconds."
 

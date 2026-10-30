@@ -118,7 +118,7 @@ def retrieve(embedder, queries: list[str], k: int = 4, facets: list[str] | None 
     load()
     best: dict[int, float] = {}
     qv = embed([q for q in queries if q])
-    pool = max(k * 5, 20)
+    pool = max(k * 8, 40)
     scores, idx = _index.search(qv, pool)
     for row_s, row_i in zip(scores, idx):
         for s, i in zip(row_s, row_i):
@@ -127,7 +127,17 @@ def retrieve(embedder, queries: list[str], k: int = 4, facets: list[str] | None 
             if facets and _store["notes"][i]["facet"] not in facets:
                 continue
             best[int(i)] = max(best.get(int(i), -1.0), float(s))
-    ranked = sorted(best.items(), key=lambda kv: -kv[1])[:k]
+    # One slot per source (title): the best chunk of a note wins, so four slots are four
+    # different notes rather than three chunks of the same review.
+    ranked, seen_titles = [], set()
+    for i, s in sorted(best.items(), key=lambda kv: -kv[1]):
+        title = _store["notes"][i]["title"]
+        if title in seen_titles:
+            continue
+        seen_titles.add(title)
+        ranked.append((i, s))
+        if len(ranked) >= k:
+            break
     out = []
     for n, (i, s) in enumerate(ranked, 1):
         note = dict(_store["notes"][i])

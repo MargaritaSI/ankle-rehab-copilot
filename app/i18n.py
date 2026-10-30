@@ -53,10 +53,22 @@ T = {
   "spinner": "Nemotron Nano routes the question · Nemotron Super reads the evidence…",
   "no_key": "NEBIUS_API_KEY is not set. Add it to .env (see .env.example).",
   "failed": "Model call failed: {e}",
-  "src_notes": "Curated notes · {n} (author's reviewed notes, talus OAT specific)",
+  "src_notes": "Author's notes · {n} (from published sources, plus own summaries)",
   "src_papers": "Open-access papers · {n} (PubMed Central)",
   "src_web": "Web sources · {n} (Tavily, medical domains — not from the library)",
   "curated": "curated", "paper": "paper", "web": "web", "source": "source ↗", "open_pmc": "open on PMC ↗",
+  "pt_guideline": "guideline / consensus", "pt_review": "review", "pt_study": "study", "pt_abstract": "conference abstract",
+  "nk_summary": "author's summary · no link", "nk_personal": "personal experience · n=1",
+  "legend_h": "What the source labels mean",
+  "legend": ("- **paper** — an open-access article from PubMed Central. Its type (from the PubMed record) shows how much weight it carries: "
+             "**guideline / consensus** and **review** sum up many studies; a **study** is one piece of research; "
+             "a **conference abstract** is a short report, weaker than a full paper.\n"
+             "- **curated** — a note I compiled from a published source; the link opens the original.\n"
+             "- **author's summary · no link** — my own short summary of several sources, without one original to open. "
+             "Useful as orientation; check it against the papers or with your clinician.\n"
+             "- **personal experience · n=1** — what happened to me after this surgery. One person, not evidence.\n"
+             "- **web** — medical websites, used only when the library has nothing on the question.\n\n"
+             "One answer can mix all of these: the id after each sentence (`KB-…`, `PMC…`, `WEB-…`) shows which one backs it."),
   "reasoning": "reasoning", "via": "via Nebius Token Factory", "routine_lang": "English",
   "sex": "Sex", "age": "Age",
   "sex_opts": {"na": "prefer not to say", "female": "female", "male": "male"},
@@ -132,10 +144,22 @@ T = {
   "spinner": "Nemotron Nano разбирает вопрос · Nemotron Super читает источники…",
   "no_key": "NEBIUS_API_KEY не задан. Добавьте его в .env (см. .env.example).",
   "failed": "Не удалось обратиться к модели: {e}",
-  "src_notes": "Кураторские заметки · {n} (проверенные заметки автора, про OAT таранной кости)",
+  "src_notes": "Заметки автора · {n} (по опубликованным источникам и собственные сводки)",
   "src_papers": "Открытые статьи · {n} (PubMed Central)",
   "src_web": "Источники из интернета · {n} (Tavily, медицинские сайты — не из библиотеки)",
   "curated": "заметка", "paper": "статья", "web": "интернет", "source": "источник ↗", "open_pmc": "открыть в PMC ↗",
+  "pt_guideline": "рекомендации / консенсус", "pt_review": "обзор", "pt_study": "исследование", "pt_abstract": "тезисы конференции",
+  "nk_summary": "сводка автора · без ссылки", "nk_personal": "личный опыт · n=1",
+  "legend_h": "Что значат метки источников",
+  "legend": ("- **статья** — открытая статья из PubMed Central. Тип (из карточки PubMed) показывает её вес: "
+             "**рекомендации / консенсус** и **обзор** обобщают много исследований; **исследование** — одна работа; "
+             "**тезисы конференции** — короткое сообщение, слабее полной статьи.\n"
+             "- **заметка** — моя выжимка из опубликованного источника; ссылка открывает оригинал.\n"
+             "- **сводка автора · без ссылки** — моё короткое обобщение нескольких источников, без одного оригинала. "
+             "Годится для ориентира; сверяйте со статьями или с врачом.\n"
+             "- **личный опыт · n=1** — что было со мной после этой операции. Один человек, не доказательство.\n"
+             "- **интернет** — медицинские сайты, только когда в библиотеке нет ответа.\n\n"
+             "В одном ответе могут смешиваться все типы: метка после каждой фразы (`KB-…`, `PMC…`, `WEB-…`) показывает, на что она опирается."),
   "reasoning": "рассуждение", "via": "через Nebius Token Factory", "routine_lang": "Russian",
   "sex": "Пол", "age": "Возраст",
   "sex_opts": {"na": "не указывать", "female": "женский", "male": "мужской"},

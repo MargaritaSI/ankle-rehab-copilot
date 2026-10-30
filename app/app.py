@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 import streamlit as st
 
 # Telegram companion bot linked from the bottom-right card — change the username here only.
-TELEGRAM_BOT_URL = "https://t.me/addsport_bot"
+TELEGRAM_BOT_URL = "https://t.me/addmove_bot"
 
 ASSETS = pathlib.Path(__file__).resolve().parent / "assets"
 ROOT = ASSETS.parent.parent

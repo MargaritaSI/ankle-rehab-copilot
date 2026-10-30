@@ -16,6 +16,7 @@ cross languages. ~440 notes → one-off build cached under corpus/index_kb/.
 from __future__ import annotations
 
 import json
+import threading
 import pathlib
 import pickle
 
@@ -90,6 +91,17 @@ def load(embedder=None) -> None:
     global _index, _store
     if _index is not None:
         return
+    with _LOAD_LOCK:
+        if _index is not None:
+            return
+        _load_locked()
+
+
+_LOAD_LOCK = threading.Lock()
+
+
+def _load_locked() -> None:
+    global _index, _store
     fp = _fingerprint()
     pkl = KB_INDEX / "chunks.pkl"
     if pkl.exists():

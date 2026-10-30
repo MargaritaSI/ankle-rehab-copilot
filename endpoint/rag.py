@@ -16,6 +16,7 @@ import os
 import sys
 import pathlib
 import pickle
+import threading
 import re
 
 import faiss
@@ -156,14 +157,27 @@ def _ensure_index_files() -> None:
     marker.write_text(INDEX_VERSION)
 
 
+_LOAD_LOCK = threading.Lock()
+
+
 def _load() -> None:
+    """Load the paper index, the embedder and the curated tier exactly once per process.
+    Several Streamlit sessions can call this at the same moment after a deploy; without the
+    lock each would load its own copy and the 1 GB container gets OOM-killed. `_index` is
+    assigned last, so a reader that sees it set also sees the store, the model and the KB."""
     global _model, _index, _store
-    if _index is None:
+    if _index is not None:
+        return
+    with _LOAD_LOCK:
+        if _index is not None:
+            return
         _ensure_index_files()
-        _store = pickle.load(open(INDEX / "chunks.pkl", "rb"))
-        _model = SentenceTransformer(_store["model"])
-        _index = faiss.read_index(str(INDEX / "faiss.index"))
-        kb.load(_model)
+        store = pickle.load(open(INDEX / "chunks.pkl", "rb"))
+        model = SentenceTransformer(store["model"])
+        index = faiss.read_index(str(INDEX / "faiss.index"))
+        kb.load(model)
+        _store, _model = store, model
+        _index = index
 
 
 def stats() -> dict:

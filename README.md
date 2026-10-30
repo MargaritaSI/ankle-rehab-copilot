@@ -10,7 +10,7 @@
 > research only**, cites every claim, says where protocols disagree, and anchors the answer to
 > **your week after surgery**.
 
-Live demo: **https://huggingface.co/spaces/ItMaj/rehab-copilot** · Video: *(YouTube link
+Live demo: **https://ankle-rehab-copilot.streamlit.app** · Video: *(YouTube link
 in the Devpost submission)* · Track: **Best Apps and Agents**
 
 > ⚠️ Educational summary of published protocols and research. Not medical advice, not a clinical

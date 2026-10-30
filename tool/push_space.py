@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Publish the app to a Hugging Face Space (Streamlit SDK, free CPU).
+Publish the app to a Hugging Face Space (Docker SDK, free CPU; see Dockerfile).
 
     HF_TOKEN=hf_...  python tool/push_space.py [owner/space-name]
 
@@ -28,16 +28,15 @@ if not token:
     sys.exit("HF_TOKEN missing (write token from https://huggingface.co/settings/tokens)")
 
 api = HfApi(token=token)
-api.create_repo(repo_id, repo_type="space", space_sdk="streamlit", exist_ok=True, private=False)
+api.create_repo(repo_id, repo_type="space", space_sdk="docker", exist_ok=True, private=False)
 
 FRONT = """---
 title: Rehab Copilot
 emoji: 🦶
 colorFrom: indigo
 colorTo: purple
-sdk: streamlit
-sdk_version: "1.58.0"
-app_file: app/app.py
+sdk: docker
+app_port: 7860
 pinned: false
 license: mit
 short_description: Evidence Q&A + daily routine after ankle cartilage surgery

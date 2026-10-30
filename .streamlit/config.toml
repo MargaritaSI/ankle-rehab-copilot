@@ -1,0 +1,7 @@
+[server]
+fileWatcherType = "none"
+headless = true
+[browser]
+gatherUsageStats = false
+[theme]
+primaryColor = "#6366F1"

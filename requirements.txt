@@ -6,4 +6,4 @@ openai>=1.30
 python-dotenv>=1.0
 requests>=2.31
 sentence-transformers>=2.6
-streamlit>=1.33
+streamlit==1.58.0  # pinned: the UI CSS targets this version's DOM (newer releases rename tabs/pills/selects)

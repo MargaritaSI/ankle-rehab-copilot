@@ -187,9 +187,10 @@ def retrieve_multi(queries: list[str], k: int = 6, tags: list[str] | None = None
 
 
 def _says_no_data(text: str) -> bool:
+    """True when the answer admits a gap — fully or for one of its sections."""
     t = text.lower()
-    return any(m in t for m in ("no data on this", "нет данных", "не содержит данных",
-                                "geen gegevens", "keine daten", "no hay datos")) and len(t) < 600
+    return any(m in t for m in ("no data on this", "has no data", "нет данных", "не содержит данных",
+                                "geen gegevens", "keine daten", "no hay datos"))
 
 
 def _tidy(text: str) -> str:
@@ -309,13 +310,14 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
     if _says_no_data(text) and allow_web and web.available() and not webhits:
         webhits = web.search(a["query_en"])
         if webhits:
-            source = "web"
+            source = "web" if not (notes or hits) else "library+web"
             user = (f"PERSON'S CONTEXT: {profile.context()}\n"
                     f"ANSWER LANGUAGE: {a['lang']}.\n\n"
                     f"FRAGMENTS:\n{_context(notes, hits, webhits)}\n\nQUESTION: {question}\n\n"
-                    f"REMINDER: the curated library was silent; answer from the WEB fragments, cite "
-                    f"[WEB-n] after every factual sentence, and say in the first line that these "
-                    f"are web sources outside the curated library. Answer language: {a['lang']}.")
+                    f"REMINDER: the curated library could not answer all of this, so WEB fragments "
+                    f"from medical domains were added. Use library fragments first; where only web "
+                    f"fragments answer, cite [WEB-n] and mark that part as 'from web sources outside "
+                    f"the curated library'. Cite after every factual sentence. Answer language: {a['lang']}.")
             text = llm.chat([{"role": "system", "content": SYSTEM},
                              {"role": "user", "content": user}],
                             tier=tier, think=False, max_tokens=1000, purpose="web-grounded answer")

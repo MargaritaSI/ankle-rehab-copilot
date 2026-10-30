@@ -98,6 +98,11 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 [data-testid="stDateInput"] input{font-size:1.02rem; height:50px; font-weight:600;}
 [data-baseweb="select"] > div{min-height:50px; font-size:1rem; font-weight:600;}
 [data-baseweb="select"] > div, [data-baseweb="base-input"], [data-baseweb="textarea"]{border-radius:14px;}
+/* Long selected values (RU surgery names, "не указывать") wrap instead of ending in "…". */
+[data-baseweb="select"] div[value]{white-space:normal !important; overflow:visible !important; text-overflow:clip !important;
+  height:auto !important; line-height:1.35; padding:8px 0;}
+[data-baseweb="select"] > div, [data-baseweb="select"] > div > div:first-child{height:auto !important;}
+[data-baseweb="select"] > div > div:first-child{overflow:visible !important;}
 [data-testid="stToggle"] p{font-size:1rem; font-weight:600;}
 [data-testid="stExpander"] details{border-radius:var(--r-md); background:var(--card);}
 [data-testid="stExpander"] summary{padding:16px 18px;}
@@ -186,7 +191,7 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 .src .id{font-weight:800; color:var(--teal); background:var(--teal-wash); border-radius:8px; padding:2px 9px; font-size:.86rem;}
 .src .kind{font-size:.74rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
 .src .t{font-weight:700; font-size:1.02rem; line-height:1.4; color:var(--ink);}
-.src .x{font-size:.94rem; line-height:1.55; color:var(--ink-2); display:-webkit-box; -webkit-line-clamp:5; -webkit-box-orient:vertical; overflow:hidden;}
+.src .x{font-size:.94rem; line-height:1.55; color:var(--ink-2);}
 .src .chips{display:flex; gap:6px; flex-wrap:wrap;}
 .chip{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid var(--line); color:var(--muted);
   font-size:.78rem; font-weight:700; background:var(--card-2); line-height:1.4;}
@@ -207,20 +212,17 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
   border-radius:var(--r-sm); padding:10px 12px; margin:.2rem 0 .4rem;}
 .phint.muted{background:transparent; color:var(--muted); padding:0 2px; font-size:.86rem;}
 
-/* ---------- Telegram companion card (fixed, above Streamlit Cloud's "Manage app" badge) */
-.tgcard{position:fixed; right:20px; bottom:76px; z-index:999; width:240px; display:flex; gap:12px; align-items:flex-start;
-  background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px;
-  box-shadow:var(--shadow); text-decoration:none !important; color:var(--ink) !important;}
-.tgcard:hover{border-color:var(--teal);}
-.tgcard .ic{flex:none; width:36px; height:36px; border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center;}
-.tgcard .ic img{width:18px; height:18px; margin-left:-2px;}
-.tgcard .tt{font-weight:800; font-size:.98rem; line-height:1.25;}
-.tgcard .tb{font-size:.84rem; line-height:1.4; color:var(--ink-2); margin-top:3px; font-weight:500;}
-@media (max-width:600px){
-  .tgcard{width:auto; padding:0; border-radius:50%; right:14px; bottom:72px; background:transparent; border:none;}
-  .tgcard .ic{width:52px; height:52px; box-shadow:var(--shadow);} .tgcard .ic img{width:24px; height:24px;}
-  .tgcard .txt{display:none;}
-}
+/* ---------- Telegram companion: an inline footer row at the very bottom of the page.
+   It used to be position:fixed and covered answers/cards; in the flow it never overlaps. */
+.tgcard{display:flex; gap:14px; align-items:center; width:max-content; max-width:100%; margin:2.4rem 0 .4rem;
+  background:transparent; border:none; box-shadow:none; padding:0; text-decoration:none !important; color:var(--ink) !important;}
+.tgcard .ic{flex:none; width:44px; height:44px; border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center;
+  box-shadow:0 8px 18px -8px rgba(47,111,109,.7); transition:transform .12s ease;}
+.tgcard:hover .ic{transform:translateY(-1px);}
+.tgcard .ic img{width:20px; height:20px; margin-left:-2px;}
+.tgcard .tt{font-weight:800; font-size:1.02rem; line-height:1.3;}
+.tgcard .tb{font-size:.92rem; line-height:1.45; color:var(--ink-2); margin-top:2px; font-weight:500;}
+.tgcard:hover .tt{color:var(--teal);}
 
 @media (max-width:700px){
   .hero{gap:14px; padding:8px 6px 4px 2px;} .hero img{height:72px;} .hero h1{font-size:2.2rem;}

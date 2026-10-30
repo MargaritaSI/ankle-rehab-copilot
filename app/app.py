@@ -188,10 +188,9 @@ with st.sidebar:
     if has_date:
         surgery_date = st.date_input(L["surgery_date"], value=dt.date.today() - dt.timedelta(weeks=22),
                                      min_value=dt.date(2000, 1, 1), max_value=dt.date.today())
-    c_sex, c_age = st.columns(2)
-    sex = c_sex.selectbox(L["sex"], list(L["sex_opts"]), format_func=lambda k: L["sex_opts"][k],
-                          help=L["profile_help"])
-    age_band = c_age.selectbox(L["age"], list(L["age_opts"]), format_func=lambda k: L["age_opts"][k])
+    sex = st.selectbox(L["sex"], list(L["sex_opts"]), format_func=lambda k: L["sex_opts"][k],
+                       help=L["profile_help"])
+    age_band = st.selectbox(L["age"], list(L["age_opts"]), format_func=lambda k: L["age_opts"][k])
     revision = st.toggle(L["revision"], value=False, help=L["revision_help"])
     poor_perf = st.toggle(L["perfusion"], value=False, help=L["perfusion_help"])
     profile = Profile(surgery=surgery, surgery_date=surgery_date, sex=sex, age_band=age_band,
@@ -230,12 +229,11 @@ with st.sidebar:
         st.error(L["lib_error"].format(e=type(exc).__name__))
         st.stop()
     sel_tags = st.multiselect(L["tags"], _tags)
+    # The daily token budget is an operator detail: visitors only see a warning once it is
+    # nearly spent (so a pause at 100% isn't a surprise), never the running percentage.
     u = llm.usage_today()
-    if u["budget"]:
-        pct = int(u["fraction"] * 100)
-        st.progress(u["fraction"], text=L["budget"].format(pct=pct, n=u["requests"]))
-        if pct >= 80:
-            st.warning(L["budget_warn"])
+    if u["budget"] and u["fraction"] >= 0.8:
+        st.warning(L["budget_warn"])
     st.divider()
     try:
         stats = rag.stats()
@@ -264,7 +262,6 @@ with _t_lang:
                          label_visibility="collapsed")
 
 ui.subtitle(L["subtitle"])
-ui.telegram_card(TELEGRAM_BOT_URL, L["tg_title"], L["tg_body"], L["tg_open"])
 ui.note(L["disclaimer"])
 
 # ----------------------------------------------------------------- your week, at a glance
@@ -345,3 +342,6 @@ with tab_doc:
     if go:
         run("doc_res", rag.specialist_questions, topic, profile)
     show_result("doc_res", "capy_frog.png", L["doc_empty"])
+
+# ----------------------------------------------------------------- Telegram companion (page footer)
+ui.telegram_card(TELEGRAM_BOT_URL, L["tg_title"], L["tg_body"], L["tg_open"])

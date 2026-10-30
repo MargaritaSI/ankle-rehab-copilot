@@ -16,7 +16,6 @@ import os
 import pathlib
 import pickle
 import re
-import urllib.request
 
 import faiss
 import numpy as np
@@ -98,7 +97,13 @@ _store = None
 
 
 # ----------------------------------------------------------------- loading
+class IndexUnavailable(RuntimeError):
+    """The prebuilt paper index is not on disk and could not be downloaded."""
+
+
 def _ensure_index_files() -> None:
+    """Download the prebuilt paper index from the GitHub Release on first run."""
+    import requests
     INDEX.mkdir(parents=True, exist_ok=True)
     for name in ("faiss.index", "chunks.pkl"):
         p = INDEX / name
@@ -106,7 +111,16 @@ def _ensure_index_files() -> None:
             continue
         url = INDEX_BASE_URL.rstrip("/") + "/" + name
         tmp = p.with_suffix(p.suffix + ".part")
-        urllib.request.urlretrieve(url, tmp)
+        try:
+            with requests.get(url, stream=True, timeout=120, allow_redirects=True,
+                              headers={"User-Agent": "rehab-copilot/1.0"}) as r:
+                r.raise_for_status()
+                with open(tmp, "wb") as fh:
+                    for block in r.iter_content(chunk_size=1 << 20):
+                        fh.write(block)
+        except Exception as exc:
+            tmp.unlink(missing_ok=True)
+            raise IndexUnavailable(f"Could not download {name} from {url}: {exc}") from exc
         tmp.replace(p)
 
 

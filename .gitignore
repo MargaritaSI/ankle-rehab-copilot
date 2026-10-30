@@ -13,3 +13,4 @@ venv/
 .DS_Store
 eval/_reports/run.log
 .usage.json
+release_v1/

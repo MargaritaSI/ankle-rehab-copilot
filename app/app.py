@@ -145,7 +145,13 @@ with st.sidebar:
     allow_web = st.toggle("Search the web when the library is silent (Tavily)",
                           value=web.available(), disabled=not web.available(),
                           help="Needs TAVILY_API_KEY. Restricted to medical domains; results are labelled.")
-    sel_tags = st.multiselect("Restrict papers to topics", rag.all_tags())
+    try:
+        _tags = rag.all_tags()
+    except Exception as exc:
+        st.error(f"The paper library could not be loaded yet ({type(exc).__name__}). "
+                 "Reload the page in a minute.")
+        st.stop()
+    sel_tags = st.multiselect("Restrict papers to topics", _tags)
     u = llm.usage_today()
     if u["budget"]:
         pct = int(u["fraction"] * 100)

@@ -15,3 +15,4 @@ eval/_reports/run.log
 .usage.json
 release_v1/
 release_v2/
+corpus/*.log

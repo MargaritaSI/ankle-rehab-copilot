@@ -94,6 +94,10 @@ Rules
    as they are. Use bold section headings, TRANSLATED into the answer language:
    **What is typical at this stage** · **What to do** · **Where protocols differ** ·
    **When to check with your clinician**  (omit a section if there is nothing for it).
+10. Notes labelled as the author's personal experience (n=1) are NOT evidence: you may mention them
+   only as "the app's author noticed … (personal experience, not a study)", never as a fact or a rule.
+11. If the question is too short or garbled to answer well (a single word, a typo that changes the
+   meaning), answer what you can in two or three lines and end with ONE short clarifying question.
 9. End with exactly this one line (translated to the answer language):
    "Educational summary of published protocols and research, not medical advice."
 """
@@ -216,10 +220,13 @@ def _says_no_data(text: str) -> bool:
 
 _CITE = re.compile(r"\[(?:KB-\d+|PMC\d+|WEB-\d+)\]")
 _NUMBER = re.compile(r"\d")
-NO_SOURCE_TAG = " _(no source in the library — check with your clinician)_"
+NO_SOURCE_TAG = {"en": " _(no source in the library — check with your clinician)_",
+                 "ru": " _(источника в библиотеке нет — уточните у врача)_"}
+DISCLAIMER_LINE = {"en": "Educational summary of published protocols and research, not medical advice.",
+                   "ru": "Образовательная сводка опубликованных протоколов и исследований, не медицинская рекомендация."}
 
 
-def _flag_unsourced(text: str) -> str:
+def _flag_unsourced(text: str, lang: str = "en") -> str:
     """Citation guard: a bullet or sentence line that states a number (weeks, minutes, grams,
     degrees) but carries no source id gets a visible tag instead of passing as evidence."""
     out = []
@@ -228,14 +235,17 @@ def _flag_unsourced(text: str) -> str:
         is_claim = (body.startswith(("-", "*", "•")) or len(body) > 60) and not body.startswith("**")
         if (is_claim and _NUMBER.search(body) and not _CITE.search(body)
                 and "not medical advice" not in body.lower() and "медицинск" not in body.lower()):
-            line = line.rstrip() + NO_SOURCE_TAG
+            line = line.rstrip() + NO_SOURCE_TAG.get(lang, NO_SOURCE_TAG["en"])
         out.append(line)
-    return "\n".join(out)
+    text = "\n".join(out)
+    if lang == "ru":
+        text = text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"])
+    return text
 
 
 def _tidy(text: str) -> str:
     """Normalise citation brackets (【PMC1】 → [PMC1]) and flag unsourced numeric claims."""
-    return _flag_unsourced(text.replace("【", "[").replace("】", "]"))
+    return _flag_unsourced(text.replace("【", "[").replace("】", "]"), guard.lang_of(text))
 
 
 def _excerpt(text: str, words: int = 45) -> str:
@@ -321,14 +331,20 @@ def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
     if guard.leak(text):
         return guard.REFUSAL[lang]
     text = text.replace("【", "[").replace("】", "]")
-    return _flag_unsourced(text) if flag else text
+    if flag:
+        return _flag_unsourced(text, lang)
+    return text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"]) if lang == "ru" else text
 
 
 def _context(notes: list[dict], hits: list[dict], webhits: list[dict]) -> str:
     parts = []
     if notes:
-        parts.append("CURATED NOTES:\n" + "\n\n".join(
-            f"[{n['id']}] {n['title']}\n{n['text']}" for n in notes))
+        def _note(n):
+            if n.get("facet", "").startswith("author"):
+                return (f"[{n['id']}] AUTHOR'S PERSONAL EXPERIENCE — n=1, NOT EVIDENCE, NOT A PROTOCOL. "
+                        f"Cite only as 'the app's author noticed … (personal experience, not a study)'.\n{n['text']}")
+            return f"[{n['id']}] {n['title']}\n{n['text']}"
+        parts.append("CURATED NOTES:\n" + "\n\n".join(_note(n) for n in notes))
     if hits:
         parts.append("PAPERS:\n" + "\n\n".join(
             f"[{h['meta'].get('pmcid', '?')}] {h['meta'].get('title', '')}\n{h['text']}"
@@ -419,6 +435,10 @@ Then 6–8 checklist items as markdown task list lines "- [ ] …": each = one m
 and a source id in brackets. Mix: 2 lying/sitting, 2 standing/walking, 1 donor-knee item,
 1 nutrition item (protein / hydration / caffeine timing if present in fragments), 1 breathing or
 swelling-control item.
+Situational cues from the notes ("while the kettle boils", "during an ad break") are timing anchors
+for a busy home day — when you use one, say so in a few words ("anchor: while the kettle boils, so
+it happens several times a day without planning"), never present it as the exercise itself.
+Write headings and all text in the requested language only.
 Then **Stop signs** — 2 calm lines from the fragments (pain that persists past rest, swelling
 next morning) with what to do (reduce, not quit).
 Then **Where protocols differ** if the fragments disagree about this phase.
@@ -475,7 +495,10 @@ def compare(topic_a: str, topic_b: str, k: int = 5, tier: str = "strong") -> dic
          "(rows: mechanism, evidence strength, typical protocol / dose / timing, when it is "
          "preferred, cautions), every cell with source ids in brackets, then 3 lines of "
          "'Where they differ' and a calm one-line takeaway. Only from the fragments; write "
-         "'no data' where the fragments are silent. Answer in the language of the topics. "
+         "'no data' where the fragments are silent. Write EVERYTHING — table headers, the section "
+         "'Where they differ' and the takeaway — in the ANSWER LANGUAGE given below; never mix "
+         "languages (in Russian: «Механизм», «Сила доказательств», «Типичный протокол / доза / сроки», "
+         "«Когда предпочтительнее», «Осторожно», «В чём различия», «Итог»). "
          "End with one short disclaimer line. " + guard.DATA_RULE},
         {"role": "user", "content": f"ANSWER LANGUAGE: {aa['lang']}\n\nAPPROACH A: {guard.wrap(topic_a)}\n{ctx_a}"
                                     f"\n\nAPPROACH B: {guard.wrap(topic_b)}\n{ctx_b}"},
@@ -507,7 +530,7 @@ def specialist_questions(topic: str, profile: Profile | None = None, k: int = 5)
          "should be answerable in a 10-minute appointment and reference the detail from a source "
          "in brackets. Add one line 'Bring with you:' listing what to note down beforehand "
          "(dates, measurements, photos of swelling). No advice of your own — questions only. "
-         "Answer in the language of the topic. " + guard.DATA_RULE},
+         "Write headings and everything else in the language of the topic only — no mixing. " + guard.DATA_RULE},
         {"role": "user", "content": f"PERSON'S CONTEXT: {profile.context()}\n"
                                     f"ANSWER LANGUAGE: {a['lang']}\nTOPIC: {guard.wrap(topic)}\n"
                                     f"FRAGMENTS:\n{_context(notes, hits, [])}"},

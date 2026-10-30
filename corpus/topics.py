@@ -151,4 +151,11 @@ TOPICS = {
     "heat_venous": "heat exposure venous insufficiency leg edema seasonal variation symptoms",
     "heat_vasodilation": "thermoregulation cutaneous vasodilation lower limb swelling hot environment",
     "postop_edema_season": "seasonal variation postoperative swelling wound complications summer orthopedic",
+
+    # --- Нервы после операций на голеностопе; плавание как нагрузка (добавлено 2026-10-30, вечер) ---
+    "nerve_arthroscopy": "superficial peroneal nerve sural nerve injury ankle arthroscopy portal complications paresthesia",
+    "nerve_recovery": "postoperative numbness paresthesia foot ankle surgery recovery time neuropraxia management",
+    "nerve_exercise": "peripheral nerve irritation exercise modification continue activity load adjustment",
+    "swim_kick_ankle": "swimming flutter kick ankle plantarflexion load joint stress rehabilitation",
+    "aquatic_postop": "aquatic exercise hydrostatic pressure postoperative lower limb effects edema joint",
 }

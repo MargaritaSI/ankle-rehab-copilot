@@ -39,6 +39,7 @@ FACETS = {
     "nutrition_supplements": "nutrition", "extended_kb": "nutrition & exercise",
     "extended_kb2": "misc", "cartilage_longevity": "long-term",
     "scenarios_predictions": "scenarios", "faq_bestof": "faq",
+    "author_experience": "author's experience (n=1)",
 }
 
 _index = None

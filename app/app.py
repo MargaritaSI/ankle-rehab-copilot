@@ -73,6 +73,9 @@ if "lang" not in st.session_state:
     st.session_state["lang"] = "en"
 L = T[st.session_state["lang"]]
 RU = st.session_state["lang"] == "ru"
+# One answer language: every model call gets the interface language, whatever language the
+# question was typed in (owner: an English UI must never return a Russian answer).
+UI_LANG = st.session_state["lang"]
 
 
 def phase_text(name: str, focus: str) -> tuple[str, str]:
@@ -340,7 +343,7 @@ with tab_ask:
         q = st.text_area(L["your_q"], height=130, key="ask_q", placeholder=L["q_placeholder"], max_chars=1200)
         go = st.button(L["ask_btn"], type="primary", disabled=not q.strip(), icon=":material/arrow_forward:")
     if go:
-        run("ask_res", rag.answer, q, profile, tags=sel_tags or None, tier=tier, allow_web=allow_web)
+        run("ask_res", rag.answer, q, profile, tags=sel_tags or None, tier=tier, allow_web=allow_web, lang=UI_LANG)
     show_result("ask_res", "capy_king.png", L["ask_empty"])
 
 # ----------------------------------------------------------------- Today
@@ -348,13 +351,12 @@ with tab_today:
     with st.container(key="card-today", border=True):
         with st.container(key="lead-today"):
             st.markdown(L["today_intro"])
-        lang = L["routine_lang"]
         constraints = st.text_input(L["constraints"], placeholder=L["constraints_ph"], max_chars=200)
         if profile.weeks is None:
             st.info(L["need_date"])
         go = st.button(L["today_btn"], type="primary", disabled=profile.weeks is None, icon=":material/wb_sunny:")
     if go:
-        run("today_res", rag.routine, profile, lang, constraints)
+        run("today_res", rag.routine, profile, UI_LANG, constraints)
     show_result("today_res", "sun.png", L["today_empty"])
 
 # ----------------------------------------------------------------- Compare
@@ -367,7 +369,7 @@ with tab_cmp:
         b = c2.text_input(L["cmp_b"], L["cmp_b_def"], key=f"cmp_b_{st.session_state['lang']}", max_chars=200)
         go = st.button(L["cmp_btn"], type="primary", icon=":material/compare_arrows:")
     if go:
-        run("cmp_res", rag.compare, a, b, tier=tier)
+        run("cmp_res", rag.compare, a, b, tier=tier, lang=UI_LANG)
     show_result("cmp_res", "pebble.png", L["cmp_empty"])
 
 # ----------------------------------------------------------------- Doctor
@@ -378,7 +380,7 @@ with tab_doc:
         topic = st.text_input(L["topic"], L["topic_def"], key=f"doc_topic_{st.session_state['lang']}", max_chars=200)
         go = st.button(L["doc_btn"], type="primary", icon=":material/stethoscope:")
     if go:
-        run("doc_res", rag.specialist_questions, topic, profile)
+        run("doc_res", rag.specialist_questions, topic, profile, lang=UI_LANG)
     show_result("doc_res", "capy_frog.png", L["doc_empty"])
 
 # ----------------------------------------------------------------- Telegram companion (page footer)

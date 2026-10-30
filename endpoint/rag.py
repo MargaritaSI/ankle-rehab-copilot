@@ -472,7 +472,7 @@ _RU_GLOSSARY = ("mindfulness → осознанность; empowerment → во�
 _RU_FALLBACK = {"combined with": "в сочетании с", "combined": "в сочетании", "evidence-based": "доказательный",
                 "based": "основанный", "mindfulness": "осознанность", "empowerment": "вовлечённость",
                 "relaxation": "расслабление", "tension": "напряжение", "breathing": "дыхание",
-                "coping": "совладание", "with": "с", "and": "и"}
+                "coping": "совладание", "anchor": "привязка", "Anchor": "Привязка", "with": "с", "and": "и"}
 
 
 def _ru_rewrite_latin(text: str) -> str:
@@ -631,7 +631,8 @@ and a source id in brackets. Mix: 2 lying/sitting, 2 standing/walking, 1 donor-k
 swelling-control item.
 Situational cues from the notes ("while the kettle boils", "during an ad break") are timing anchors
 for a busy home day — when you use one, say so in a few words ("anchor: while the kettle boils, so
-it happens several times a day without planning"), never present it as the exercise itself.
+it happens several times a day without planning"; in Russian write «привязка: пока закипает чайник…»,
+never the English word "anchor"), never present it as the exercise itself.
 Write headings and all text in the requested language only.
 Then **Stop signs** — 2 calm lines from the fragments (pain that persists past rest, swelling
 next morning) with what to do (reduce, not quit).

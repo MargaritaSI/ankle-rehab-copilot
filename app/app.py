@@ -28,12 +28,33 @@ sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint")
 import llm  # noqa: E402
 import rag  # noqa: E402
 
-# Same hot-reload problem for the retrieval modules: if the running `rag` predates the
-# note-merge change, reload kb then rag once (their index caches rebuild on the next call).
-if not hasattr(rag, "_merge_notes"):
-    import kb as _kb  # noqa: E402
-    importlib.reload(_kb)
-    rag = importlib.reload(rag)
+# Streamlit Cloud hot-reloads this script on a push but keeps already-imported modules in
+# memory, so a pushed change to endpoint/*.py silently never runs until someone reboots the
+# app (2026-10-30: the live demo kept answering with the pre-cleanup rag.py for an hour).
+# Guard: whenever an endpoint file on disk is newer than the copy we loaded, reload the whole
+# chain in dependency order; the index caches rebuild on the next call (a few seconds, once).
+_ENDPOINT_CHAIN = ("llm", "guard", "web", "phase", "kb", "rag")
+
+
+def _reload_endpoint_if_stale() -> None:
+    import os
+    mods = [sys.modules[n] for n in _ENDPOINT_CHAIN if n in sys.modules]
+    for m in mods:
+        if not hasattr(m, "_loaded_mtime"):
+            m._loaded_mtime = os.path.getmtime(m.__file__)
+    stale = any(os.path.getmtime(m.__file__) > m._loaded_mtime + 1 for m in mods)
+    # One-time marker for the deploy this guard ships in (the running rag predates it).
+    stale = stale or not hasattr(sys.modules["rag"], "_RU_FALLBACK")
+    if not stale:
+        return
+    for name in _ENDPOINT_CHAIN:
+        mod = importlib.import_module(name)
+        mod = importlib.reload(mod)
+        mod._loaded_mtime = os.path.getmtime(mod.__file__)
+
+
+_reload_endpoint_if_stale()
+import rag  # noqa: E402, F811  (rebind after a possible reload)
 import web  # noqa: E402
 from phase import PHASES, SURGERIES, Profile  # noqa: E402
 

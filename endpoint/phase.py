@@ -71,6 +71,8 @@ class Profile:
     today: dt.date = field(default_factory=dt.date.today)
     sex: str = "na"
     age_band: str = "na"
+    revision: bool = False          # repeat operation on this ankle (after a failed earlier procedure)
+    poor_perfusion: bool = False    # known circulation problems: cold foot, slow healing, smoking, diabetes
 
     @property
     def weeks(self) -> int | None:
@@ -110,6 +112,15 @@ class Profile:
         lines.append("These windows are typical ranges across published protocols; the person's "
                      "own surgeon's protocol overrides them.")
         hints = [h for h in (_SEX_HINT.get(self.sex), _AGE_HINT.get(self.age_band)) if h]
+        if self.revision:
+            hints.append("REVISION case: this is a repeat operation after an earlier failed procedure on the "
+                         "same ankle — expect slower progression, prefer evidence on revision outcomes, and "
+                         "say when primary-surgery numbers may not apply")
+        if self.poor_perfusion:
+            hints.append("known poor peripheral circulation (cold foot, slow healing, smoking or diabetes "
+                         "history): healing is slower, swelling and wound issues more likely — prefer "
+                         "evidence on perfusion and what improves it (walking, calf pump, elevation, "
+                         "smoking cessation, glucose control)")
         if hints:
             lines.append("Profile (" + "; ".join(hints) + ") — prefer evidence for this group when the "
                          "fragments offer it, and say when a number differs by sex or age.")

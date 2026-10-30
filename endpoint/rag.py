@@ -92,8 +92,17 @@ Rules
    theirs and the patient's together.
 8. Answer in the language of the question (Russian question → Russian answer), keep source ids
    as they are. Use bold section headings, TRANSLATED into the answer language:
-   **What is typical at this stage** · **What to do** · **Where protocols differ** ·
-   **When to check with your clinician**  (omit a section if there is nothing for it).
+   **What is typical at this stage** · **What to do** · **If less / as now / more** (activity
+   questions only) · **Where protocols differ** · **When to check with your clinician**
+   (omit a section if there is nothing for it).
+9b. When the question is about DOING something (an exercise, sport, walking, swimming, work on
+   the feet, returning to running), add a section **If less / as now / more** with three short
+   lines: what likely happens over the next weeks if the person does LESS than they do now
+   (what is lost: strength, range, bone/cartilage loading stimulus), if they keep it AS NOW, and if
+   they do MORE (what is gained, what can go wrong: swelling, graft overload, pain that lingers
+   past the next morning). Name early warning signs and the "step back one level" rule the
+   sources describe. Where the profile says revision case, poor circulation, sex or age band,
+   say in one line how that shifts the picture — only if a fragment supports it.
 10. Notes labelled as the author's personal experience (n=1) are NOT evidence: you may mention them
    only as "the app's author noticed … (personal experience, not a study)", never as a fact or a rule.
 11. If the question is too short or garbled to answer well (a single word, a typo that changes the
@@ -243,7 +252,7 @@ def _flag_unsourced(text: str, lang: str = "en") -> str:
     return text
 
 
-_RU_FIX = [("Where they differ", "В чём различия"), ("Where protocols differ", "Где протоколы расходятся"),
+_RU_FIX = [("Where they differ", "В чём различия"), ("If less / as now / more", "Если меньше / как сейчас / больше"), ("Where protocols differ", "Где протоколы расходятся"),
            ("What is typical at this stage", "Что типично на этом этапе"), ("What to do", "Что делать"),
            ("When to check with your clinician", "Когда проверить с врачом"), ("Takeaway", "Итог"),
            ("Disclaimer:", ""), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]

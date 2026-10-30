@@ -166,4 +166,21 @@ TOPICS = {
     "hormonal_contraception_tendon": "hormonal contraception estrogen progestin tendon collagen ligament laxity injury",
     "men_testosterone_bone": "men testosterone decline bone density muscle recovery after orthopedic surgery",
     "older_adults_cartilage": "older adults cartilage repair outcomes age over 50 osteochondral",
+
+    # --- Вода: давление, дозировка; консервативное лечение после неудачной артроскопии (добавлено 2026-10-30, вечер 2) ---
+    "hydrostatic_tissue": "hydrostatic pressure immersion effects on soft tissue nerve conduction paresthesia lower limb",
+    "aquatic_dose": "aquatic therapy session duration minutes frequency dose response postoperative orthopedic rehabilitation",
+    "aquatic_early_postop": "early aquatic rehabilitation after lower limb surgery outcomes complications wound",
+    "olt_conservative": "nonoperative conservative management osteochondral lesion talus outcomes physiotherapy",
+    "olt_physio_vs_surgery": "physiotherapy versus surgery osteochondral lesion talus symptomatic patients decision",
+    "bme_conservative": "bone marrow edema talus treatment unloading bisphosphonate iloprost extracorporeal shockwave outcomes",
+    "muscle_offload_joint": "muscle strengthening peroneal tibialis reduces ankle joint load compensation cartilage defect",
+    "steroid_repeat_cartilage": "repeated intra-articular corticosteroid injections cartilage volume loss randomized",
+    "failed_arthroscopy_3y": "persistent pain years after ankle arthroscopy microfracture second look findings",
+    # --- Сценарии нагрузки: недо- и перетренировка, перфузия ---
+    "overload_cartilage": "excessive loading cartilage repair failure graft overload early return signs",
+    "underload_cartilage": "immobilization disuse cartilage atrophy insufficient loading rehabilitation",
+    "load_progression_criteria": "criteria based progression rehabilitation load monitoring pain rule 24 hours",
+    "perfusion_poor_healing": "impaired peripheral perfusion smoking diabetes delayed healing orthopedic what improves perfusion exercise",
+    "revision_vs_primary_rehab": "revision cartilage surgery rehabilitation differences primary slower progression outcomes",
 }

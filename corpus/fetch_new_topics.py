@@ -3,7 +3,7 @@
 import pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import fetch, topics
-NEW = ['nerve_arthroscopy', 'nerve_recovery', 'nerve_exercise', 'swim_kick_ankle', 'aquatic_postop', 'muscle_loss_30s', 'perimenopause_msk', 'women_iron_recovery', 'hormonal_contraception_tendon', 'men_testosterone_bone', 'older_adults_cartilage']
+NEW = ['hydrostatic_tissue', 'aquatic_dose', 'aquatic_early_postop', 'olt_conservative', 'olt_physio_vs_surgery', 'bme_conservative', 'muscle_offload_joint', 'steroid_repeat_cartilage', 'failed_arthroscopy_3y', 'overload_cartilage', 'underload_cartilage', 'load_progression_criteria', 'perfusion_poor_healing', 'revision_vs_primary_rehab']
 for k in list(fetch.TOPICS):
     if k not in NEW:
         del fetch.TOPICS[k]

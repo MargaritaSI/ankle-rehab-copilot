@@ -21,9 +21,10 @@ Five months ago I had an osteochondral autograft (mosaicplasty): cartilage moved
 - **Honesty**: out-of-scope questions are refused in half a second; in-scope questions the library cannot answer fall back to Tavily restricted to medical domains and are labelled as web sources; the app never presents itself as medical advice.
 
 ## How we built it
-Python + Streamlit. Generation is NVIDIA Nemotron 3 on Nebius Token Factory through the OpenAI-compatible API: Nano for the fast JSON routing calls (reasoning off via `chat_template_kwargs`), Super with reasoning on for the evidence answer (reasoning is what made the model cite every sentence — without it citations dropped to one per answer), Ultra as an optional "Deep" mode. The curated tier is embedded with `Qwen/Qwen3-Embedding-8B` from Token Factory because the notes are mixed Russian/English; the paper tier uses a local MiniLM + FAISS over 50,610 chunks with a lexical boost for rare terms. The corpus comes from the Europe PMC open-access API (no key); indexing is a job that runs locally or as a Nebius Serverless Job. Tavily is the web fallback. Hosted on a Hugging Face Space; the prebuilt index is a GitHub Release asset downloaded on first start.
+Python + Streamlit. Generation is NVIDIA Nemotron 3 on Nebius Token Factory through the OpenAI-compatible API: Nano for the fast JSON routing calls (reasoning off via `chat_template_kwargs`), Super with reasoning on for the evidence answer (reasoning is what made the model cite every sentence — without it citations dropped to one per answer), Ultra as an optional "Deep" mode. The curated tier is embedded with `Qwen/Qwen3-Embedding-8B` from Token Factory because the notes are mixed Russian/English; the paper tier uses a local MiniLM + FAISS over 50,610 chunks with a lexical boost for rare terms. The corpus comes from the Europe PMC open-access API (no key); indexing is a job that runs locally or as a Nebius Serverless Job. Tavily fills gaps: when the library cannot answer all or part of a question, a medical-domains-only web search is added and those parts are labelled as web sources. A citation guard tags any numeric claim (weeks, minutes, grams) that carries no source id. Hosted free on Streamlit Community Cloud (https://ankle-rehab-copilot.streamlit.app); the prebuilt index is a GitHub Release asset downloaded on first start; a daily token budget protects the public demo from draining credits.
 
 ## Challenges
+- Even with reasoning on, Super once filled "Where protocols differ" with plausible but uncited ranges. Fixed with a stricter rule (every side of a disagreement must cite, otherwise one neutral line) plus a deterministic citation guard that tags unsourced numeric claims in the UI.
 - Russian questions against English embeddings returned "no data" for notes that answered the question exactly — switching the curated tier to Token Factory's multilingual embeddings fixed it in one afternoon.
 - Super without reasoning wrote fluent answers with almost no citations; with reasoning on it cited every sentence, so the extra seconds are worth it.
 - Dense retrieval has no notion of scope: a question about lumbar herniation scored *higher* than in-scope questions. A Nano scope check in front of retrieval was the only reliable fix.
@@ -39,7 +40,7 @@ Tiered models are not a cost trick only — Nano's half-second refusal is a prod
 Push the daily routine into a Telegram companion with reminders (protein, hourly movement, donor-knee care) and a small peer group; weekly automatic corpus refresh as a Nebius Serverless Job; per-clinic protocol upload so "Where protocols differ" can include the user's own protocol.
 
 ## Built with
-python, streamlit, nvidia-nemotron, nebius-token-factory, faiss, sentence-transformers, tavily, hugging-face-spaces
+python, streamlit, nvidia-nemotron, nebius-token-factory, faiss, sentence-transformers, tavily, streamlit-community-cloud
 
 ## Feedback on Nebius Token Factory / NVIDIA tools
 - Token Factory: the OpenAI-compatible API worked first try with the `openai` SDK; `/v1/models` made model discovery trivial. Per-call reasoning control through `chat_template_kwargs.enable_thinking` is exactly the knob a tiered app needs — it deserves a prominent place in the docs with a latency/quality example. A `max_reasoning_tokens` cap would help bound tail latency (one Russian answer reasoned for 27 s).
@@ -49,3 +50,7 @@ python, streamlit, nvidia-nemotron, nebius-token-factory, faiss, sentence-transf
 
 ## Existed before the submission period?
 Yes — see "What changed during the hackathon submission period" in the README: a never-published June 2026 retrieval prototype (Qwen on a self-hosted endpoint, Russian-only page) was rebuilt on Nemotron/Token Factory with a curated tier, phase context, three new modes, scope check, Tavily fallback, English UI, public repo, hosted demo and an evaluation script.
+
+## Links
+- Demo: https://ankle-rehab-copilot.streamlit.app
+- Code (MIT): https://github.com/MargaritaSI/ankle-rehab-copilot

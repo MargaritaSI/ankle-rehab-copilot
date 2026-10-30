@@ -64,9 +64,11 @@ Rules
 1. Use ONLY the fragments. Every concrete claim carries its source id in brackets.
 2. Be concrete: weeks, grams, degrees, exercise names, muscles, minutes. No filler sentences
    ("it is important to monitor", "consult a specialist") unless tied to a detail from a source.
-3. Protocols differ. When fragments disagree, say so explicitly in a section "Where protocols
-   differ": give the range, what it depends on, and name the more conservative option. Never pick
-   one silently. Tell the person to check which protocol their own surgeon follows.
+3. Protocols differ. Write "Where protocols differ" ONLY when two fragments actually disagree;
+   every side of the disagreement carries its own source id, e.g. "6 months [KB-2] vs 9–12 months
+   [PMC123]", then name the more conservative option. If the fragments do not disagree, write
+   exactly one line there: "The sources here do not disagree on this — ask which protocol your
+   surgeon follows." NEVER invent ranges, weeks or minutes to fill this section.
 4. If the person's recovery phase is given, anchor the answer to it ("at week 22 …"). If not,
    give the answer by phase.
 5. Tone: neutral to supportive. No alarm words, no catastrophizing, no promises of outcomes.
@@ -207,9 +209,28 @@ def _says_no_data(text: str) -> bool:
                                 "geen gegevens", "keine daten", "no hay datos"))
 
 
+_CITE = re.compile(r"\[(?:KB-\d+|PMC\d+|WEB-\d+)\]")
+_NUMBER = re.compile(r"\d")
+NO_SOURCE_TAG = " _(no source in the library — check with your clinician)_"
+
+
+def _flag_unsourced(text: str) -> str:
+    """Citation guard: a bullet or sentence line that states a number (weeks, minutes, grams,
+    degrees) but carries no source id gets a visible tag instead of passing as evidence."""
+    out = []
+    for line in text.splitlines():
+        body = line.strip()
+        is_claim = (body.startswith(("-", "*", "•")) or len(body) > 60) and not body.startswith("**")
+        if (is_claim and _NUMBER.search(body) and not _CITE.search(body)
+                and "not medical advice" not in body.lower() and "медицинск" not in body.lower()):
+            line = line.rstrip() + NO_SOURCE_TAG
+        out.append(line)
+    return "\n".join(out)
+
+
 def _tidy(text: str) -> str:
-    """Normalise citation brackets the model sometimes emits (【PMC1】 → [PMC1])."""
-    return text.replace("【", "[").replace("】", "]")
+    """Normalise citation brackets (【PMC1】 → [PMC1]) and flag unsourced numeric claims."""
+    return _flag_unsourced(text.replace("【", "[").replace("】", "]"))
 
 
 def _excerpt(text: str, words: int = 45) -> str:

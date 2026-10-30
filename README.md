@@ -45,7 +45,12 @@ for week 22, not in general.
   the more conservative option, instead of silently picking one.
 - Out-of-scope questions (another body part, shoe brands) are refused in 0.5 s by the scope
   check — no confident guessing. In-scope questions the library cannot answer fall back to
-  **Tavily** web search restricted to medical domains, clearly labelled as web sources.
+  **Tavily** web search restricted to medical domains (also when only *part* of a question is
+  uncovered), clearly labelled as web sources.
+- **Citation guard**: any line that states a number (weeks, minutes, grams, degrees) without a
+  source id is tagged *no source in the library* in the UI instead of passing as evidence.
+- **Spend guard**: a daily token budget (`DAILY_TOKEN_BUDGET`) pauses the public demo before it
+  can drain the Token Factory account; the sidebar shows today's usage.
 - Tone rules: neutral-to-supportive, no alarm words, red flags stated once and calmly.
 
 ## How NVIDIA Nemotron and Nebius Token Factory are used

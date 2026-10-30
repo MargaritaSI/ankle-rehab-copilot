@@ -10,6 +10,7 @@ Run:  streamlit run app/app.py      (needs NEBIUS_API_KEY in .env or the environ
 from __future__ import annotations
 
 import datetime as dt
+import importlib
 import json
 import re
 import pathlib
@@ -28,6 +29,12 @@ from phase import PHASES, SURGERIES, Profile  # noqa: E402
 
 sys.path.append(str(pathlib.Path(__file__).resolve().parent))
 import ui  # noqa: E402
+import i18n as _i18n  # noqa: E402
+
+# Streamlit Cloud hot-reloads this script on a push but keeps already-imported modules in
+# memory; a new string key in app.py then raises KeyError until someone reboots the app.
+# The strings module is a plain dict literal, so reloading it on every run is free and safe.
+importlib.reload(_i18n)
 from i18n import PHASE_RU, SURGERY_RU, T  # noqa: E402
 
 if "lang" not in st.session_state:

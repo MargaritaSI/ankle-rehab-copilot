@@ -252,7 +252,10 @@ def _flag_unsourced(text: str, lang: str = "en") -> str:
     return text
 
 
-_RU_FIX = [("Where they differ", "В чём различия"), ("If less / as now / more", "Если меньше / как сейчас / больше"), ("Where protocols differ", "Где протоколы расходятся"),
+_RU_FIX = [("Where they differ", "В чём различия"), ("If less / as now / more", "Если меньше / как сейчас / больше"),
+           ("**Less**", "**Меньше**"), ("**As now**", "**Как сейчас**"), ("**More**", "**Больше**"),
+           ("The sources here do not disagree on this — ask which protocol your surgeon follows.",
+            "Источники здесь не расходятся — уточните, какому протоколу следует ваш хирург."), ("Where protocols differ", "Где протоколы расходятся"),
            ("What is typical at this stage", "Что типично на этом этапе"), ("What to do", "Что делать"),
            ("When to check with your clinician", "Когда проверить с врачом"), ("Takeaway", "Итог"),
            ("Disclaimer:", ""), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]
@@ -297,6 +300,20 @@ def _kb_evidence(notes: list[dict]) -> list[dict]:
 
 
 # ---------------------------------------------------------------- analysis
+# Lay symptom → the paper vocabulary that actually retrieves the mechanism (deterministic backstop
+# for the router; each adds one sub-query when the pattern matches the question or its rewrite).
+_MECHANISM_QUERIES = [
+    (r"paresthesia|numb|tingl|онеме|покалыва|nerve", "superficial peroneal nerve sural nerve injury ankle arthroscopy complications paresthesia recovery"),
+    (r"edema|swell|отёк|отек", "postoperative ankle edema management elevation compression duration"),
+    (r"corticosteroid|steroid|стероид|кортико|укол", "intra-articular corticosteroid injection cartilage effects repeated injections"),
+    (r"donor|донор", "donor site morbidity knee osteochondral autograft harvest"),
+    (r"scar|рубец|шрам", "silicone gel sheeting surgical scar management sun protection"),
+    (r"swim|aquatic|pool|плава|бассейн", "aquatic therapy hydrostatic pressure lower limb rehabilitation duration"),
+    (r"run|jog|бег", "return to running after ankle cartilage surgery criteria timeline"),
+    (r"stair|лестниц", "stair descent knee joint loading rehabilitation technique"),
+]
+
+
 def analyze(question: str) -> dict:
     """Nemotron Nano: is the question inside the library's scope? + English search query."""
     data = llm.chat_json([
@@ -305,10 +322,15 @@ def analyze(question: str) -> dict:
          f"LIBRARY SCOPE: {SCOPE}\n"
          "Return JSON only: {\"in_scope\": true|false, \"reason\": \"<10 words>\", "
          "\"query_en\": \"<the question rewritten in English as a dense search query with "
-         "medical terms, keeping the surgery context>\", "
-         "\"query_general\": \"<a second English query about the underlying mechanism or "
-         "topic WITHOUT the surgery name, e.g. 'dependent edema prolonged standing lower limb "
-         "compression elevation'>\", "
+         "medical terms, keeping the surgery context. Translate lay words into the terms papers use: "
+         "numbness/tingling → paresthesia, superficial peroneal or sural nerve irritation after ankle "
+         "arthroscopy; swelling → edema; 'knee hurts where they took the graft' → donor-site morbidity; "
+         "'can't bend the foot' → dorsiflexion range of motion; 'pool/swimming' → aquatic therapy, "
+         "immersion; 'injections' → intra-articular corticosteroid; 'bone swelling on MRI' → bone marrow "
+         "edema / lesion>\", "
+         "\"query_general\": \"<a second English query about the underlying MECHANISM of THIS "
+         "question without the surgery name — write it fresh from the question, never reuse wording "
+         "from these instructions>\", "
          "\"sub_queries\": [<if the question has several distinct parts (e.g. compares 3 treatment "
          "options, or asks about a procedure AND a medication), one short English search query per "
          "part, max 4; otherwise []>], "
@@ -352,6 +374,26 @@ def _blocked(*texts: str, check_scope: bool = True) -> dict | None:
                 return {**base, "answer": guard.OFF_TOPIC[lang], "source": "none",
                         "routing": {"in_scope": False, "reason": "out of scope"}, "calls": list(llm.CALLS)}
     return None
+
+
+def _disclose_author_notes(text: str, notes: list[dict], lang: str) -> str:
+    """Deterministic honesty check: if the answer cites an author's n=1 note without saying so,
+    append a visible disclosure under the answer. Also flags when it is the ONLY evidence."""
+    ids = [n["id"] for n in notes if n.get("facet", "").startswith("author") and f"[{n['id']}]" in text]
+    if not ids:
+        return text
+    ru = str(lang).lower().startswith("rus")
+    said = ("личный опыт" in text.lower()) or ("personal experience" in text.lower())
+    other = bool(re.search(r"\[(PMC\d+|WEB-\d+)\]", text)) or any(
+        f"[{n['id']}]" in text for n in notes if not n.get("facet", "").startswith("author"))
+    lines = []
+    if not said:
+        lines.append(("⚠ " + ", ".join(ids) + " — это личный опыт автора приложения (n=1), а не исследование.")
+                     if ru else ("⚠ " + ", ".join(ids) + " is the app author's personal experience (n=1), not a study."))
+    if not other:
+        lines.append("В библиотеке по этому вопросу пока нет опубликованных источников — выше только наблюдение одного человека; обсудите это с врачом."
+                     if ru else "The library has no published source on this yet — the above rests on one person's observation; discuss it with your clinician.")
+    return text + ("\n\n" + "\n".join(lines) if lines else "")
 
 
 def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
@@ -407,7 +449,10 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
                 "source": "none", "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
     notes, hits, webhits, source = [], [], [], "library"
-    subs = a.get("sub_queries") or []
+    subs = list(a.get("sub_queries") or [])
+    for pat, extra in _MECHANISM_QUERIES:
+        if re.search(pat, a["query_en"] + " " + question, re.I) and extra not in subs:
+            subs.append(extra)
     notes = kb.retrieve(_model, kb_queries + subs, k=k_notes + (2 if subs else 0))
     # a multi-part question gets more paper slots, one list per part, interleaved
     hits = retrieve_multi([a["query_en"], a["query_general"]] + subs,
@@ -447,7 +492,8 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
             text = llm.chat([{"role": "system", "content": SYSTEM},
                              {"role": "user", "content": user}],
                             tier=tier, think=False, max_tokens=1000, purpose="web-grounded answer")
-    return {"answer": _safe_out(text, guard.lang_of(question)),
+    answer_text = _disclose_author_notes(_safe_out(text, guard.lang_of(question)), notes, a["lang"])
+    return {"answer": answer_text,
             "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": webhits},
             "routing": a, "source": source, "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 

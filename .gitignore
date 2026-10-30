@@ -1,0 +1,14 @@
+# корпус и индекс не коммитим — воспроизводятся скриптами (и могут быть большими)
+corpus/raw/
+corpus/index/
+# секреты
+.env
+*.token
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env.*.local
+.DS_Store
+eval/_reports/run.log

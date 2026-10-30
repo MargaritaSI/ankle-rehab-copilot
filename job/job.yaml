@@ -1,0 +1,19 @@
+# Конфиг Nebius Serverless AI JOB — индексация корпуса.
+# Запуск:  nebius ai job create --file job/job.yaml
+# Job отрабатывает и освобождает compute (платишь только за минуты работы).
+name: leg-recovery-index
+container:
+  image: python:3.11-slim
+  command:
+    - bash
+    - -lc
+    - |
+      pip install -r requirements.txt && \
+      python job/index.py
+resources:
+  preset: cpu-4vcpu-16gb        # эмбеддинги на CPU — дёшево, GPU не нужен
+mounts:
+  # подключи том/бакет, где лежат corpus/raw и куда писать corpus/index
+  - path: /workspace
+    source: project
+timeout: 1800

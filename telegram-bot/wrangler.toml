@@ -1,0 +1,28 @@
+name = "addsport-bot"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "addsport_db"
+database_id = "REPLACE_WITH_YOUR_D1_ID"
+migrations_dir = "migrations"
+
+# Cloudflare Workers AI — RAG по ноге (embeddings bge-m3 + генерация).
+# Считается на Cloudflare (free-tier Neurons), без внешнего API / Nebius.
+[ai]
+binding = "AI"
+
+# Тик каждые 15 минут: напоминания (локальное время юзера) + групповые «окна».
+# ВНИМАНИЕ: на бесплатном плане Cloudflare лимит — 5 cron-триггеров на весь
+# АККАУНТ (не на воркер). Этот бот использует ровно один; bots/dogs — два.
+# Не добавляй сюда второй cron без проверки остатка лимита.
+[triggers]
+crons = ["*/15 * * * *"]
+
+[vars]
+DEFAULT_TZ = "Europe/Amsterdam"
+
+[observability]
+enabled = true

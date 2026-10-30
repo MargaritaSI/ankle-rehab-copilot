@@ -1,0 +1,5 @@
+
+# telegram-bot
+node_modules/
+.wrangler/
+.dev.vars

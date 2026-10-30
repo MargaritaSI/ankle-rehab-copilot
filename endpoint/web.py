@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import os
 import pathlib
+import sys
 
 import requests
 from dotenv import load_dotenv
@@ -28,19 +29,23 @@ def available() -> bool:
 def search(query: str, max_results: int = 5) -> list[dict]:
     if not available():
         return []
-    try:
-        r = requests.post(
-            "https://api.tavily.com/search",
-            headers={"Authorization": f"Bearer {os.environ['TAVILY_API_KEY']}"},
-            json={"query": query, "search_depth": "basic", "max_results": max_results,
-                  "include_domains": DOMAINS, "include_answer": False},
-            timeout=20,
-        )
-        r.raise_for_status()
-        out = []
-        for i, item in enumerate(r.json().get("results", []), 1):
-            out.append({"id": f"WEB-{i}", "title": item.get("title", ""),
-                        "url": item.get("url", ""), "text": item.get("content", "")})
-        return out
-    except Exception:
-        return []
+    last_err = None
+    for attempt in range(2):                      # one retry on a transient failure
+        try:
+            r = requests.post(
+                "https://api.tavily.com/search",
+                headers={"Authorization": f"Bearer {os.environ['TAVILY_API_KEY']}"},
+                json={"query": query[:400], "search_depth": "basic", "max_results": max_results,
+                      "include_domains": DOMAINS, "include_answer": False},
+                timeout=20,
+            )
+            r.raise_for_status()
+            out = []
+            for i, item in enumerate(r.json().get("results", []), 1):
+                out.append({"id": f"WEB-{i}", "title": item.get("title", ""),
+                            "url": item.get("url", ""), "text": item.get("content", "")})
+            return out
+        except Exception as exc:
+            last_err = exc
+    print(f"[web] Tavily search failed: {last_err}", file=sys.stderr)
+    return []

@@ -51,6 +51,12 @@ for week 22, not in general.
   source id is tagged *no source in the library* in the UI instead of passing as evidence.
 - **Spend guard**: a daily token budget (`DAILY_TOKEN_BUDGET`) pauses the public demo before it
   can drain the Token Factory account; the sidebar shows today's usage.
+- **Safety guards** (`endpoint/guard.py`): self-harm wording gets a fixed, warm reply with crisis
+  lines (113 / 112) before any model sees it; prompt-injection patterns are refused up front; user
+  text reaches every prompt inside `<user_input>` tags marked as data; an output check replaces any
+  answer that echoes the system prompt or a key. Off-topic questions (math, code, trivia) are refused
+  by the Nano scope check and never sent to the web. Prescribed medication is never changed by the app.
+- **English / Russian** interface switch at the top of the page; answers follow the question's language.
 - Tone rules: neutral-to-supportive, no alarm words, red flags stated once and calmly.
 
 ## How NVIDIA Nemotron and Nebius Token Factory are used
@@ -114,6 +120,7 @@ automatically when they change.
 
 ```bash
 python eval/eval_answers.py   # 13 questions (9 from an earlier bot evaluation + out-of-scope probes) → eval/_reports/
+python eval/eval_edge.py      # 20 edge + adversarial cases across all four modes (injection, off-topic, crisis, medication)
 ```
 
 ## Repository layout

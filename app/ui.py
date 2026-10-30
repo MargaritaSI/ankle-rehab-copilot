@@ -192,6 +192,11 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 .src .kind{font-size:.74rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
 .src .t{font-weight:700; font-size:1.02rem; line-height:1.4; color:var(--ink);}
 .src .x{font-size:.94rem; line-height:1.55; color:var(--ink-2);}
+.src details.full summary{cursor:pointer; font-weight:800; font-size:.9rem; color:var(--teal); list-style:none;}
+.src details.full summary::-webkit-details-marker{display:none;}
+.src details.full summary:before{content:"+ ";} .src details.full[open] summary:before{content:"− ";}
+.src details.full .ft{font-size:.94rem; line-height:1.6; color:var(--ink-2); white-space:pre-wrap; margin-top:8px;
+  max-height:420px; overflow:auto; padding-right:6px;}
 .src .chips{display:flex; gap:6px; flex-wrap:wrap;}
 .chip{display:inline-block; padding:3px 10px; border-radius:999px; border:1px solid var(--line); color:var(--muted);
   font-size:.78rem; font-weight:700; background:var(--card-2); line-height:1.4;}
@@ -336,10 +341,15 @@ def source_grid(cards: list[dict]) -> None:
         chips = f"<div class='chips'>{chips}</div>" if chips else ""
         link = (f"<a href='{esc(c['url'])}' target='_blank' rel='noopener'>{esc(c['link_label'])}</a>"
                 if c.get("url") else "")
+        # Full note text in place (author notes have no external page to open).
+        full_txt = (c.get("full") or "").strip()
+        full = (f"<details class='full'><summary>{esc(c.get('full_label', ''))}</summary>"
+                f"<div class='ft'>{esc(full_txt)}</div></details>"
+                if full_txt and full_txt != (c.get("excerpt") or "").strip() else "")
         out.append(
             f"<div class='src'><div class='top'><span class='id'>[{esc(c['id'])}]</span>"
             f"<span class='kind'>{esc(c['kind'])}</span></div>"
-            f"<div class='t'>{esc(c['title'])}</div><div class='x'>{esc(c['excerpt'])}</div>{chips}{link}</div>")
+            f"<div class='t'>{esc(c['title'])}</div><div class='x'>{esc(c['excerpt'])}</div>{full}{chips}{link}</div>")
     st.html(f"<div class='srcgrid'>{''.join(out)}</div>")
 
 

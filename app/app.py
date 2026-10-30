@@ -99,6 +99,10 @@ def paper_type(pmcid: str, title: str) -> str:
     return L["pt_study"]
 
 
+def tag_name(tag: str) -> str:
+    return L.get("tag_names", {}).get(tag, tag.replace("_", " "))
+
+
 def note_kind(n: dict) -> str:
     if n.get("file") in _PERSONAL or n.get("topic") in _PERSONAL:
         return L["nk_personal"]
@@ -118,14 +122,15 @@ def render_sources(ev: dict):
     if notes:
         with st.expander(L["src_notes"].format(n=len(notes)), expanded=True):
             ui.source_grid([{
-                "id": n["id"], "title": n["title"], "kind": note_kind(n), "chips": [n.get("facet")],
+                "id": n["id"], "title": n["title"], "kind": note_kind(n),
+                "chips": [(n.get("facet_ru") if RU else None) or n.get("facet")], "full": n.get("text"), "full_label": L["show_full"],
                 "excerpt": n["excerpt"], "link_label": L["source"], "url": n.get("url"),
             } for n in notes])
     if papers:
         with st.expander(L["src_papers"].format(n=len(papers)), expanded=not notes):
             ui.source_grid([{
                 "id": e["id"], "title": e["title"], "kind": f"{L['paper']} · {paper_type(e['id'], e['title'])} · {e.get('year', '')}",
-                "chips": e.get("tags", []), "excerpt": e["excerpt"], "link_label": L["open_pmc"], "url": e.get("url"),
+                "chips": [tag_name(x) for x in e.get("tags", [])], "excerpt": e["excerpt"], "link_label": L["open_pmc"], "url": e.get("url"),
             } for e in papers])
     if webs:
         with st.expander(L["src_web"].format(n=len(webs)), expanded=True):
@@ -228,7 +233,9 @@ with st.sidebar:
     except Exception as exc:
         st.error(L["lib_error"].format(e=type(exc).__name__))
         st.stop()
-    sel_tags = st.multiselect(L["tags"], _tags)
+    # One topic at a time (owner, 2026-10-30): a single choice reads clearer than a multi-filter.
+    _tag = st.selectbox(L["tags"], [None] + list(_tags), format_func=lambda x: L["tags_all"] if x is None else tag_name(x))
+    sel_tags = [_tag] if _tag else []
     # The daily token budget is an operator detail: visitors only see a warning once it is
     # nearly spent (so a pause at 100% isn't a surprise), never the running percentage.
     u = llm.usage_today()
@@ -271,7 +278,7 @@ if profile.phase:
     tiles = [
         {"k": L["stat_week"], "v": profile.weeks, "s": f"~{profile.months} {L['months']} {L['stat_since']}", "accent": True},
         {"k": L["stat_phase"], "v": pname, "size": "sm",
-         "s": f"{L['weeks']} {p['start']}{'+' if p['end'] is None else '–' + str(p['end'])}"},
+         "s": f"{L['weeks']} {p['start']}{'+' if p['end'] is None else '–' + str(p['end'])} · {L['phase_hint']}"},
         {"k": L["stat_focus"], "v": pfocus, "size": "xs", "s": ""},
     ]
 else:

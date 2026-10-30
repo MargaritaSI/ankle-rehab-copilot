@@ -108,6 +108,9 @@ Rules
    say in one line how that shifts the picture — only if a fragment supports it.
 10. Notes labelled as the author's personal experience (n=1) are NOT evidence: you may mention them
    only as "the app's author noticed … (personal experience, not a study)", never as a fact or a rule.
+12. Language purity: in a Russian answer write every word in Russian (translate terms such as
+   "paced breathing" → «дыхание с удлинённым выдохом»); Latin letters only for source ids and
+   standard abbreviations (OAT, MRI/МРТ, VAS). Never mix alphabets inside one word.
 11. If the question is too short or garbled to answer well (a single word, a typo that changes the
    meaning), answer what you can in two or three lines and end with ONE short clarifying question.
 9. End with exactly this one line (translated to the answer language):
@@ -270,8 +273,23 @@ _RU_FIX = [("Where they differ", "В чём различия"), ("If less / as n
            ("Disclaimer:", ""), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]
 
 
+_LAT2CYR = str.maketrans("aceopxyACEHKMOPTXB", "асеорхуАСЕНКМОРТХВ")
+
+
+def _fix_mixed_script(text: str) -> str:
+    """A word that is mostly Cyrillic but contains Latin look-alike letters ('Пaced') gets those
+    letters mapped to Cyrillic; pure Latin words (PMC ids, OAT, VAS) are left alone."""
+    def fix(m):
+        w = m.group(0)
+        if re.search(r"[А-Яа-яЁё]", w) and re.search(r"[A-Za-z]", w):
+            return w.translate(_LAT2CYR)
+        return w
+    return re.sub(r"[A-Za-zА-Яа-яЁё]+", fix, text)
+
+
 def _ru_leftovers(text: str) -> str:
     """English headings the model sometimes keeps in a Russian answer → Russian."""
+    text = _fix_mixed_script(text)
     text = text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"])
     for en, ru in _RU_FIX:
         text = text.replace(en, ru)
@@ -322,10 +340,17 @@ def _merge_notes(main: list[dict], extra: list[dict]) -> list[dict]:
     return out
 
 
+_FACET_RU = {"rehab": "реабилитация", "donor knee": "донорское колено", "routine": "рутина",
+             "nutrition": "питание", "nutrition & exercise": "питание и упражнения", "misc": "разное",
+             "long-term": "в долгосрочной перспективе", "scenarios": "сценарии", "faq": "частые вопросы",
+             "author's experience (n=1)": "личный опыт автора (n=1)"}
+
+
 def _kb_evidence(notes: list[dict]) -> list[dict]:
     return [{"id": n["id"], "title": n["title"], "facet": n["facet"], "url": n["url"],
              "file": n.get("file", ""), "topic": n.get("topic", ""),
-             "excerpt": _excerpt(n["text"]), "score": n["score"]}
+             "excerpt": _excerpt(n["text"]), "text": n["text"],
+             "facet_ru": _FACET_RU.get(n["facet"], n["facet"]), "score": n["score"]}
             for n in notes]
 
 

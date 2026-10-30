@@ -91,7 +91,9 @@ def reset_calls() -> None:
 
 
 def _client() -> OpenAI:
-    return OpenAI(base_url=BASE_URL, api_key=os.environ.get("NEBIUS_API_KEY", "missing"))
+    # hard timeout so a stalled upstream call cannot hang the UI; one retry on transient errors
+    return OpenAI(base_url=BASE_URL, api_key=os.environ.get("NEBIUS_API_KEY", "missing"),
+                  timeout=float(os.environ.get("LLM_TIMEOUT_S", "120")), max_retries=1)
 
 
 def chat(messages: list[dict], tier: str = "strong", *, temperature: float = 0.2,
@@ -103,21 +105,26 @@ def chat(messages: list[dict], tier: str = "strong", *, temperature: float = 0.2
     if not think:
         kwargs["extra_body"] = {"chat_template_kwargs": {"enable_thinking": False}}
     else:
-        max_tokens = max(max_tokens, 2500)
+        # reasoning tokens count against max_tokens — leave room for the visible answer
+        max_tokens = max(max_tokens, 4500)
     t0 = time.time()
     resp = _client().chat.completions.create(
         model=model, messages=messages, temperature=temperature,
         max_tokens=max_tokens, **kwargs,
     )
-    msg = resp.choices[0].message
-    text = (msg.content or "").strip()
+    choice = resp.choices[0]
+    text = (choice.message.content or "").strip()
     record_usage(getattr(resp.usage, "total_tokens", None))
     CALLS.append({
         "tier": tier, "model": model, "label": LABELS[tier], "purpose": purpose,
         "seconds": round(time.time() - t0, 1),
         "tokens": getattr(resp.usage, "total_tokens", None),
-        "think": think,
+        "think": think, "finish": choice.finish_reason,
     })
+    # Reasoning ate the budget and the visible answer got cut off → answer again without it.
+    if think and choice.finish_reason == "length" and len(text) < 400:
+        return chat(messages, tier, temperature=temperature, max_tokens=max_tokens,
+                    think=False, purpose=purpose + " (retry, no reasoning)")
     return text
 
 

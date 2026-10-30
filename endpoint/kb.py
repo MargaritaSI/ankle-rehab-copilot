@@ -71,7 +71,7 @@ def _fingerprint() -> str:
 def embed(texts: list[str]) -> np.ndarray:
     """Multilingual embeddings from Nebius Token Factory (batched, normalised)."""
     client = OpenAI(base_url=os.environ.get("NEBIUS_BASE_URL", "https://api.tokenfactory.nebius.com/v1"),
-                    api_key=os.environ.get("NEBIUS_API_KEY", "missing"))
+                    api_key=os.environ.get("NEBIUS_API_KEY", "missing"), timeout=60, max_retries=1)
     vecs: list[list[float]] = []
     for i in range(0, len(texts), 32):
         llm.check_budget()

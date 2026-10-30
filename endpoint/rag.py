@@ -29,10 +29,12 @@ from phase import Profile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 INDEX = ROOT / "corpus" / "index"
-# Where to fetch the prebuilt paper index if it is not on disk (GitHub Release).
+# Which prebuilt paper index to run on, and where to fetch it (GitHub Release assets).
+# Bumping INDEX_VERSION makes a running deployment drop its old files and download the new set.
+INDEX_VERSION = os.environ.get("INDEX_VERSION", "index-v2")
 INDEX_BASE_URL = os.environ.get(
     "INDEX_BASE_URL",
-    "https://github.com/MargaritaSI/ankle-rehab-copilot/releases/download/index-v1/",
+    f"https://github.com/MargaritaSI/ankle-rehab-copilot/releases/download/{INDEX_VERSION}/",
 )
 
 DISCLAIMER = ("Educational summary of published protocols and research, not medical advice. "
@@ -125,6 +127,11 @@ def _ensure_index_files() -> None:
     """Download the prebuilt paper index from the GitHub Release on first run."""
     import requests
     INDEX.mkdir(parents=True, exist_ok=True)
+    marker = INDEX / "VERSION"
+    on_disk = marker.read_text().strip() if marker.exists() else ""
+    if on_disk and on_disk != INDEX_VERSION:
+        for name in ("faiss.index", "chunks.pkl"):          # stale version → refetch
+            (INDEX / name).unlink(missing_ok=True)
     for name in ("faiss.index", "chunks.pkl"):
         p = INDEX / name
         if p.exists() and p.stat().st_size > 1_000_000:
@@ -142,6 +149,7 @@ def _ensure_index_files() -> None:
             tmp.unlink(missing_ok=True)
             raise IndexUnavailable(f"Could not download {name} from {url}: {exc}") from exc
         tmp.replace(p)
+    marker.write_text(INDEX_VERSION)
 
 
 def _load() -> None:

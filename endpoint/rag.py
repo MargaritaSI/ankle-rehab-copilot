@@ -239,7 +239,8 @@ def _says_no_data(text: str) -> bool:
                                 "geen gegevens", "keine daten", "no hay datos"))
 
 
-_CITE = re.compile(r"\[(?:KB-\d+|PMC\d+|WEB-\d+)\]")
+_ID = r"(?:KB-\d+|PMC\d+|WEB-\d+)"
+_CITE = re.compile(rf"\[{_ID}(?:\s*[,;]\s*{_ID})*\]")
 _NUMBER = re.compile(r"\d")
 NO_SOURCE_TAG = {"en": " _(no source in the library — check with your clinician)_",
                  "ru": " _(источника в библиотеке нет — уточните у врача)_"}
@@ -636,7 +637,9 @@ never the English word "anchor"), never present it as the exercise itself.
 Write headings and all text in the requested language only.
 Then **Stop signs** — 2 calm lines from the fragments (pain that persists past rest, swelling
 next morning) with what to do (reduce, not quit).
-Then **Where protocols differ** if the fragments disagree about this phase.
+Then **Where protocols differ** ONLY if the fragments actually disagree about this phase — if they
+do not, leave this section out entirely (no "no disagreement found" line).
+Every checklist item cites a fragment id; no generic rules without a source.
 Only what the fragments support. No new exercises. End with one short disclaimer line.
 """
 

@@ -4,4 +4,11 @@ headless = true
 [browser]
 gatherUsageStats = false
 [theme]
-primaryColor = "#6366F1"
+base = "light"
+primaryColor = "#2F6F6D"
+backgroundColor = "#FAF8F4"
+secondaryBackgroundColor = "#F2EFE8"
+textColor = "#1F2422"
+linkColor = "#2F6F6D"
+borderColor = "#DAD6CC"
+baseRadius = "6px"

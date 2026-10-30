@@ -14,6 +14,7 @@ import sys
 
 import streamlit as st
 
+ASSETS = pathlib.Path(__file__).resolve().parent / "assets"
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint"))
 import llm  # noqa: E402
 import rag  # noqa: E402
@@ -21,25 +22,21 @@ import web  # noqa: E402
 from phase import PHASES, SURGERIES, Profile  # noqa: E402
 
 st.set_page_config(page_title="Rehab Copilot — ankle cartilage recovery",
-                   page_icon="🦶", layout="wide")
+                   page_icon=str(ASSETS / "capy_frog.png"), layout="wide")
 
 st.markdown("""
 <style>
 .block-container {padding-top: 2rem; max-width: 1150px;}
-h1 {font-weight: 700; letter-spacing: -0.4px; margin-bottom: 0.2rem;}
-.chip {display:inline-block; padding:2px 10px; margin:2px 4px 2px 0; border-radius:12px;
-       background:#EEF2FF; color:#4338CA; font-size:0.72rem; font-weight:600;}
-.chip.kb {background:#ECFDF5; color:#047857;}
-.chip.web {background:#FFF7ED; color:#C2410C;}
-.chip.model {background:#F3F4F6; color:#374151; font-weight:500;}
-.src {border:1px solid #E5E7EB; border-radius:12px; padding:12px 14px; margin-bottom:8px; background:#fff;}
-.src .t {font-weight:600; font-size:0.9rem; color:#111827;}
-.src .x {color:#374151; font-size:0.84rem; margin-top:5px; line-height:1.45;}
-.src .id {color:#6366F1; font-weight:700;}
-.phase {border-left:4px solid #6366F1; background:#F5F3FF; padding:10px 14px; border-radius:8px;
-        font-size:0.9rem; margin-bottom:8px;}
-.stButton>button {border-radius:10px; font-weight:600;}
-.footer {color:#6B7280; font-size:0.78rem; margin-top:14px;}
+h1 {margin-bottom: 0.2rem;}
+.chip {display:inline-block; padding:1px 8px; margin:2px 4px 2px 0; border-radius:4px;
+       border:1px solid #D6D3CB; color:#6B706C; font-size:0.74rem; background:transparent;}
+.kind {color:#6B706C; font-size:0.76rem; margin-left:6px;}
+.src {border:1px solid #DAD6CC; border-radius:6px; padding:12px 14px; margin-bottom:8px; background:transparent;}
+.src .t {font-size:0.92rem;}
+.src .x {color:#3F4643; font-size:0.84rem; margin-top:5px; line-height:1.45;}
+.src .id {color:#2F6F6D;}
+.phase {border-left:2px solid #2F6F6D; padding:4px 0 4px 12px; font-size:0.9rem; margin-bottom:8px;}
+.footer {color:#6B706C; font-size:0.78rem; margin-top:14px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -49,8 +46,8 @@ DISCLAIMER_UI = ("Educational summary of published protocols and research — **
 
 
 # ----------------------------------------------------------------- helpers
-def chips(items, cls=""):
-    return " ".join(f"<span class='chip {cls}'>{i}</span>" for i in items)
+def chips(items):
+    return " ".join(f"<span class='chip'>{i}</span>" for i in items)
 
 
 def render_sources(ev: dict):
@@ -62,14 +59,14 @@ def render_sources(ev: dict):
                 link = f"<a href='{n['url']}' target='_blank'>source ↗</a>" if n["url"] else ""
                 st.markdown(
                     f"<div class='src'><div class='t'><span class='id'>[{n['id']}]</span> {n['title']}"
-                    f" {chips([n['facet']], 'kb')}</div><div class='x'>{n['excerpt']}</div>{link}</div>",
+                    f" <span class='kind'>curated</span> {chips([n['facet']])}</div><div class='x'>{n['excerpt']}</div>{link}</div>",
                     unsafe_allow_html=True)
     if papers:
         with st.expander(f"Open-access papers · {len(papers)} (PubMed Central)", expanded=False):
             for e in papers:
                 st.markdown(
                     f"<div class='src'><div class='t'><span class='id'>[{e['id']}]</span> {e['title']}"
-                    f" <span style='color:#6B7280'>{e.get('year', '')}</span> {chips(e.get('tags', []))}"
+                    f" <span class='kind'>paper · {e.get('year', '')}</span> {chips(e.get('tags', []))}"
                     f"</div><div class='x'>{e['excerpt']}</div>"
                     f"<a href='{e['url']}' target='_blank'>open on PMC ↗</a></div>",
                     unsafe_allow_html=True)
@@ -79,7 +76,7 @@ def render_sources(ev: dict):
             for w in webs:
                 st.markdown(
                     f"<div class='src'><div class='t'><span class='id'>[{w['id']}]</span> {w['title']}"
-                    f" {chips(['web'], 'web')}</div><div class='x'>{w['text'][:300]} …</div>"
+                    f" <span class='kind'>web</span></div><div class='x'>{w['text'][:300]} …</div>"
                     f"<a href='{w['url']}' target='_blank'>{w['url']}</a></div>",
                     unsafe_allow_html=True)
 
@@ -89,13 +86,21 @@ def render_calls(calls: list[dict]):
         return
     parts = [f"{c['label']} · {c['purpose']} · {c['seconds']}s" + (" · reasoning" if c["think"] else "")
              for c in calls]
-    st.markdown(f"<div class='footer'>{chips(parts, 'model')} via Nebius Token Factory</div>",
+    st.markdown(f"<div class='footer'>{chips(parts)} via Nebius Token Factory</div>",
                 unsafe_allow_html=True)
 
 
-def show_result(key: str):
+def empty_state(img: str, text: str):
+    c_img, c_txt = st.columns([1, 6], vertical_alignment="center")
+    c_img.image(str(ASSETS / img), width=120)
+    c_txt.markdown(text)
+
+
+def show_result(key: str, img: str = "", text: str = ""):
     res = st.session_state.get(key)
     if not res:
+        if img:
+            empty_state(img, text)
         return
     if res.get("source") == "web":
         st.info("The local library had nothing on this, so these are **web sources** from medical "
@@ -121,6 +126,7 @@ def run(key: str, fn, *args, **kwargs):
 
 # ----------------------------------------------------------------- sidebar
 with st.sidebar:
+    st.image(str(ASSETS / "pebble.png"), width=80)
     st.header("Your recovery")
     surgery = st.selectbox("Surgery", list(SURGERIES), format_func=lambda k: SURGERIES[k])
     has_date = st.toggle("I know my surgery date", value=True)
@@ -134,7 +140,7 @@ with st.sidebar:
         end = "+" if p["end"] is None else f"–{p['end']}"
         st.markdown(f"<div class='phase'><b>Week {profile.weeks}</b> · ~{profile.months} months<br>"
                     f"Typical phase: <b>{p['name']}</b> (weeks {p['start']}{end})<br>"
-                    f"<span style='color:#4B5563'>{p['focus']}</span></div>", unsafe_allow_html=True)
+                    f"<span style='color:#6B706C'>{p['focus']}</span></div>", unsafe_allow_html=True)
         with st.expander("All phases (typical ranges)"):
             for s_, e_, name, focus, _ in PHASES:
                 st.markdown(f"**{s_}{'+' if e_ is None else '–' + str(e_)} wk — {name}**  \n{focus}")
@@ -168,7 +174,9 @@ with st.sidebar:
         st.caption(f"Library not loaded: {exc}")
 
 # ----------------------------------------------------------------- header
-st.title("🦶 Rehab Copilot")
+_t_img, _t_txt = st.columns([1, 14], vertical_alignment="center")
+_t_img.image(str(ASSETS / "capy_frog.png"), width=56)
+_t_txt.title("Rehab Copilot")
 st.caption("Recovery after ankle cartilage surgery (talus OAT / mosaicplasty) — what published protocols "
            "and research actually say, with a source on every claim, anchored to *your* week.")
 st.warning(DISCLAIMER_UI)
@@ -205,7 +213,7 @@ with tab_ask:
                      placeholder="e.g. Прошло 5 месяцев, нога отекает после 2 часов стоя — что делать?")
     if st.button("Ask", type="primary", disabled=not q.strip()):
         run("ask_res", rag.answer, q, profile, tags=sel_tags or None, tier=tier, allow_web=allow_web)
-    show_result("ask_res")
+    show_result("ask_res", "capy_king.png", "**Ask me about your week.** Pick an example above or write your own question; every claim in the answer comes with a source.")
 
 # ----------------------------------------------------------------- Today
 with tab_today:
@@ -218,7 +226,7 @@ with tab_today:
         st.info("Set your surgery date in the sidebar so the routine matches your phase.")
     if st.button("Build today's routine", type="primary", disabled=profile.weeks is None):
         run("today_res", rag.routine, profile, lang, constraints)
-    show_result("today_res")
+    show_result("today_res", "sun.png", "**Nothing built yet today.** Set your surgery date, then build a routine for your phase.")
 
 # ----------------------------------------------------------------- Compare
 with tab_cmp:
@@ -229,7 +237,7 @@ with tab_cmp:
     b = c2.text_input("Approach B", "compression for post-operative swelling")
     if st.button("Compare", type="primary"):
         run("cmp_res", rag.compare, a, b, tier=tier)
-    show_result("cmp_res")
+    show_result("cmp_res", "pebble.png", "**Two approaches, side by side.** Press Compare to see what the sources say about each.")
 
 # ----------------------------------------------------------------- Doctor
 with tab_doc:
@@ -238,4 +246,4 @@ with tab_doc:
     topic = st.text_input("Topic", "persistent ankle swelling 5 months after cartilage surgery")
     if st.button("Prepare questions", type="primary"):
         run("doc_res", rag.specialist_questions, topic, profile)
-    show_result("doc_res")
+    show_result("doc_res", "capy_frog.png", "**Make the most of a short appointment.** Press Prepare questions to get a short list for your surgeon or physio.")

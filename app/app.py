@@ -171,14 +171,23 @@ def render_calls(calls: list[dict]):
 
 
 def empty_state(key: str, img: str, text: str):
+    # Images are inlined as data URIs on purpose: st.image() serves files through Streamlit's
+    # /media/<hash> endpoint, which came back broken on Streamlit Cloud (every mascot showed
+    # as a broken-image icon). An inline <img> has nothing to fetch.
     with st.container(key=f"empty-{key}"):
         c_img, c_txt = st.columns([1, 5], vertical_alignment="center")
-        c_img.image(str(ASSETS / img), width=150)
+        c_img.html(ui.inline_img(img, 150))
         c_txt.markdown(text)
 
 
+def _res_key(key: str) -> str:
+    """Results are stored per interface language, so switching EN↔RU never shows an answer
+    produced in the other language (the owner saw a Russian answer under the English UI)."""
+    return f"{key}_{st.session_state['lang']}"
+
+
 def show_result(key: str, img: str = "", text: str = ""):
-    res = st.session_state.get(key)
+    res = st.session_state.get(_res_key(key))
     if not res:
         if img:
             empty_state(key, img, text)
@@ -197,7 +206,7 @@ def run(key: str, fn, *args, **kwargs):
         return
     with st.spinner(L["spinner"], show_time=True):
         try:
-            st.session_state[key] = fn(*args, **kwargs)
+            st.session_state[_res_key(key)] = fn(*args, **kwargs)
         except llm.BudgetExceeded as exc:
             st.warning(str(exc))
         except Exception as exc:  # surface, don't crash the page
@@ -240,7 +249,7 @@ with st.sidebar:
         st.info(L["need_date"])
     with st.expander(L["anatomy"]):
         for img, cap in zip(("Gray357.png", "Gray355.png", "Gray347.png"), L["anat"]):
-            st.image(str(ASSETS / "anatomy" / img), caption=cap, width="stretch")
+            st.html(ui.inline_img(f"anatomy/{img}", None, caption=cap))
         st.caption(L["anat_credit"])
     st.divider()
     st.subheader(L["answers"])
@@ -250,7 +259,8 @@ with st.sidebar:
     allow_web = st.toggle(L["web_toggle"], value=web.available(), disabled=not web.available(),
                           help=L["web_help"])
     try:
-        _tags = rag.all_tags()
+        with st.spinner(L["lib_loading"], show_time=True):
+            _tags = rag.all_tags()
     except Exception as exc:
         st.error(L["lib_error"].format(e=type(exc).__name__))
         st.stop()

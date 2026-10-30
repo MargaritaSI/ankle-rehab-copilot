@@ -125,6 +125,9 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 [class*="st-key-empty"] .stMarkdown p{font-size:1.22rem; line-height:1.55; color:var(--ink-2);}
 [class*="st-key-empty"] img{filter:drop-shadow(0 10px 16px rgba(27,31,30,.14));}
 
+figure.inl{margin:0;} figure.inl .imgcap{font-size:.9rem; line-height:1.45; color:var(--muted); margin:6px 0 14px;}
+[data-testid="stSidebar"] figure.inl img{border-radius:var(--r-sm);}
+
 /* ---------- hero */
 .hero{display:flex; align-items:center; gap:20px; padding:10px 8px 6px 4px; overflow:visible;}
 .hero img{height:96px; width:auto; flex:none; object-fit:contain;}
@@ -302,6 +305,14 @@ def telegram_card(url: str, title: str, body: str, aria: str) -> None:
     st.html(f"<a class='tgcard' href='{esc(url)}' target='_blank' rel='noopener' aria-label='{esc(aria)}' title='{esc(aria)}'>"
             f"<span class='ic'>{_TG_ICON}</span><span class='txt'><div class='tt'>{esc(title)}</div>"
             f"<div class='tb'>{esc(body)}</div></span></a>")
+
+
+def inline_img(name: str, width: int | None, caption: str = "") -> str:
+    """<img> with the file inlined as a data URI (see app.empty_state for why)."""
+    w = f"width:{width}px;" if width else "width:100%;"
+    cap = f"<div class='imgcap'>{esc(caption)}</div>" if caption else ""
+    return (f"<figure class='inl'><img src='data:image/png;base64,{img_b64(name)}' alt='' "
+            f"style='{w}height:auto;display:block'>{cap}</figure>")
 
 
 def side_header(title: str, img: str) -> None:

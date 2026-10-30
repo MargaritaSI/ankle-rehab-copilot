@@ -39,7 +39,12 @@ h1,h2,h3,h4{letter-spacing:-.02em;}
 
 /* ---------- layout */
 [data-testid="stMainBlockContainer"]{padding-top:3.4rem; padding-bottom:6rem; max-width:1260px;}
-section[data-testid="stSidebar"]{width:376px !important; min-width:376px !important;}
+/* Wider sidebar on desktop only, and only while open. On phones/tablets Streamlit
+   caps it at 90vw and collapses it by default; forcing a min-width there made the
+   open sidebar wider than the screen and pushed its close button off-screen. */
+@media (min-width:1100px){
+  section[data-testid="stSidebar"][aria-expanded="true"]{width:360px !important; min-width:360px !important;}
+}
 [data-testid="stSidebarUserContent"]{padding:1.1rem 1.4rem 2.5rem;}
 [data-testid="stSidebar"] hr{margin:1.2rem 0;}
 .stMarkdown p, .stMarkdown li{font-size:1.04rem; line-height:1.7;}

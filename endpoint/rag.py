@@ -270,7 +270,7 @@ _RU_FIX = [("Where they differ", "В чём различия"), ("If less / as n
             "Источники здесь не расходятся — уточните, какому протоколу следует ваш хирург."), ("Where protocols differ", "Где протоколы расходятся"),
            ("What is typical at this stage", "Что типично на этом этапе"), ("What to do", "Что делать"),
            ("When to check with your clinician", "Когда проверить с врачом"), ("Takeaway", "Итог"),
-           ("Disclaimer:", ""), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]
+           ("Disclaimer:", ""), ("силовый", "силовой"), ("Силовый", "Силовой"), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]
 
 
 _LAT2CYR = str.maketrans("aceopxyACEHKMOPTXB", "асеорхуАСЕНКМОРТХВ")
@@ -469,6 +469,12 @@ _RU_GLOSSARY = ("mindfulness → осознанность; empowerment → во�
                 "периоперационный; warrants discussion with clinician → стоит обсудить с врачом; graft → трансплантат")
 
 
+_RU_FALLBACK = {"combined with": "в сочетании с", "combined": "в сочетании", "evidence-based": "доказательный",
+                "based": "основанный", "mindfulness": "осознанность", "empowerment": "вовлечённость",
+                "relaxation": "расслабление", "tension": "напряжение", "breathing": "дыхание",
+                "coping": "совладание", "with": "с", "and": "и"}
+
+
 def _ru_rewrite_latin(text: str) -> str:
     """Second net for Russian answers: lines that still contain English words are rewritten in
     Russian — first by Nemotron Nano, then (only for stubborn lines) by Nemotron Super."""
@@ -495,7 +501,11 @@ def _ru_rewrite_latin(text: str) -> str:
                         lines[i] = new_line
         except Exception:
             break
-    return "\n".join(lines)
+    # last, deterministic net for common leftovers the models kept
+    out = "\n".join(lines)
+    for en, ru in _RU_FALLBACK.items():
+        out = re.sub(rf"(?<![A-Za-z]){en}(?![A-Za-z])", ru, out)
+    return out
 
 
 def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:

@@ -239,7 +239,21 @@ def _flag_unsourced(text: str, lang: str = "en") -> str:
         out.append(line)
     text = "\n".join(out)
     if lang == "ru":
-        text = text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"])
+        text = _ru_leftovers(text)
+    return text
+
+
+_RU_FIX = [("Where they differ", "В чём различия"), ("Where protocols differ", "Где протоколы расходятся"),
+           ("What is typical at this stage", "Что типично на этом этапе"), ("What to do", "Что делать"),
+           ("When to check with your clinician", "Когда проверить с врачом"), ("Takeaway", "Итог"),
+           ("Disclaimer:", ""), ("Bring with you:", "Взять с собой:"), ("no data", "нет данных")]
+
+
+def _ru_leftovers(text: str) -> str:
+    """English headings the model sometimes keeps in a Russian answer → Russian."""
+    text = text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"])
+    for en, ru in _RU_FIX:
+        text = text.replace(en, ru)
     return text
 
 
@@ -337,7 +351,7 @@ def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
     text = text.replace("【", "[").replace("】", "]")
     if flag:
         return _flag_unsourced(text, lang)
-    return text.replace(DISCLAIMER_LINE["en"], DISCLAIMER_LINE["ru"]) if lang == "ru" else text
+    return _ru_leftovers(text) if lang == "ru" else text
 
 
 def _context(notes: list[dict], hits: list[dict], webhits: list[dict]) -> str:

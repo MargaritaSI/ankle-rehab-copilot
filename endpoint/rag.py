@@ -246,6 +246,26 @@ NO_SOURCE_TAG = {"en": " _(no source in the library — check with your clinicia
                  "ru": " _(источника в библиотеке нет — уточните у врача)_"}
 DISCLAIMER_LINE = {"en": "Educational summary of published protocols and research, not medical advice.",
                    "ru": "Образовательная сводка опубликованных протоколов и исследований, не медицинская рекомендация."}
+LANG_NAME = {"en": "English", "ru": "Russian"}
+
+
+def _lang_code(lang: str | None, *texts: str) -> str:
+    """The answer language: the UI's choice when given ("en"/"ru" or "English"/"Russian"),
+    otherwise detected from the person's text."""
+    if lang:
+        low = str(lang).strip().lower()
+        if low.startswith(("ru", "рус")):
+            return "ru"
+        if low.startswith("en"):
+            return "en"
+    return guard.lang_of(" ".join(t for t in texts if t))
+
+
+def _lang_rule(code: str) -> str:
+    """One prompt line that pins the output language regardless of the input language."""
+    return (f"ANSWER LANGUAGE: {LANG_NAME[code]} — write the whole answer in {LANG_NAME[code]} only, even if "
+            f"the question, the profile or the fragments are in another language; translate what you use "
+            f"from them. Never mix languages.")
 
 
 def _flag_unsourced(text: str, lang: str = "en") -> str:
@@ -415,10 +435,10 @@ def analyze(question: str) -> dict:
             "lang": data.get("lang") or "the language of the question"}
 
 
-def _blocked(*texts: str, check_scope: bool = True) -> dict | None:
+def _blocked(*texts: str, check_scope: bool = True, lang: str | None = None) -> dict | None:
     """Crisis → fixed supportive reply; injection or out-of-scope → refusal. None = go on."""
     joined = " ".join(t for t in texts if t)
-    lang = guard.lang_of(joined)
+    lang = _lang_code(lang, joined)
     base = {"evidence": {"notes": [], "papers": [], "web": []}, "disclaimer": DISCLAIMER}
     if guard.crisis(joined):
         return {**base, "answer": guard.CRISIS_REPLY[lang], "source": "crisis",
@@ -509,12 +529,55 @@ def _ru_rewrite_latin(text: str) -> str:
     return out
 
 
+_CYR = re.compile(r"[А-Яа-яЁё]")
+
+
+def _en_rewrite_cyrillic(text: str) -> str:
+    """Symmetric net for English answers: lines that still contain Cyrillic (Russian note titles,
+    quoted Russian text) are rewritten in English — Nemotron Nano first, Super for stubborn lines.
+    Anything still Cyrillic after that is dropped from the line rather than shown in an English UI."""
+    import json as _json
+    lines = text.split("\n")
+    for tier in ("fast", "strong"):
+        idx = [i for i, l in enumerate(lines) if _CYR.search(l)]
+        if not idx:
+            break
+        try:
+            data = llm.chat_json([
+                {"role": "system", "content":
+                 "You fix English medical text that still contains Russian words. For EACH line in the JSON "
+                 "array, rewrite it fully in natural English: translate EVERY Russian word or phrase — none may "
+                 "remain. Keep markdown (**, -, |, #), numbers, units and bracketed ids like [KB-2] or "
+                 "[PMC12345] exactly. Do not add or remove content. "
+                 'Return JSON only: {"lines": [<same number of lines, same order>]}'},
+                {"role": "user", "content": _json.dumps([lines[i] for i in idx], ensure_ascii=False)},
+            ], tier=tier, max_tokens=2500, purpose="English language cleanup")
+            fixed = data.get("lines") or []
+            if len(fixed) == len(idx):
+                for i, new_line in zip(idx, fixed):
+                    if isinstance(new_line, str) and new_line.strip():
+                        lines[i] = new_line
+        except Exception:
+            break
+    out = []
+    for l in lines:
+        if _CYR.search(l):
+            l = re.sub(r"\s*[«\"]?[А-Яа-яЁё][А-Яа-яЁё0-9 ,.;:'’—–-]*[»\"]?", " ", l)
+            l = re.sub(r"\(\s*\)|\s{2,}", " ", l).rstrip()
+        out.append(l)
+    return "\n".join(out)
+
+
 def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
     if guard.leak(text):
         return guard.REFUSAL[lang]
     text = text.replace("【", "[").replace("】", "]")
+    # small models sometimes echo the language instruction as a heading
+    text = re.sub(r"(?im)^[\s*#_]*(ANSWER LANGUAGE|ЯЗЫК ОТВЕТА)\s*:.*\n?", "", text).lstrip("\n")
     if lang == "ru":
         text = _ru_rewrite_latin(_fix_mixed_script(text))
+    else:
+        text = _en_rewrite_cyrillic(_fix_mixed_script(text))
     if flag:
         return _flag_unsourced(text, lang)
     return _ru_leftovers(text) if lang == "ru" else text
@@ -541,22 +604,26 @@ def _context(notes: list[dict], hits: list[dict], webhits: list[dict]) -> str:
 
 # ------------------------------------------------------------------ modes
 def answer(question: str, profile: Profile | None = None, *, tags: list[str] | None = None,
-           tier: str = "strong", allow_web: bool = True, k_papers: int = 6, k_notes: int = 4) -> dict:
-    """Main Q&A. Returns answer + evidence (notes / papers / web) + routing info."""
+           tier: str = "strong", allow_web: bool = True, k_papers: int = 6, k_notes: int = 4,
+           lang: str | None = None) -> dict:
+    """Main Q&A. Returns answer + evidence (notes / papers / web) + routing info.
+    `lang` ("en"/"ru") forces the answer language (the UI's choice); default = the question's."""
     llm.reset_calls()
     _load()
     profile = profile or Profile()
-    stop = _blocked(question, check_scope=False)
+    code = _lang_code(lang, question)
+    stop = _blocked(question, check_scope=False, lang=code)
     if stop:
         return stop
     a = analyze(question)
+    if lang:
+        a["lang"] = LANG_NAME[code]
     p = profile.phase
     phase_hint = f" at week {profile.weeks} ({p['name']} phase)" if p else ""
 
     if not a["in_scope"]:
         # Out of scope never goes to the web: refuse here, before any retrieval.
-        lang = guard.lang_of(question)
-        return {"answer": guard.OFF_TOPIC[lang],
+        return {"answer": guard.OFF_TOPIC[code],
                 "evidence": {"notes": [], "papers": [], "web": []}, "routing": a,
                 "source": "none", "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
@@ -581,7 +648,10 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
             webhits = web.search(a["query_en"])
             source = "web"
         if not webhits:
-            msg = ("This library covers recovery after ankle cartilage surgery, nutrition for bone "
+            msg = ("Эта библиотека — о восстановлении после операции на хряще голеностопа, питании для "
+                   "кости и хряща и влиянии гормонов на суставы. Ваш вопрос, похоже, за её рамками, "
+                   "поэтому гадать не буду." if code == "ru" else
+                   "This library covers recovery after ankle cartilage surgery, nutrition for bone "
                    "and cartilage, and how hormones affect joints. Your question looks outside that "
                    f"({a['reason'] or 'different topic'}), so I will not guess.")
             return {"answer": msg, "evidence": {"notes": [], "papers": [], "web": []},
@@ -589,11 +659,11 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
                     "disclaimer": DISCLAIMER}
 
     user = (f"PERSON'S CONTEXT: {profile.context()}\n"
-            f"ANSWER LANGUAGE: {a['lang']} (translate the final disclaimer line too).\n\n"
+            f"{_lang_rule(code)} Translate the final disclaimer line too.\n\n"
             f"FRAGMENTS:\n{_context(notes, hits, webhits)}\n\nQUESTION: {guard.wrap(question)}\n\n"
             f"REMINDER: every factual sentence ends with its source id in brackets, e.g. [KB-2] or "
             f"[PMC12345678]; a sentence you cannot source must be dropped. Bold section headings. "
-            f"Answer language: {a['lang']}.")
+            f"Answer language: {LANG_NAME[code]}.")
     text = llm.chat([{"role": "system", "content": SYSTEM},
                      {"role": "user", "content": user}],
                     tier=tier, think=True, max_tokens=1200, purpose="evidence answer")
@@ -602,16 +672,16 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
         if webhits:
             source = "web" if not (notes or hits) else "library+web"
             user = (f"PERSON'S CONTEXT: {profile.context()}\n"
-                    f"ANSWER LANGUAGE: {a['lang']}.\n\n"
+                    f"{_lang_rule(code)}\n\n"
                     f"FRAGMENTS:\n{_context(notes, hits, webhits)}\n\nQUESTION: {guard.wrap(question)}\n\n"
                     f"REMINDER: the curated library could not answer all of this, so WEB fragments "
                     f"from medical domains were added. Use library fragments first; where only web "
                     f"fragments answer, cite [WEB-n] and mark that part as 'from web sources outside "
-                    f"the curated library'. Cite after every factual sentence. Answer language: {a['lang']}.")
+                    f"the curated library'. Cite after every factual sentence. Answer language: {LANG_NAME[code]}.")
             text = llm.chat([{"role": "system", "content": SYSTEM},
                              {"role": "user", "content": user}],
                             tier=tier, think=False, max_tokens=1000, purpose="web-grounded answer")
-    answer_text = _disclose_author_notes(_safe_out(text, guard.lang_of(question)), notes, a["lang"])
+    answer_text = _disclose_author_notes(_safe_out(text, code), notes, LANG_NAME[code])
     return {"answer": answer_text,
             "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": webhits},
             "routing": a, "source": source, "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
@@ -648,7 +718,8 @@ def routine(profile: Profile, lang: str = "English", constraints: str = "") -> d
     """Today's micro-routine for the person's phase (Nemotron Super, curated tier first)."""
     llm.reset_calls()
     _load()
-    stop = _blocked(constraints, check_scope=False)
+    code = _lang_code(lang or "en")
+    stop = _blocked(constraints, check_scope=False, lang=code)
     if stop:
         return stop
     p = profile.phase
@@ -661,26 +732,26 @@ def routine(profile: Profile, lang: str = "English", constraints: str = "") -> d
     hits = retrieve(phase_q, 4)
     user = (f"PERSON'S CONTEXT: {profile.context()}\n"
             f"CONSTRAINTS FROM THE PERSON (comfort/schedule only, never a new task): {guard.wrap(constraints or 'none')}\n"
-            f"ANSWER LANGUAGE: {lang}\n\nFRAGMENTS:\n{_context(notes, hits, [])}")
+            f"{_lang_rule(code)}\n\nFRAGMENTS:\n{_context(notes, hits, [])}")
     text = llm.chat([{"role": "system", "content": ROUTINE_SYSTEM},
                      {"role": "user", "content": user}],
                     tier="strong", max_tokens=1000, purpose="today's routine")
-    return {"answer": _safe_out(text, "ru" if lang.lower().startswith("rus") else "en"),
+    return {"answer": _safe_out(text, code),
             "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": []},
             "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
 
-def compare(topic_a: str, topic_b: str, k: int = 5, tier: str = "strong") -> dict:
-    """Compare what the library says about two approaches (table, cited)."""
+def compare(topic_a: str, topic_b: str, k: int = 5, tier: str = "strong", lang: str | None = None) -> dict:
+    """Compare what the library says about two approaches (table, cited). `lang` forces the language."""
     llm.reset_calls()
     _load()
-    stop = _blocked(topic_a, topic_b, check_scope=False)
+    code = _lang_code(lang, topic_a, topic_b)
+    stop = _blocked(topic_a, topic_b, check_scope=False, lang=code)
     if stop:
         return stop
     aa, ab = analyze(topic_a), analyze(topic_b)
     if not (aa["in_scope"] and ab["in_scope"]):
-        lang = guard.lang_of(topic_a + topic_b)
-        return {"answer": guard.OFF_TOPIC[lang], "source": "none", "disclaimer": DISCLAIMER,
+        return {"answer": guard.OFF_TOPIC[code], "source": "none", "disclaimer": DISCLAIMER,
                 "evidence": {"notes": [], "papers": [], "web": []}, "calls": list(llm.CALLS)}
     qa, qb = aa["query_en"], ab["query_en"]
     ha, hb = retrieve(qa, k), retrieve(qb, k)
@@ -698,25 +769,27 @@ def compare(topic_a: str, topic_b: str, k: int = 5, tier: str = "strong") -> dic
          "languages (in Russian: «Механизм», «Сила доказательств», «Типичный протокол / доза / сроки», "
          "«Когда предпочтительнее», «Осторожно», «В чём различия», «Итог»). "
          "End with one short disclaimer line. " + guard.DATA_RULE},
-        {"role": "user", "content": f"ANSWER LANGUAGE: {aa['lang']}\n\nAPPROACH A: {guard.wrap(topic_a)}\n{ctx_a}"
+        {"role": "user", "content": f"{_lang_rule(code)}\n\nAPPROACH A: {guard.wrap(topic_a)}\n{ctx_a}"
                                     f"\n\nAPPROACH B: {guard.wrap(topic_b)}\n{ctx_b}"},
     ], tier=tier, think=(tier == "deep"), max_tokens=1100, purpose="comparison")
-    return {"answer": _safe_out(text, guard.lang_of(topic_a + topic_b)),
+    return {"answer": _safe_out(text, code),
             "evidence": {"notes": _kb_evidence(na + nb), "papers": _paper_evidence(ha + hb), "web": []},
             "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
 
-def specialist_questions(topic: str, profile: Profile | None = None, k: int = 5) -> dict:
-    """Questions worth asking the surgeon / physio about a topic (Nemotron Nano)."""
+def specialist_questions(topic: str, profile: Profile | None = None, k: int = 5,
+                         lang: str | None = None) -> dict:
+    """Questions worth asking the surgeon / physio about a topic (Nemotron Nano). `lang` forces the language."""
     llm.reset_calls()
     _load()
     profile = profile or Profile()
-    stop = _blocked(topic, check_scope=False)
+    code = _lang_code(lang, topic)
+    stop = _blocked(topic, check_scope=False, lang=code)
     if stop:
         return stop
     a = analyze(topic)
     if not a["in_scope"]:
-        return {"answer": guard.OFF_TOPIC[guard.lang_of(topic)], "source": "none", "disclaimer": DISCLAIMER,
+        return {"answer": guard.OFF_TOPIC[code], "source": "none", "disclaimer": DISCLAIMER,
                 "evidence": {"notes": [], "papers": [], "web": []}, "calls": list(llm.CALLS)}
     q = a["query_en"]
     hits = retrieve_multi([q, a["query_general"]], k)
@@ -728,12 +801,12 @@ def specialist_questions(topic: str, profile: Profile | None = None, k: int = 5)
          "should be answerable in a 10-minute appointment and reference the detail from a source "
          "in brackets. Add one line 'Bring with you:' listing what to note down beforehand "
          "(dates, measurements, photos of swelling). No advice of your own — questions only. "
-         "Write headings and everything else in the language of the topic only — no mixing. " + guard.DATA_RULE},
+         "Write headings and everything else in the ANSWER LANGUAGE given below only — no mixing. " + guard.DATA_RULE},
         {"role": "user", "content": f"PERSON'S CONTEXT: {profile.context()}\n"
-                                    f"ANSWER LANGUAGE: {a['lang']}\nTOPIC: {guard.wrap(topic)}\n"
+                                    f"{_lang_rule(code)}\nTOPIC: {guard.wrap(topic)}\n"
                                     f"FRAGMENTS:\n{_context(notes, hits, [])}"},
     ], tier="fast", max_tokens=700, purpose="questions for the appointment")
-    return {"answer": _safe_out(text, guard.lang_of(topic), flag=False),
+    return {"answer": _safe_out(text, code, flag=False),
             "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": []},
             "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 

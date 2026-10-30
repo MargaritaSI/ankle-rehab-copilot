@@ -22,7 +22,7 @@ from huggingface_hub import HfApi
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 load_dotenv(ROOT / ".env")
 
-repo_id = sys.argv[1] if len(sys.argv) > 1 else "MargaritaSI/rehab-copilot"
+repo_id = sys.argv[1] if len(sys.argv) > 1 else "ItMaj/rehab-copilot"
 token = os.environ.get("HF_TOKEN")
 if not token:
     sys.exit("HF_TOKEN missing (write token from https://huggingface.co/settings/tokens)")

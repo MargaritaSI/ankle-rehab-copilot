@@ -121,8 +121,8 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 [class*="st-key-empty"] img{filter:drop-shadow(0 10px 16px rgba(27,31,30,.14));}
 
 /* ---------- hero */
-.hero{display:flex; align-items:center; gap:20px;}
-.hero img{height:88px; width:auto; flex:none; filter:drop-shadow(0 10px 16px rgba(27,31,30,.14));}
+.hero{display:flex; align-items:center; gap:20px; padding:10px 8px 6px 4px; overflow:visible;}
+.hero img{height:96px; width:auto; flex:none; object-fit:contain;}
 .hero .eyebrow{font-size:.8rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--teal); margin-bottom:4px;}
 .hero h1{margin:0; font-size:3.1rem; font-weight:800; letter-spacing:-.035em; line-height:1.02; color:var(--ink);}
 .sub{font-size:1.24rem; line-height:1.55; color:var(--ink-2); max-width:860px; margin:1rem 0 1.1rem; font-weight:500;}
@@ -196,8 +196,34 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 .calls .chip{background:var(--card);}
 .calls .lbl{font-weight:800; letter-spacing:.1em; text-transform:uppercase; font-size:.74rem; margin-right:4px;}
 
+/* ---------- nothing clipped at column / label edges */
+[data-testid="stColumn"], [data-testid="stWidgetLabel"], [data-testid="stHtml"],
+[data-testid="stElementContainer"]:has(.hero){overflow:visible !important;}
+[data-testid="stWidgetLabel"]{padding-left:2px; min-width:0;}
+[data-testid="stWidgetLabel"] p{white-space:normal; overflow:visible; text-overflow:clip;}
+
+/* ---------- profile hints */
+.phint{font-size:.94rem; line-height:1.45; color:var(--ink-2); background:var(--teal-wash);
+  border-radius:var(--r-sm); padding:10px 12px; margin:.2rem 0 .4rem;}
+.phint.muted{background:transparent; color:var(--muted); padding:0 2px; font-size:.86rem;}
+
+/* ---------- Telegram companion card (fixed, above Streamlit Cloud's "Manage app" badge) */
+.tgcard{position:fixed; right:20px; bottom:76px; z-index:999; width:240px; display:flex; gap:12px; align-items:flex-start;
+  background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px;
+  box-shadow:var(--shadow); text-decoration:none !important; color:var(--ink) !important;}
+.tgcard:hover{border-color:var(--teal);}
+.tgcard .ic{flex:none; width:36px; height:36px; border-radius:50%; background:var(--teal); display:flex; align-items:center; justify-content:center;}
+.tgcard .ic img{width:18px; height:18px; margin-left:-2px;}
+.tgcard .tt{font-weight:800; font-size:.98rem; line-height:1.25;}
+.tgcard .tb{font-size:.84rem; line-height:1.4; color:var(--ink-2); margin-top:3px; font-weight:500;}
+@media (max-width:600px){
+  .tgcard{width:auto; padding:0; border-radius:50%; right:14px; bottom:72px; background:transparent; border:none;}
+  .tgcard .ic{width:52px; height:52px; box-shadow:var(--shadow);} .tgcard .ic img{width:24px; height:24px;}
+  .tgcard .txt{display:none;}
+}
+
 @media (max-width:700px){
-  .hero img{height:62px;} .hero h1{font-size:2.2rem;}
+  .hero{gap:14px; padding:8px 6px 4px 2px;} .hero img{height:72px;} .hero h1{font-size:2.2rem;}
   .sub{font-size:1.08rem;} .tile .v{font-size:2.2rem;}
   button[data-baseweb="tab"]{padding:0 16px; height:44px;}
   [class*="st-key-card"]{padding:1.1rem 1.1rem !important;}
@@ -252,6 +278,23 @@ def stat_grid(tiles: list[dict]) -> None:
             f"<div class='{cls}'><div><div class='k'>{esc(t['k'])}</div>"
             f"<div class='v{size}'>{esc(t['v'])}</div></div><div class='s'>{esc(t.get('s', ''))}</div></div>")
     st.html(f"<div class='grid'>{''.join(cells)}</div>")
+
+
+def profile_hint(text: str, muted: bool = False) -> None:
+    st.html(f"<div class='phint{' muted' if muted else ''}'>{md_inline(text)}</div>")
+
+
+# st.html sanitizes inline <svg>, so the paper-plane icon goes in as a data-URI <img>.
+_TG_SVG = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path fill='#fff' d='M21.5 3.6 2.9 10.8c-1.3.5-1.3 1.2-.2 1.6l4.8 1.5 "
+            "1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.7 3.5c.9.5 1.5.2 1.7-.8l3.1-14.6c.3-1.3-.5-1.9-1.4-1.5Z"
+            "M8.9 13.6l8.6-5.4c.4-.3.8-.1.5.2l-7.1 6.4-.3 3.2-1.7-4.4Z'/></svg>")
+_TG_ICON = f"<img src='data:image/svg+xml;base64,{base64.b64encode(_TG_SVG.encode()).decode()}' alt=''>"
+
+
+def telegram_card(url: str, title: str, body: str, aria: str) -> None:
+    st.html(f"<a class='tgcard' href='{esc(url)}' target='_blank' rel='noopener' aria-label='{esc(aria)}' title='{esc(aria)}'>"
+            f"<span class='ic'>{_TG_ICON}</span><span class='txt'><div class='tt'>{esc(title)}</div>"
+            f"<div class='tb'>{esc(body)}</div></span></a>")
 
 
 def side_header(title: str, img: str) -> None:

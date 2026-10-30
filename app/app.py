@@ -19,6 +19,9 @@ from urllib.parse import urlparse
 
 import streamlit as st
 
+# Telegram companion bot linked from the bottom-right card — change the username here only.
+TELEGRAM_BOT_URL = "https://t.me/addsport_bot"
+
 ASSETS = pathlib.Path(__file__).resolve().parent / "assets"
 ROOT = ASSETS.parent.parent
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint"))
@@ -42,6 +45,7 @@ import i18n as _i18n  # noqa: E402
 # memory; a new string key in app.py then raises KeyError until someone reboots the app.
 # The strings module is a plain dict literal, so reloading it on every run is free and safe.
 importlib.reload(_i18n)
+ui = importlib.reload(ui)
 from i18n import PHASE_RU, SURGERY_RU, T  # noqa: E402
 
 if "lang" not in st.session_state:
@@ -192,6 +196,10 @@ with st.sidebar:
     poor_perf = st.toggle(L["perfusion"], value=False, help=L["perfusion_help"])
     profile = Profile(surgery=surgery, surgery_date=surgery_date, sex=sex, age_band=age_band,
                       revision=revision, poor_perfusion=poor_perf)
+    if surgery_date is None:
+        ui.profile_hint(L["hint_date"])
+    if sex == "na" and age_band == "na" and not revision and not poor_perf:
+        ui.profile_hint(L["hint_optional"], muted=True)
     if profile.phase:
         p = profile.phase
         pname, pfocus = phase_text(p["name"], p["focus"])
@@ -237,7 +245,7 @@ with st.sidebar:
         st.caption(L["lib_error"].format(e=type(exc).__name__))
 
 # ----------------------------------------------------------------- header
-_t_txt, _t_lang = st.columns([8, 3], vertical_alignment="center")
+_t_txt, _t_lang = st.columns([8, 2], vertical_alignment="center")
 with _t_txt:
     ui.hero(L["eyebrow"], "Rehab Copilot", "capy_frog.png")
 
@@ -245,17 +253,18 @@ with _t_txt:
 def _switch_lang():
     choice = st.session_state.get("lang_pick")
     if choice:
-        st.session_state["lang"] = "ru" if choice == "Русский" else "en"
+        st.session_state["lang"] = "ru" if choice == "RU" else "en"
         for k in ("ask_q", "preset_pick", "cmp_a", "cmp_b", "doc_topic"):
             st.session_state.pop(k, None)
 
 
 with _t_lang:
-    st.segmented_control(L["lang_label"], ["English", "Русский"], key="lang_pick",
-                         default="Русский" if RU else "English", on_change=_switch_lang,
+    st.segmented_control(L["lang_label"], ["EN", "RU"], key="lang_pick",
+                         default="RU" if RU else "EN", on_change=_switch_lang,
                          label_visibility="collapsed")
 
 ui.subtitle(L["subtitle"])
+ui.telegram_card(TELEGRAM_BOT_URL, L["tg_title"], L["tg_body"], L["tg_open"])
 ui.note(L["disclaimer"])
 
 # ----------------------------------------------------------------- your week, at a glance
@@ -319,8 +328,8 @@ with tab_cmp:
         with st.container(key="lead-cmp"):
             st.markdown(L["cmp_intro"])
         c1, c2 = st.columns(2, gap="medium")
-        a = c1.text_input(L["cmp_a"], L["cmp_a_def"], key="cmp_a", max_chars=200)
-        b = c2.text_input(L["cmp_b"], L["cmp_b_def"], key="cmp_b", max_chars=200)
+        a = c1.text_input(L["cmp_a"], L["cmp_a_def"], key=f"cmp_a_{st.session_state['lang']}", max_chars=200)
+        b = c2.text_input(L["cmp_b"], L["cmp_b_def"], key=f"cmp_b_{st.session_state['lang']}", max_chars=200)
         go = st.button(L["cmp_btn"], type="primary", icon=":material/compare_arrows:")
     if go:
         run("cmp_res", rag.compare, a, b, tier=tier)
@@ -331,7 +340,7 @@ with tab_doc:
     with st.container(key="card-doc", border=True):
         with st.container(key="lead-doc"):
             st.markdown(L["doc_intro"])
-        topic = st.text_input(L["topic"], L["topic_def"], key="doc_topic", max_chars=200)
+        topic = st.text_input(L["topic"], L["topic_def"], key=f"doc_topic_{st.session_state['lang']}", max_chars=200)
         go = st.button(L["doc_btn"], type="primary", icon=":material/stethoscope:")
     if go:
         run("doc_res", rag.specialist_questions, topic, profile)

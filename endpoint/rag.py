@@ -283,9 +283,18 @@ def _tidy(text: str) -> str:
     return _flag_unsourced(text.replace("【", "[").replace("】", "]"), guard.lang_of(text))
 
 
-def _excerpt(text: str, words: int = 45) -> str:
-    body = text.split("\n\n", 1)[-1]
-    return " ".join(body.split()[:words]) + " …"
+def _excerpt(text: str, words: int = 60, min_words: int = 18) -> str:
+    """A readable excerpt: up to `words` words, cut at the last full sentence when there is one,
+    so cards don't end mid-phrase. Falls back to a word cut with an ellipsis."""
+    body = text.split("\n\n", 1)[-1] if text.count("\n\n") and len(text.split("\n\n", 1)[0]) < 300 else text
+    tokens = body.split()
+    if len(tokens) <= words:
+        return " ".join(tokens)
+    chunk = " ".join(tokens[:words])
+    ends = [m.end() for m in re.finditer(r"[.!?…](?=\s|$)", chunk)]
+    if ends and len(chunk[:ends[-1]].split()) >= min_words:
+        return chunk[:ends[-1]]
+    return chunk.rstrip(",;:—- ") + " …"
 
 
 def _paper_evidence(hits: list[dict]) -> list[dict]:
@@ -316,7 +325,7 @@ def _merge_notes(main: list[dict], extra: list[dict]) -> list[dict]:
 def _kb_evidence(notes: list[dict]) -> list[dict]:
     return [{"id": n["id"], "title": n["title"], "facet": n["facet"], "url": n["url"],
              "file": n.get("file", ""), "topic": n.get("topic", ""),
-             "excerpt": " ".join(n["text"].split()[:45]) + " …", "score": n["score"]}
+             "excerpt": _excerpt(n["text"]), "score": n["score"]}
             for n in notes]
 
 

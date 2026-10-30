@@ -453,10 +453,57 @@ def _disclose_author_notes(text: str, notes: list[dict], lang: str) -> str:
     return text + ("\n\n" + "\n".join(lines) if lines else "")
 
 
+_KEEP_LATIN = {"oat", "oats", "mri", "vas", "aofas", "nsaid", "nsaids", "bmac", "prp", "aci", 
+               "rct", "rcts", "pubmed", "europe", "nemotron", "nebius", "tavily", "graft"}
+
+
+def _foreign_words(line: str) -> list[str]:
+    bare = re.sub(r"\[[^\]]*\]|https?://\S+", " ", line)
+    return [w for w in re.findall(r"\b[A-Za-z][A-Za-z'-]{3,}\b", bare)
+            if w.lower() not in _KEEP_LATIN and not w.isupper()]
+
+
+_RU_GLOSSARY = ("mindfulness → осознанность; empowerment → вовлечённость пациента; paced breathing → дыхание "
+                "с удлинённым выдохом; core breathing → дыхание с участием мышц кора; relaxation → расслабление; "
+                "tension → напряжение; coping → совладание; maladaptive → неадаптивные; perioperative → "
+                "периоперационный; warrants discussion with clinician → стоит обсудить с врачом; graft → трансплантат")
+
+
+def _ru_rewrite_latin(text: str) -> str:
+    """Second net for Russian answers: lines that still contain English words are rewritten in
+    Russian — first by Nemotron Nano, then (only for stubborn lines) by Nemotron Super."""
+    import json as _json
+    lines = text.split("\n")
+    for tier in ("fast", "strong"):
+        idx = [i for i, l in enumerate(lines) if _foreign_words(l)]
+        if not idx:
+            break
+        try:
+            data = llm.chat_json([
+                {"role": "system", "content":
+                 "You fix Russian medical text that still contains English words. For EACH line in the JSON "
+                 "array, rewrite it fully in natural Russian: translate EVERY English word or phrase — none may "
+                 "remain. Keep markdown (**, -, |, #), numbers, units and bracketed ids like [KB-2] or "
+                 "[PMC12345] exactly; keep standard abbreviations (OAT, MRI, VAS, PRP). Do not add or remove "
+                 "content. Glossary: " + _RU_GLOSSARY + '. Return JSON only: {"lines": [<same number of lines, same order>]}'},
+                {"role": "user", "content": _json.dumps([lines[i] for i in idx], ensure_ascii=False)},
+            ], tier=tier, max_tokens=2500, purpose="Russian language cleanup")
+            fixed = data.get("lines") or []
+            if len(fixed) == len(idx):
+                for i, new_line in zip(idx, fixed):
+                    if isinstance(new_line, str) and new_line.strip():
+                        lines[i] = new_line
+        except Exception:
+            break
+    return "\n".join(lines)
+
+
 def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
     if guard.leak(text):
         return guard.REFUSAL[lang]
     text = text.replace("【", "[").replace("】", "]")
+    if lang == "ru":
+        text = _ru_rewrite_latin(_fix_mixed_script(text))
     if flag:
         return _flag_unsourced(text, lang)
     return _ru_leftovers(text) if lang == "ru" else text

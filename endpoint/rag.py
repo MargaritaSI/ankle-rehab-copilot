@@ -274,6 +274,7 @@ _RU_FIX = [("Where they differ", "В чём различия"), ("If less / as n
 
 
 _LAT2CYR = str.maketrans("aceopxyACEHKMOPTXB", "асеорхуАСЕНКМОРТХВ")
+_CYR2LAT = str.maketrans("асеорхуАСЕНКМОРТХВП", "aceopxyACEHKMOPTXBP")
 
 
 def _fix_mixed_script(text: str) -> str:
@@ -281,8 +282,9 @@ def _fix_mixed_script(text: str) -> str:
     letters mapped to Cyrillic; pure Latin words (PMC ids, OAT, VAS) are left alone."""
     def fix(m):
         w = m.group(0)
-        if re.search(r"[А-Яа-яЁё]", w) and re.search(r"[A-Za-z]", w):
-            return w.translate(_LAT2CYR)
+        cyr, lat = len(re.findall(r"[А-Яа-яЁё]", w)), len(re.findall(r"[A-Za-z]", w))
+        if cyr and lat:
+            return w.translate(_LAT2CYR) if cyr >= lat else w.translate(_CYR2LAT)
         return w
     return re.sub(r"[A-Za-zА-Яа-яЁё]+", fix, text)
 

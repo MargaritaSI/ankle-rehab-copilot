@@ -155,6 +155,10 @@ with st.sidebar:
             for s_, e_, name, focus, _ in PHASES:
                 n_, f_ = phase_text(name, focus)
                 st.markdown(f"**{s_}{'+' if e_ is None else '–' + str(e_)} {L['wk']} — {n_}**  \n{f_}")
+    with st.expander(L["anatomy"]):
+        for img, cap in zip(("Gray357.png", "Gray355.png", "Gray347.png"), L["anat"]):
+            st.image(str(ASSETS / "anatomy" / img), caption=cap, use_container_width=True)
+        st.caption(L["anat_credit"])
     st.divider()
     st.header(L["answers"])
     depth = st.radio(L["depth"], L["depth_opts"], index=0)
@@ -181,9 +185,18 @@ with st.sidebar:
         st.caption(L["lib_error"].format(e=type(exc).__name__))
 
 # ----------------------------------------------------------------- header
-_t_img, _t_txt, _t_lang = st.columns([1, 9, 4], vertical_alignment="center")
-_t_img.image(str(ASSETS / "capy_frog.png"), width=56)
-_t_txt.title("Rehab Copilot")
+@st.cache_data
+def _img_b64(name: str) -> str:
+    import base64
+    return base64.b64encode((ASSETS / name).read_bytes()).decode()
+
+
+_t_txt, _t_lang = st.columns([10, 4], vertical_alignment="center")
+_t_txt.markdown(
+    f"<div style='display:flex;align-items:center;gap:14px'>"
+    f"<img src='data:image/png;base64,{_img_b64('capy_frog.png')}' alt='' "
+    f"style='height:64px;width:auto;flex:none'>"
+    f"<h1 style='margin:0;padding:0'>Rehab Copilot</h1></div>", unsafe_allow_html=True)
 
 
 def _switch_lang():

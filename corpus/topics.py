@@ -131,4 +131,24 @@ TOPICS = {
     "elevation_edema": "leg elevation above heart level edema reduction postoperative",
     "caffeine_bone": "caffeine coffee intake bone mineral density calcium absorption fracture healing",
     "caffeine_inflammation": "coffee consumption inflammation markers joint health osteoarthritis",
+
+    # --- После неудачной артроскопии / ревизия (добавлено 2026-10-30, вечер) ---
+    "failed_marrow_stim": "failed bone marrow stimulation microfracture osteochondral lesion talus revision options outcomes",
+    "revision_olt": "revision surgery osteochondral lesion talus after failed arthroscopy",
+    "talus_bme": "bone marrow edema talus osteochondral lesion persistent pain MRI after microfracture",
+    "steroid_ankle": "intra-articular corticosteroid injection ankle cartilage chondrotoxicity repeated injections",
+    "ankle_arthrodesis": "ankle arthrodesis fusion outcomes adjacent joint arthritis young patients",
+    "ankle_tar": "total ankle arthroplasty versus arthrodesis outcomes young active patients",
+    "oat_donor_sites": "osteochondral autograft donor site knee versus talus versus femoral head comparison morbidity",
+    "talus_allograft": "fresh osteochondral allograft talus outcomes",
+    "cystic_olt": "subchondral cyst osteochondral lesion talus treatment",
+    "supramalleolar": "supramalleolar osteotomy ankle cartilage lesion realignment",
+    "prp_ha_ankle": "platelet rich plasma hyaluronic acid injection ankle osteochondral lesion",
+    # --- Связки и сухожилия ---
+    "ankle_ligament": "lateral ankle ligament instability reconstruction rehabilitation chronic",
+    "peroneal_achilles": "peroneal tendon Achilles tendinopathy after ankle surgery rehabilitation",
+    # --- Жара и отёк ---
+    "heat_venous": "heat exposure venous insufficiency leg edema seasonal variation symptoms",
+    "heat_vasodilation": "thermoregulation cutaneous vasodilation lower limb swelling hot environment",
+    "postop_edema_season": "seasonal variation postoperative swelling wound complications summer orthopedic",
 }

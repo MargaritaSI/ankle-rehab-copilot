@@ -58,6 +58,11 @@ T = {
   "src_web": "Web sources · {n} (Tavily, medical domains — not from the library)",
   "curated": "curated", "paper": "paper", "web": "web", "source": "source ↗", "open_pmc": "open on PMC ↗",
   "reasoning": "reasoning", "via": "via Nebius Token Factory", "routine_lang": "English",
+  "anatomy": "Anatomy (Gray, 1918)",
+  "anat": ["Ankle joint, coronal section: the talus sits under the tibia — its cartilage dome is where osteochondral lesions occur.",
+           "Ligaments on the outer side of the ankle and foot (lateral aspect).",
+           "Knee from the front — the usual donor site for osteochondral autograft plugs."],
+  "anat_credit": "Public-domain plates from Gray's Anatomy (1918) via Wikimedia Commons.",
   "presets": {
     "Swelling after standing": "I'm 5 months after ankle cartilage surgery; the leg swells after 2 hours of standing or sitting in a car. What do studies say about why, and what helps?",
     "Protein per day": "How many grams of protein per day for muscle and bone recovery, and which foods are absorbed best?",
@@ -114,6 +119,11 @@ T = {
   "src_web": "Источники из интернета · {n} (Tavily, медицинские сайты — не из библиотеки)",
   "curated": "заметка", "paper": "статья", "web": "интернет", "source": "источник ↗", "open_pmc": "открыть в PMC ↗",
   "reasoning": "рассуждение", "via": "через Nebius Token Factory", "routine_lang": "Russian",
+  "anatomy": "Анатомия (Грей, 1918)",
+  "anat": ["Голеностопный сустав во фронтальном разрезе: таранная кость под большеберцовой — на куполе её хряща и возникают костно-хрящевые дефекты.",
+           "Связки с наружной стороны голеностопа и стопы.",
+           "Колено спереди — обычное донорское место для костно-хрящевых трансплантатов."],
+  "anat_credit": "Иллюстрации из «Анатомии Грея» (1918), общественное достояние, Wikimedia Commons.",
   "presets": {
     "Отёк после стояния": "Прошло 5 месяцев после операции на хряще голеностопа, нога отекает после 2 часов стоя или в машине. Что говорят исследования — почему так и что помогает?",
     "Белок в день": "Сколько граммов белка в день нужно для восстановления мышц и кости, и из какой еды он лучше усваивается?",

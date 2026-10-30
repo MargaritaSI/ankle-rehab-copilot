@@ -3,11 +3,7 @@
 import pathlib, sys
 sys.path.insert(0, str(pathlib.Path(__file__).parent))
 import fetch, topics
-NEW = ["anesthesia_gi", "regional_vs_general", "nerve_block_ankle", "post_anesthesia_fatigue",
-       "preop_anxiety", "postop_mood", "cbt_rehab", "fear_avoidance", "mindfulness_breathing",
-       "emdr_medical", "sleep_recovery", "scar_silicone", "scar_sun", "scar_massage",
-       "aquatic_cycling", "joint_loading_modalities", "heat_edema", "elevation_edema",
-       "caffeine_bone", "caffeine_inflammation"]
+NEW = ['failed_marrow_stim', 'revision_olt', 'talus_bme', 'steroid_ankle', 'ankle_arthrodesis', 'ankle_tar', 'oat_donor_sites', 'talus_allograft', 'cystic_olt', 'supramalleolar', 'prp_ha_ankle', 'ankle_ligament', 'peroneal_achilles', 'heat_venous', 'heat_vasodilation', 'postop_edema_season']
 for k in list(fetch.TOPICS):
     if k not in NEW:
         del fetch.TOPICS[k]

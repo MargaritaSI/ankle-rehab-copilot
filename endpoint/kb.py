@@ -25,6 +25,8 @@ import faiss
 import numpy as np
 from openai import OpenAI
 
+import llm
+
 EMBED_MODEL = os.environ.get("KB_EMBED_MODEL", "Qwen/Qwen3-Embedding-8B")
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -72,8 +74,10 @@ def embed(texts: list[str]) -> np.ndarray:
                     api_key=os.environ.get("NEBIUS_API_KEY", "missing"))
     vecs: list[list[float]] = []
     for i in range(0, len(texts), 32):
+        llm.check_budget()
         batch = [t[:6000] for t in texts[i:i + 32]]
         resp = client.embeddings.create(model=EMBED_MODEL, input=batch)
+        llm.record_usage(getattr(getattr(resp, "usage", None), "total_tokens", 0))
         vecs.extend(d.embedding for d in sorted(resp.data, key=lambda d: d.index))
     arr = np.asarray(vecs, dtype="float32")
     arr /= np.linalg.norm(arr, axis=1, keepdims=True) + 1e-9

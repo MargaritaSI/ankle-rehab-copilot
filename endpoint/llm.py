@@ -37,6 +37,50 @@ LABELS = {"fast": "Nemotron 3 Nano", "strong": "Nemotron 3 Super", "deep": "Nemo
 # Rolling log of the calls made for the current request (shown in the UI footer).
 CALLS: list[dict] = []
 
+# ---- spend guard: a daily token budget so a public demo can't drain the account ----
+DAILY_TOKEN_BUDGET = int(os.environ.get("DAILY_TOKEN_BUDGET", "1500000"))
+USAGE_FILE = ROOT / ".usage.json"
+
+
+class BudgetExceeded(RuntimeError):
+    """Raised before a call when today's token budget is spent."""
+
+
+def _usage_read() -> dict:
+    today = time.strftime("%Y-%m-%d")
+    try:
+        data = json.loads(USAGE_FILE.read_text())
+        if data.get("date") == today:
+            return data
+    except Exception:
+        pass
+    return {"date": today, "tokens": 0, "requests": 0}
+
+
+def usage_today() -> dict:
+    """{'date', 'tokens', 'requests', 'budget', 'fraction'} for the sidebar."""
+    u = _usage_read()
+    u["budget"] = DAILY_TOKEN_BUDGET
+    u["fraction"] = min(1.0, u["tokens"] / DAILY_TOKEN_BUDGET) if DAILY_TOKEN_BUDGET else 0.0
+    return u
+
+
+def record_usage(tokens: int | None) -> None:
+    u = _usage_read()
+    u["tokens"] += int(tokens or 0)
+    u["requests"] += 1
+    try:
+        USAGE_FILE.write_text(json.dumps(u))
+    except Exception:
+        pass
+
+
+def check_budget() -> None:
+    if DAILY_TOKEN_BUDGET and _usage_read()["tokens"] >= DAILY_TOKEN_BUDGET:
+        raise BudgetExceeded(
+            "Today's token budget for this demo is used up — the app pauses until tomorrow "
+            "(UTC midnight) so the account cannot be drained. Thanks for understanding.")
+
 
 def configured() -> bool:
     return bool(os.environ.get("NEBIUS_API_KEY"))
@@ -53,6 +97,7 @@ def _client() -> OpenAI:
 def chat(messages: list[dict], tier: str = "strong", *, temperature: float = 0.2,
          max_tokens: int = 900, think: bool = False, purpose: str = "") -> str:
     """One chat completion. Reasoning is off unless `think=True` (then budget grows)."""
+    check_budget()
     model = MODELS[tier]
     kwargs: dict = {}
     if not think:
@@ -66,6 +111,7 @@ def chat(messages: list[dict], tier: str = "strong", *, temperature: float = 0.2
     )
     msg = resp.choices[0].message
     text = (msg.content or "").strip()
+    record_usage(getattr(resp.usage, "total_tokens", None))
     CALLS.append({
         "tier": tier, "model": model, "label": LABELS[tier], "purpose": purpose,
         "seconds": round(time.time() - t0, 1),

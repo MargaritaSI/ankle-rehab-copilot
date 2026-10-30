@@ -113,6 +113,8 @@ def run(key: str, fn, *args, **kwargs):
     with st.spinner("Nemotron Nano routes the question · Nemotron Super reads the evidence…"):
         try:
             st.session_state[key] = fn(*args, **kwargs)
+        except llm.BudgetExceeded as exc:
+            st.warning(str(exc))
         except Exception as exc:  # surface, don't crash the page
             st.error(f"Model call failed: {exc}")
 
@@ -144,6 +146,12 @@ with st.sidebar:
                           value=web.available(), disabled=not web.available(),
                           help="Needs TAVILY_API_KEY. Restricted to medical domains; results are labelled.")
     sel_tags = st.multiselect("Restrict papers to topics", rag.all_tags())
+    u = llm.usage_today()
+    if u["budget"]:
+        pct = int(u["fraction"] * 100)
+        st.progress(u["fraction"], text=f"Demo budget today: {pct}% · {u['requests']} calls")
+        if pct >= 80:
+            st.warning("Close to today's token budget — the app pauses at 100% until tomorrow.")
     st.divider()
     try:
         s_ = rag.stats()
@@ -173,6 +181,11 @@ with tab_ask:
         "Donor knee on stairs": "How do I unload the donor knee when going down stairs?",
         "Dienogest & bone": "Does long-term dienogest affect bone density, and what does that mean for recovery?",
         "Contrast shower": "Does a contrast shower (cold / warm) help swelling after surgery? Cold vs compression?",
+        "Swimming, bike, elliptical": "Are swimming, a stationary bike and an elliptical safe for the graft now, and how do their joint loads compare?",
+        "Heat & swelling": "Why does the ankle swell more in hot weather, and what helps: elevation, compression stockings, timing of walks?",
+        "Scar & sun": "Do silicone sheets help a surgical scar, and how should I protect it from the sun this summer?",
+        "Anesthesia: general vs regional": "For ankle cartilage surgery, what do studies say about regional anesthesia or a nerve block versus general anesthesia — side effects like nausea, reflux and fatigue?",
+        "Fear before surgery": "I'm anxious before the operation and low after it. Which evidence-based techniques help — breathing, CBT-style tools, anything else?",
         "Out of scope test": "Which running-shoe brand is best for ankle recovery?",
     }
     def _apply_preset():
@@ -192,7 +205,7 @@ with tab_ask:
 with tab_today:
     st.markdown("A **micro-routine for today**: many ≤1-minute sets through the day, built only from the "
                 "curated notes for your phase. Tick items as you go; regenerate tomorrow.")
-    lang = st.selectbox("Language", ["English", "Russian", "Dutch", "German", "Spanish"], index=0)
+    lang = st.selectbox("Language", ["English", "Russian"], index=0)
     constraints = st.text_input("Anything to respect today? (optional)",
                                 placeholder="e.g. desk day, mild swelling last night, no gym access")
     if profile.weeks is None:

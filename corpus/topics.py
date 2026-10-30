@@ -103,4 +103,32 @@ TOPICS = {
 
     # --- NSAIDs и заживление (спорный) ---
     "nsaids_healing": "NSAIDs effect bone cartilage healing after surgery",
+
+    # --- Анестезия и первые дни: побочные эффекты, выбор анестезии (добавлено 2026-10-30) ---
+    "anesthesia_gi": "postoperative nausea vomiting general anesthesia gastrointestinal side effects heartburn reflux recovery",
+    "regional_vs_general": "regional anesthesia versus general anesthesia foot ankle surgery outcomes recovery side effects",
+    "nerve_block_ankle": "peripheral nerve block ankle surgery postoperative pain opioid sparing",
+    "post_anesthesia_fatigue": "postoperative fatigue cognitive recovery after general anesthesia adults",
+
+    # --- Психологическая сторона операции и восстановления ---
+    "preop_anxiety": "preoperative anxiety orthopedic surgery evidence based interventions breathing relaxation",
+    "postop_mood": "postoperative depression low mood orthopedic recovery prevalence risk factors coping",
+    "cbt_rehab": "cognitive behavioral therapy rehabilitation adherence musculoskeletal injury recovery",
+    "fear_avoidance": "kinesiophobia fear of movement after surgery rehabilitation outcomes intervention",
+    "mindfulness_breathing": "mindfulness breathing exercises pain stress postoperative recovery randomized",
+    "emdr_medical": "EMDR eye movement desensitization medical trauma surgery distress",
+    "sleep_recovery": "sleep quality tissue healing recovery after surgery",
+
+    # --- Рубец ---
+    "scar_silicone": "silicone gel sheet scar management surgical scar randomized",
+    "scar_sun": "scar sun protection hyperpigmentation photoprotection postoperative",
+    "scar_massage": "scar massage mobilization postoperative function",
+
+    # --- Низкоударная активность, компрессия, жара ---
+    "aquatic_cycling": "aquatic therapy swimming stationary cycling elliptical lower limb rehabilitation joint load",
+    "joint_loading_modalities": "joint contact force walking cycling elliptical swimming comparison lower extremity",
+    "heat_edema": "ambient heat summer lower limb swelling venous edema dependent position",
+    "elevation_edema": "leg elevation above heart level edema reduction postoperative",
+    "caffeine_bone": "caffeine coffee intake bone mineral density calcium absorption fracture healing",
+    "caffeine_inflammation": "coffee consumption inflammation markers joint health osteoarthritis",
 }

@@ -12,3 +12,4 @@ venv/
 .env.*.local
 .DS_Store
 eval/_reports/run.log
+.usage.json

@@ -44,11 +44,33 @@ PHASES = [
 ]
 
 
+SEXES = {"na": "prefer not to say", "female": "female", "male": "male"}
+AGE_BANDS = {"na": "prefer not to say", "u30": "under 30", "30_45": "30–45", "45_60": "45–60", "60p": "60+"}
+
+# What the literature says matters, by group — used only as a hint for the model about which
+# evidence to prefer; never as a claim in itself.
+_SEX_HINT = {
+    "female": "woman: estrogen/progestin status, hormonal contraception or dienogest, iron/ferritin, "
+              "pregnancy or breastfeeding history may matter for bone, tendon and recovery",
+    "male": "man: testosterone status and typically higher muscle mass may matter for recovery",
+}
+_AGE_HINT = {
+    "u30": "under 30: cartilage repair outcomes are typically best; peak bone mass still forming",
+    "30_45": "30–45: age-related muscle loss begins — protein intake and strength work matter more; "
+             "for women perimenopausal changes can start late in this band",
+    "45_60": "45–60: slower tissue healing, menopause-related bone/tendon changes for women, "
+             "sarcopenia risk — protein per kg and resistance training weigh more",
+    "60p": "60+: slower healing, higher sarcopenia and osteoporosis risk, balance and fall prevention matter",
+}
+
+
 @dataclass
 class Profile:
     surgery: str = "talus_oat"
     surgery_date: dt.date | None = None
     today: dt.date = field(default_factory=dt.date.today)
+    sex: str = "na"
+    age_band: str = "na"
 
     @property
     def weeks(self) -> int | None:
@@ -87,4 +109,8 @@ class Profile:
             )
         lines.append("These windows are typical ranges across published protocols; the person's "
                      "own surgeon's protocol overrides them.")
+        hints = [h for h in (_SEX_HINT.get(self.sex), _AGE_HINT.get(self.age_band)) if h]
+        if hints:
+            lines.append("Profile (" + "; ".join(hints) + ") — prefer evidence for this group when the "
+                         "fragments offer it, and say when a number differs by sex or age.")
         return " ".join(lines)

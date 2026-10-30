@@ -143,7 +143,11 @@ with st.sidebar:
     if has_date:
         surgery_date = st.date_input(L["surgery_date"], value=dt.date.today() - dt.timedelta(weeks=22),
                                      min_value=dt.date(2000, 1, 1), max_value=dt.date.today())
-    profile = Profile(surgery=surgery, surgery_date=surgery_date)
+    c_sex, c_age = st.columns(2)
+    sex = c_sex.selectbox(L["sex"], list(L["sex_opts"]), format_func=lambda k: L["sex_opts"][k],
+                          help=L["profile_help"])
+    age_band = c_age.selectbox(L["age"], list(L["age_opts"]), format_func=lambda k: L["age_opts"][k])
+    profile = Profile(surgery=surgery, surgery_date=surgery_date, sex=sex, age_band=age_band)
     if profile.phase:
         p = profile.phase
         end = "+" if p["end"] is None else f"–{p['end']}"

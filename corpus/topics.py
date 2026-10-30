@@ -158,4 +158,12 @@ TOPICS = {
     "nerve_exercise": "peripheral nerve irritation exercise modification continue activity load adjustment",
     "swim_kick_ankle": "swimming flutter kick ankle plantarflexion load joint stress rehabilitation",
     "aquatic_postop": "aquatic exercise hydrostatic pressure postoperative lower limb effects edema joint",
+
+    # --- Возраст и пол (добавлено 2026-10-30, вечер) ---
+    "muscle_loss_30s": "age-related muscle loss begins thirties forties resistance training protein requirements adults",
+    "perimenopause_msk": "perimenopause menopause estrogen decline tendon cartilage bone muscle musculoskeletal syndrome of menopause",
+    "women_iron_recovery": "iron deficiency women fatigue tissue healing exercise recovery ferritin",
+    "hormonal_contraception_tendon": "hormonal contraception estrogen progestin tendon collagen ligament laxity injury",
+    "men_testosterone_bone": "men testosterone decline bone density muscle recovery after orthopedic surgery",
+    "older_adults_cartilage": "older adults cartilage repair outcomes age over 50 osteochondral",
 }

@@ -24,6 +24,8 @@ TELEGRAM_BOT_URL = "https://t.me/addmove_bot"
 
 ASSETS = pathlib.Path(__file__).resolve().parent / "assets"
 ROOT = ASSETS.parent.parent
+sys.path.append(str(pathlib.Path(__file__).resolve().parent))
+from proc_state import LIBRARY_LOCK  # noqa: E402
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint"))
 import llm  # noqa: E402
 import rag  # noqa: E402
@@ -47,10 +49,23 @@ def _reload_endpoint_if_stale() -> None:
     stale = stale or not hasattr(sys.modules["rag"], "_RU_FALLBACK")
     if not stale:
         return
-    for name in _ENDPOINT_CHAIN:
-        mod = importlib.import_module(name)
-        mod = importlib.reload(mod)
-        mod._loaded_mtime = os.path.getmtime(mod.__file__)
+    import gc
+    with LIBRARY_LOCK:
+        # Another session may have reloaded while we waited for the lock.
+        if all(os.path.getmtime(m.__file__) <= m._loaded_mtime + 1 for m in mods) \
+                and hasattr(sys.modules["rag"], "_RU_FALLBACK"):
+            return
+        # Drop the old index / store / model BEFORE loading new ones: reload re-executes the
+        # module in place, so without this the process briefly held two copies (~800 MB).
+        for m in mods:
+            for attr in ("_store", "_index", "_model"):
+                if hasattr(m, attr):
+                    setattr(m, attr, None)
+        gc.collect()
+        for name in _ENDPOINT_CHAIN:
+            mod = importlib.import_module(name)
+            mod = importlib.reload(mod)
+            mod._loaded_mtime = os.path.getmtime(mod.__file__)
 
 
 _reload_endpoint_if_stale()
@@ -262,8 +277,8 @@ with st.sidebar:
     allow_web = st.toggle(L["web_toggle"], value=web.available(), disabled=not web.available(),
                           help=L["web_help"])
     try:
-        with st.spinner(L["lib_loading"], show_time=True):
-            _tags = rag.all_tags()
+        with st.spinner(L["lib_loading"], show_time=True), LIBRARY_LOCK:
+            _tags = rag.all_tags()  # first call loads the index; later sessions wait, then hit the cache
     except Exception as exc:
         st.error(L["lib_error"].format(e=type(exc).__name__))
         st.stop()

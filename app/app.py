@@ -24,6 +24,13 @@ ROOT = ASSETS.parent.parent
 sys.path.append(str(pathlib.Path(__file__).resolve().parent.parent / "endpoint"))
 import llm  # noqa: E402
 import rag  # noqa: E402
+
+# Same hot-reload problem for the retrieval modules: if the running `rag` predates the
+# note-merge change, reload kb then rag once (their index caches rebuild on the next call).
+if not hasattr(rag, "_merge_notes"):
+    import kb as _kb  # noqa: E402
+    importlib.reload(_kb)
+    rag = importlib.reload(rag)
 import web  # noqa: E402
 from phase import PHASES, SURGERIES, Profile  # noqa: E402
 

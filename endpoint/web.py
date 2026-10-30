@@ -27,8 +27,8 @@ def search(query: str, max_results: int = 5) -> list[dict]:
     try:
         r = requests.post(
             "https://api.tavily.com/search",
-            json={"api_key": os.environ["TAVILY_API_KEY"], "query": query,
-                  "search_depth": "basic", "max_results": max_results,
+            headers={"Authorization": f"Bearer {os.environ['TAVILY_API_KEY']}"},
+            json={"query": query, "search_depth": "basic", "max_results": max_results,
                   "include_domains": DOMAINS, "include_answer": False},
             timeout=20,
         )

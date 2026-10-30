@@ -7,8 +7,12 @@ the answer still cites checkable sources. Results are labelled as web sources.
 from __future__ import annotations
 
 import os
+import pathlib
 
 import requests
+from dotenv import load_dotenv
+
+load_dotenv(pathlib.Path(__file__).resolve().parent.parent / ".env")
 
 DOMAINS = [
     "pubmed.ncbi.nlm.nih.gov", "pmc.ncbi.nlm.nih.gov", "europepmc.org",

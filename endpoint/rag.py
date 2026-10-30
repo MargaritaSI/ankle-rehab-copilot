@@ -286,6 +286,9 @@ def analyze(question: str) -> dict:
          "\"query_general\": \"<a second English query about the underlying mechanism or "
          "topic WITHOUT the surgery name, e.g. 'dependent edema prolonged standing lower limb "
          "compression elevation'>\", "
+         "\"sub_queries\": [<if the question has several distinct parts (e.g. compares 3 treatment "
+         "options, or asks about a procedure AND a medication), one short English search query per "
+         "part, max 4; otherwise []>], "
          "\"lang\": \"<English name of the question language, e.g. Russian>\"}.\n"
          "The person asking had ankle cartilage surgery (talus OAT / mosaicplasty, donor knee). "
          "Everyday questions asked for THIS recovery are in scope: which exercises, sport, stairs, "
@@ -305,6 +308,7 @@ def analyze(question: str) -> dict:
             "reason": data.get("reason", ""),
             "query_en": data.get("query_en") or question,
             "query_general": data.get("query_general") or "",
+            "sub_queries": [q for q in (data.get("sub_queries") or []) if isinstance(q, str)][:4],
             "lang": data.get("lang") or "the language of the question"}
 
 
@@ -380,8 +384,11 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
                 "source": "none", "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
     notes, hits, webhits, source = [], [], [], "library"
-    notes = kb.retrieve(_model, kb_queries, k=k_notes)
-    hits = retrieve_multi([a["query_en"], a["query_general"]], k_papers, tags)
+    subs = a.get("sub_queries") or []
+    notes = kb.retrieve(_model, kb_queries + subs, k=k_notes + (2 if subs else 0))
+    # a multi-part question gets more paper slots, one list per part, interleaved
+    hits = retrieve_multi([a["query_en"], a["query_general"]] + subs,
+                          k_papers + 2 * len(subs), tags)
     if not notes and not hits:
         if allow_web and web.available():
             webhits = web.search(a["query_en"])

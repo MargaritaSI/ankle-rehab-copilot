@@ -1,10 +1,14 @@
 # Devpost submission texts
 
-## Project name
-Rehab Copilot — evidence Q&A and daily routine after ankle cartilage surgery
+## Project name (≤ 60 chars)
+Rehab Copilot — recovery after ankle cartilage surgery
 
-## Tagline
-Published protocols and research, cited sentence by sentence, anchored to your week after surgery — on NVIDIA Nemotron via Nebius Token Factory.
+(alternative: `Rehab Copilot: cited answers for ankle cartilage recovery`)
+
+## Elevator pitch (≤ 200 chars)
+Cited answers and a daily micro-routine for the months after ankle cartilage surgery — from 1,400 papers and curated notes, anchored to your week. NVIDIA Nemotron on Nebius Token Factory.
+
+(shorter: `Evidence-only recovery copilot after ankle cartilage surgery: every claim cited, anchored to your week. Nemotron on Nebius Token Factory.`)
 
 ## Track
 Best Apps and Agents

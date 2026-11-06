@@ -542,9 +542,10 @@ def _ru_rewrite_latin(text: str) -> str:
         try:
             data = llm.chat_json([
                 {"role": "system", "content":
-                 "You fix Russian medical text that still contains English words. For EACH line in the JSON "
-                 "array, rewrite it fully in natural Russian: translate EVERY English word or phrase — none may "
-                 "remain. Keep markdown (**, -, |, #), numbers, units and bracketed ids like [KB-2] or "
+                 "You fix Russian medical text that still contains foreign words — English or any other "
+                 "Latin-script word (e.g. a Czech-looking verb like 'Consumujte' → «Употребляйте»). For EACH "
+                 "line in the JSON array, rewrite it fully in natural Russian: translate EVERY such word or "
+                 "phrase — none may remain. Keep markdown (**, -, |, #), numbers, units and bracketed ids like [KB-2] or "
                  "[PMC12345] exactly; keep standard abbreviations (OAT, MRI, VAS, PRP). Do not add or remove "
                  "content. Glossary: " + _RU_GLOSSARY + '. Return JSON only: {"lines": [<same number of lines, same order>]}'},
                 {"role": "user", "content": _json.dumps([lines[i] for i in idx], ensure_ascii=False)},
@@ -554,6 +555,27 @@ def _ru_rewrite_latin(text: str) -> str:
                 for i, new_line in zip(idx, fixed):
                     if isinstance(new_line, str) and new_line.strip():
                         lines[i] = new_line
+        except Exception:
+            break
+    # third net: stubborn lines one at a time, plain text (nothing JSON-shaped to get wrong),
+    # accepted only if the line is now Russian and still carries exactly its source ids
+    for i in [i for i, l in enumerate(lines) if _foreign_words(l)][:4]:
+        try:
+            new = llm.chat([
+                {"role": "system", "content":
+                 "Rewrite the given line of Russian medical text so that EVERY word is Russian: translate any "
+                 "English or other Latin-script word (e.g. 'Consumujte' → «Употребляйте», 'mindfulness' → "
+                 "«осознанность»). Keep markdown (**, -, |, #), numbers, units and bracketed ids like [KB-2] or "
+                 "[PMC12345] exactly; keep OAT, MRI, VAS, PRP. Output ONLY the rewritten line."},
+                {"role": "user", "content": lines[i]},
+            ], tier="strong", temperature=0.0, max_tokens=600, purpose="Russian language cleanup (line)").strip()
+            new = new.splitlines()[0].strip() if new else ""
+            if (new and not _foreign_words(new)
+                    and sorted(_CITE.findall(new)) == sorted(_CITE.findall(lines[i]))):
+                lead = re.match(r"^\s*(?:[-*•]\s+|\d+\.\s+)?", lines[i]).group(0)
+                if lead and not new.startswith(lead.strip()[:1] if lead.strip() else lead):
+                    new = lead + new
+                lines[i] = new
         except Exception:
             break
     # last, deterministic net for common leftovers the models kept

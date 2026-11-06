@@ -26,9 +26,10 @@ DOMAINS = [
 
 # Spend guard for the web tier. The Tavily "Researcher" plan is 1,000 credits a month with no
 # card on file and no pay-as-you-go, so the account itself cannot be charged — but a bot hammering
-# the public demo could burn the month in an afternoon. One basic search = 1 credit; the cap
-# below keeps a single day under a third of the month.
-WEB_DAILY_CAP = int(os.environ.get("WEB_DAILY_CAP", "300"))
+# the public demo could burn the month in an afternoon. One basic search = 1 credit; with
+# "always add" as the default mode every question is one credit, so the cap keeps a day at
+# ~4% of the month (40 × 30 = 1,200 ≈ the plan, and real traffic is far below the cap).
+WEB_DAILY_CAP = int(os.environ.get("WEB_DAILY_CAP", "40"))
 _USAGE_FILE = pathlib.Path(__file__).resolve().parent.parent / ".web_usage.json"
 
 

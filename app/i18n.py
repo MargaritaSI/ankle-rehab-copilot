@@ -105,7 +105,7 @@ T = {
   "unknown_kind": "not retrieved",
   "note_ru": "note in Russian", "note_en": "note in English",
   "web_mode": "Web search (Tavily, medical sites only)",
-  "web_mode_opts": ["when the library is silent", "always add", "off"],
+  "web_mode_opts": ["always add", "when the library is silent", "off"],
   "web_mode_help": "Web results come from a fixed list of medical domains and are labelled WEB-n. "
                    "\"Always add\" runs one web search per question next to the library — useful when you want current web sources on every answer.",
   "web_add_info": "Besides the library, **web sources** from medical domains (Tavily) were added to this answer — they carry WEB-n ids and are a starting point, not the curated tier.",
@@ -214,7 +214,7 @@ T = {
   "unknown_kind": "не найден",
   "note_ru": "заметка на русском", "note_en": "заметка на английском",
   "web_mode": "Поиск в интернете (Tavily, только медицинские сайты)",
-  "web_mode_opts": ["если библиотека молчит", "всегда добавлять", "выключен"],
+  "web_mode_opts": ["всегда добавлять", "если библиотека молчит", "выключен"],
   "web_mode_help": "Результаты из интернета берутся с фиксированного списка медицинских сайтов и помечаются WEB-n. "
                    "«Всегда добавлять» — один поиск на каждый вопрос в дополнение к библиотеке.",
   "web_add_info": "Кроме библиотеки, в ответ добавлены **источники из интернета** с медицинских сайтов (Tavily) — у них метки WEB-n; это отправная точка, а не проверенный ярус.",

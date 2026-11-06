@@ -133,9 +133,19 @@ def chat_json(messages: list[dict], tier: str = "fast", *, max_tokens: int = 400
     """Ask for JSON and parse the first {...} block; {} on failure."""
     text = chat(messages, tier, temperature=0.0, max_tokens=max_tokens, purpose=purpose)
     m = re.search(r"\{.*\}", text, flags=re.S)
-    if not m:
-        return {}
-    try:
-        return json.loads(m.group(0))
-    except json.JSONDecodeError:
-        return {}
+    if m:
+        try:
+            return json.loads(m.group(0))
+        except json.JSONDecodeError:
+            pass
+    # Small models sometimes answer with the bare array and skip the {"lines": …} wrapper
+    # (2026-11-06: that is how 'Consumujte' survived the Russian cleanup — the parse failed
+    # silently and the line was never touched). Accept the array under "lines".
+    m = re.search(r"\[.*\]", text, flags=re.S)
+    if m:
+        try:
+            arr = json.loads(m.group(0))
+            return {"lines": arr} if isinstance(arr, list) else {}
+        except json.JSONDecodeError:
+            return {}
+    return {}

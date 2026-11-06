@@ -371,8 +371,10 @@ with st.sidebar:
     _web_opts = L["web_mode_opts"] if web.available() else [L["web_mode_opts"][2]]
     _web_pick = st.segmented_control(L["web_mode"], _web_opts, default=_web_opts[0],
                                      disabled=not web.available(), help=L["web_mode_help"], width="stretch")
-    web_mode = {L["web_mode_opts"][0]: "silent", L["web_mode_opts"][1]: "always",
-                L["web_mode_opts"][2]: "off"}.get(_web_pick, "silent")
+    # Default "always add" (owner, 2026-11-06): every answer shows web sources next to the
+    # library; endpoint/web.py caps the day so the free Tavily plan cannot be drained.
+    web_mode = {L["web_mode_opts"][0]: "always", L["web_mode_opts"][1]: "silent",
+                L["web_mode_opts"][2]: "off"}.get(_web_pick, "always")
     try:
         with st.spinner(L["lib_loading"], show_time=True), LIBRARY_LOCK:
             _tags = rag.all_tags()  # first call loads the index; later sessions wait, then hit the cache

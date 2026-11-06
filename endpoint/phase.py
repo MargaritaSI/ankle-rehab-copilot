@@ -96,12 +96,34 @@ class Profile:
                         "focus": focus, "caution": caution}
         return None
 
-    def context(self) -> str:
-        """Short block injected into prompts."""
+    def phase_fragment(self) -> str | None:
+        """The phase as a citable fragment of its own, id [PHASE]: the model then attributes
+        "you are in the strength-and-control phase" to the app's timeline instead of to whatever
+        paper chunk happens to sit next to it. None when the surgery date is unknown."""
+        p = self.phase
+        if p is None:
+            return None
+        end = "onwards" if p["end"] is None else f"to {p['end']}"
+        return (f"[PHASE] Typical recovery phase — from the app's own timeline, NOT a study. "
+                f"Week {self.weeks} (~{self.months} months) after surgery → typical phase '{p['name']}' "
+                f"(weeks {p['start']} {end}). Typical focus: {p['focus']}. Typical cautions: {p['caution']}. "
+                f"These windows are typical ranges across published OAT / mosaicplasty protocols; the "
+                f"person's own surgeon's protocol overrides them.")
+
+    def phase_evidence(self) -> dict | None:
+        """What the UI needs to draw the [PHASE] source card."""
+        p = self.phase
+        if p is None:
+            return None
+        return {"id": "PHASE", "weeks": self.weeks, "months": self.months, **p}
+
+    def context(self, include_phase: bool = True) -> str:
+        """Short block injected into prompts. With include_phase=False the phase description is
+        left out — the caller passes it as the separate [PHASE] fragment instead."""
         lines = [f"Surgery: {SURGERIES.get(self.surgery, self.surgery)}."]
         if self.weeks is None:
             lines.append("Surgery date not given — do not assume a phase; give ranges by phase.")
-        else:
+        elif include_phase:
             p = self.phase
             end = "onwards" if p["end"] is None else f"to {p['end']}"
             lines.append(
@@ -109,6 +131,9 @@ class Profile:
                 f"'{p['name']}' (weeks {p['start']} {end}). Typical focus: {p['focus']}. "
                 f"Typical cautions: {p['caution']}."
             )
+        else:
+            lines.append(f"Today is week {self.weeks} (~{self.months} months) after surgery; the typical "
+                         f"phase for this week is the [PHASE] fragment — cite it as [PHASE].")
         lines.append("These windows are typical ranges across published protocols; the person's "
                      "own surgeon's protocol overrides them.")
         hints = [h for h in (_SEX_HINT.get(self.sex), _AGE_HINT.get(self.age_band)) if h]

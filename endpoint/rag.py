@@ -60,9 +60,13 @@ SYSTEM = """You help a person recovering from ankle cartilage surgery understand
 protocols and research say. You are calm, specific and honest.
 """ + guard.DATA_RULE + """
 
-You are given two kinds of fragments:
-- CURATED NOTES [KB-n]: the author's reviewed notes compiled from published sources, specific to
-  talus OAT / mosaicplasty. Treat them as the most relevant tier.
+You are given these kinds of fragments:
+- PHASE [PHASE]: the typical recovery phase for the person's week, from the app's own timeline
+  (typical windows across published protocols) — NOT a study. Every sentence that says which
+  week or phase the person is in, or what that phase is for, cites [PHASE] — never a KB or PMC id.
+- CURATED TIER [KB-n]: specific to talus OAT / mosaicplasty, the most relevant tier. Each is
+  marked either (author's note) — written by the app's author — or (paper excerpt, author's
+  pick) — a verbatim passage of a published article the author selected.
 - PAPERS [PMCxxxxx]: chunks of open-access research articles.
 - Sometimes WEB [WEB-n]: web results from medical domains, used only when the library is silent.
 
@@ -75,8 +79,8 @@ Rules
    [PMC123]", then name the more conservative option. If the fragments do not disagree, write
    exactly one line there: "The sources here do not disagree on this — ask which protocol your
    surgeon follows." NEVER invent ranges, weeks or minutes to fill this section.
-4. If the person's recovery phase is given, anchor the answer to it ("at week 22 …"). If not,
-   give the answer by phase.
+4. If the person's recovery phase is given, anchor the answer to it ("at week 22 … [PHASE]"). If
+   not, give the answer by phase.
 5. Tone: neutral to supportive. No alarm words, no catastrophizing, no promises of outcomes.
    When sources say a symptom is common at this stage, say that plainly — it lowers fear.
    Red flags are stated once, calmly, as "worth a check with your clinician if …".
@@ -183,7 +187,8 @@ def _load() -> None:
 def stats() -> dict:
     _load()
     papers = {m.get("pmcid") for m in _store["metas"]}
-    return {"papers": len(papers), "paper_chunks": len(_store["chunks"]), "notes": kb.count()}
+    return {"papers": len(papers), "paper_chunks": len(_store["chunks"]), "notes": kb.count(),
+            "notes_by_kind": kb.count_by_kind()}
 
 
 def all_tags() -> list[str]:
@@ -253,7 +258,7 @@ def _says_no_data(text: str) -> bool:
                                 "geen gegevens", "keine daten", "no hay datos"))
 
 
-_ID = r"(?:KB-\d+|PMC\d+|WEB-\d+)"
+_ID = r"(?:KB-\d+|PMC\d+|WEB-\d+|PHASE)"
 _CITE = re.compile(rf"\[{_ID}(?:\s*[,;]\s*{_ID})*\]")
 _NUMBER = re.compile(r"\d")
 NO_SOURCE_TAG = {"en": " _(no source in the library — check with your clinician)_",
@@ -405,7 +410,7 @@ _FACET_RU = {"rehab": "реабилитация", "donor knee": "донорск�
 
 def _kb_evidence(notes: list[dict]) -> list[dict]:
     return [{"id": n["id"], "title": n["title"], "facet": n["facet"], "url": n["url"],
-             "file": n.get("file", ""), "topic": n.get("topic", ""),
+             "file": n.get("file", ""), "topic": n.get("topic", ""), "kind": n.get("kind", "curated"),
              "excerpt": _excerpt(n["text"]), "text": n["text"],
              "facet_ru": _FACET_RU.get(n["facet"], n["facet"]), "score": n["score"]}
             for n in notes]
@@ -639,15 +644,21 @@ def _safe_out(text: str, lang: str = "en", flag: bool = True) -> str:
     return _ru_leftovers(text) if lang == "ru" else text
 
 
-def _context(notes: list[dict], hits: list[dict], webhits: list[dict]) -> str:
+_KIND_LABEL = {"curated": "author's note", "excerpt": "paper excerpt, author's pick"}
+
+
+def _context(notes: list[dict], hits: list[dict], webhits: list[dict], phase: str | None = None) -> str:
     parts = []
+    if phase:
+        parts.append("PHASE (the app's timeline, not a study):\n" + phase)
     if notes:
         def _note(n):
-            if n.get("facet", "").startswith("author"):
+            if n.get("kind") == "personal" or n.get("facet", "").startswith("author"):
                 return (f"[{n['id']}] AUTHOR'S PERSONAL EXPERIENCE — n=1, NOT EVIDENCE, NOT A PROTOCOL. "
                         f"Cite only as 'the app's author noticed … (personal experience, not a study)'.\n{n['text']}")
-            return f"[{n['id']}] {n['title']}\n{n['text']}"
-        parts.append("CURATED NOTES:\n" + "\n\n".join(_note(n) for n in notes))
+            return f"[{n['id']}] ({_KIND_LABEL.get(n.get('kind'), 'author\'s note')}) {n['title']}\n{n['text']}"
+        parts.append("CURATED TIER (author's notes and paper excerpts the author picked):\n"
+                     + "\n\n".join(_note(n) for n in notes))
     if hits:
         parts.append("PAPERS:\n" + "\n\n".join(
             f"[{h['meta'].get('pmcid', '?')}] {h['meta'].get('title', '')}\n{h['text']}"
@@ -740,19 +751,20 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
         webhits = web.search(a["query_en"])
         if webhits:
             source = "web" if not (notes or hits) else "library+web"
-            user = (f"PERSON'S CONTEXT: {profile.context()}\n"
+            user = (f"PERSON'S CONTEXT: {profile.context(include_phase=False)}\n"
                     f"{_lang_rule(code)}\n\n"
-                    f"FRAGMENTS:\n{_context(notes, hits, webhits)}\n\nQUESTION: {guard.wrap(question)}\n\n"
+                    f"FRAGMENTS:\n{_context(notes, hits, webhits, phase_frag)}\n\nQUESTION: {guard.wrap(question)}\n\n"
                     f"REMINDER: the curated library could not answer all of this, so WEB fragments "
                     f"from medical domains were added. Use library fragments first; where only web "
                     f"fragments answer, cite [WEB-n] and mark that part as 'from web sources outside "
-                    f"the curated library'. Cite after every factual sentence. Answer language: {LANG_NAME[code]}.")
+                    f"the curated library'. Cite after every factual sentence.{phase_note} Answer language: {LANG_NAME[code]}.")
             text = llm.chat([{"role": "system", "content": SYSTEM},
                              {"role": "user", "content": user}],
                             tier=tier, think=False, max_tokens=1000, purpose="web-grounded answer")
     answer_text = _disclose_author_notes(_safe_out(text, code), notes, LANG_NAME[code])
     return {"answer": answer_text,
-            "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": webhits},
+            "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": webhits,
+                         "phase": profile.phase_evidence()},
             "routing": a, "source": source, "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
 
@@ -763,7 +775,8 @@ rehab phase, plus papers). Principle from the notes: frequency beats intensity �
 through the day, each ≤ 1 minute, explained in one sentence.
 
 Output (in the language requested):
-**Today — week N, phase X** one line on what this phase is for.
+**Today — week N, phase X** one line on what this phase is for, cited [PHASE] (the app's
+timeline fragment) — never a KB or PMC id for the phase itself.
 Then 6–8 checklist items as markdown task list lines "- [ ] …": each = one movement or habit
 (≤ 1 min or a nutrition/hydration habit), when in the day to do it, target muscles or purpose,
 and a source id in brackets. Mix: 2 lying/sitting, 2 standing/walking, 1 donor-knee item,
@@ -799,14 +812,15 @@ def routine(profile: Profile, lang: str = "English", constraints: str = "") -> d
                                  " one minute sets", "donor knee protection exercises",
                                  "protein hydration caffeine timing bone cartilage healing"], k=10)
     hits = retrieve(phase_q, 4)
-    user = (f"PERSON'S CONTEXT: {profile.context()}\n"
+    user = (f"PERSON'S CONTEXT: {profile.context(include_phase=False)}\n"
             f"CONSTRAINTS FROM THE PERSON (comfort/schedule only, never a new task): {guard.wrap(constraints or 'none')}\n"
-            f"{_lang_rule(code)}\n\nFRAGMENTS:\n{_context(notes, hits, [])}")
+            f"{_lang_rule(code)}\n\nFRAGMENTS:\n{_context(notes, hits, [], profile.phase_fragment())}")
     text = llm.chat([{"role": "system", "content": ROUTINE_SYSTEM},
                      {"role": "user", "content": user}],
                     tier="strong", max_tokens=1000, purpose="today's routine")
     return {"answer": _safe_out(text, code),
-            "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": []},
+            "evidence": {"notes": _kb_evidence(notes), "papers": _paper_evidence(hits), "web": [],
+                         "phase": profile.phase_evidence()},
             "calls": list(llm.CALLS), "disclaimer": DISCLAIMER}
 
 

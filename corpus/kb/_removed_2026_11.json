@@ -1,0 +1,520 @@
+[
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "OAT (mosaicplasty) for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7049595/",
+    "chunk_idx": 9,
+    "text": "conflicts of interest . Acknowledgments Research performed at Sport Medicine and Knee Research Center, Milad Hospital, Tehran, Iran. But, this research did not receive any specific grant from funding agencies in the public, commercial, or not-for-profit sectors. Footnotes Peer review under responsibility of Chinese Medical Association.",
+    "_file": "talus_oat_rehab",
+    "_pos": 9,
+    "_reasons": [
+      "acknowledgements / back matter (3)"
+    ]
+  },
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "New approach to postoperative rehabilitation after mosaicplasty + BMAC",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11200487/",
+    "chunk_idx": 9,
+    "text": "diseases, ligament lesions, lower limb disuse or less than 120° ROM of flexion, and moderate hydrarthrosis). The patients were randomly divided into three groups. All the participants were diagnosed with cartilage defects based on a magnetic resonance imaging (MRI) scan of the knee. Group 1—( n = 10) mosaicplasty + 12-week two-phase rehabilitation and BMAC augmentation; Group 2—( n = 15) mosaicplasty + 12-week two-phase rehabilitation; Group 3—( n = 12) mosaicplasty + 6 weeks one-phase rehabilitation. 2.2. Surgical Treatment and BMAC Augmentation The surgery will be performed at Piatra Neamt Emergency County Hospital, radio-imaging investigations will be performed both in the radiology and imaging department of the Hospital and at the Micromedica Clinic, with 1.5 Tesla MRIs. Mosaicplasty was performed with Arthrex OATS ® disposable kit (Arthrex GmbH, Munich, Germany) ( Figure 1 ), and BMAC augmentation was performed with BioCUE ® BMAC—Zimmer Biomet ® kit (Zimmer Biomet, Warsaw, IN, USA) ( Figure 2 ). Figure 1. Open in a new tab Mosaicplasty procedure using the Artherx OATS ® technique. In the left photo, we see the chondral lesion,",
+    "_file": "talus_oat_rehab",
+    "_pos": 19,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "New approach to postoperative rehabilitation after mosaicplasty + BMAC",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11200487/",
+    "chunk_idx": 10,
+    "text": "in the middle photo, the plug extraction, and in the right photo, the plugs are loaded with intact cartilage. Figure 2. Open in a new tab Bone marrow aspirate concentrate (BMAC) augmentation using the BioCUE ® BMAC—Zimmer Biomet ® kit. The bone marrow was extracted from the anterior superior iliac spine (ASIS), selected for its accessibility during arthroscopy, as illustrated in the left image by the orthopedist. The harvested material is then processed using the Druker/Biologics 755VES Biomet Centrifuge depicted in the middle, followed by additional concentration using the BioCUE ® Blood and Bone Marrow Aspirate (BBMA) Concentration System shown on the right side. After the initial arthroscopic examination, the size and location of the chondral defect are assessed after appropriate debridement. Graft harvesting was then performed from the periphery of the non-weight-bearing trochlea. To prepare for graft insertion at the recipient site, a drill guide was inserted perpendicular to the joint surface into the defect to allow for graft socket reaming. Grafts were spaced at approximately 3 mm to avoid tunnel confluence and the loosening of condyles. It is",
+    "_file": "talus_oat_rehab",
+    "_pos": 20,
+    "_reasons": []
+  },
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "Triplane osteotomy + talar autologous osteochondral transplantation",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8783502/",
+    "chunk_idx": 6,
+    "text": "classification [ 11 ] based on CT scans. Among the OLTs, 5 OLTs were type I, 11 OLTs were typeIIa and 7 OLTs were typeIIb. The average area of the lesion was 113.2 ± 28.1 (range, 63.6–153.9) mm 2 , and the mean depth of the cyst was 11.0 ± 2.5 (range, 7.0–16.0) mm after debridement during the operation (Table 1 ). Table 1. Demographic data of OLT patients Cases Sex Age (yr) BMI Side Etiology Duration (mo) Classification Location Area of lesion (mm 2 ) Depth of lesion (mm) 1 F 29 25 R Sprain 11 IIa 7 78.5 7 2 M 32 26 L Fracture 20 IIa 4 113.1 13 3 F 35 22 R Sprain 12 I 4 132.7 8 4 M 36 30 L Unknown 8 IIa 4 78.5 16 5 M 44 25 L Sprain 19 IIb 4 113.1 9 6 M 30 24 R Fracture 12 IIb 4 132.7 10 7 F 31 26 R Sprain 6 IIa 4 153.9 9 8 M 37 27 L Unknown 9 IIb 7 132.7 11 9 M",
+    "_file": "talus_oat_rehab",
+    "_pos": 40,
+    "_reasons": [
+      "data table (digits 23%, numeric tokens 47%)"
+    ]
+  },
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "Triplane osteotomy + talar autologous osteochondral transplantation",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8783502/",
+    "chunk_idx": 7,
+    "text": "42 23 L Unknown 10 IIa 4 113.1 13 10 F 31 29 L Sprain 7 I 4 113.1 11 11 M 27 28 R Sprain 33 IIa 4 78.5 9 12 M 20 30 R Sprain 21 IIa 4 153.9 14 13 F 31 21 L Unknown 9 IIb 4 63.6 10 14 F 29 23 L Unknown 11 IIa 4 113.1 9 15 M 19 27 R Sprain 6 I 4 78.5 7 16 M 27 21 L Sprain 8 I 5 78.5 9 17 F 23 19 L Unknown 13 IIa 4 153.9 13 18 M 24 22 R Sprain 12 IIa 4 132.7 10 19 F 41 33 L Sprain 9 IIb 4 132.7 14 20 M 30 24 L Unknown 10 IIb 7 78.5 11 21 M 27 22 L Sprain 14 IIa 4 113.1 15 22 F 46 30 R Fracture 21 I 4 132.7 11 23 M 32 20 R Sprain 12 IIb 4 132.7 13 Open in a new tab Surgical technique All the operations were finished by the same surgeon (ZHM).",
+    "_file": "talus_oat_rehab",
+    "_pos": 41,
+    "_reasons": [
+      "data table (digits 45%, numeric tokens 66%)"
+    ]
+  },
+  {
+    "topic": "talus_oat_rehab",
+    "source_title": "Triplane osteotomy + talar autologous osteochondral transplantation",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8783502/",
+    "chunk_idx": 10,
+    "text": "medial malleolar triplane osteotomy; C : AOT for OLTs from a non-weight-bearing area, and the donor defect was filled with a bone graft with periosteum from the tibia; D - E : medial malleolar osteotomy fixed with screws Fig. 3. Open in a new tab Case1, female, 31y, osteochondral lesions of left talus. A - E : preoperative imaging (X - ray and CT) supported the diagnosis; F - G : the lesion was exposed through the medial malleolus triplane osteotomy and debrided; H - I : AOT for OLTs from a non-weight-bearing area, and the donor defect was filled with a bone graft with periosteum from the tibia; J - M : at 37-month follow-up, imaging showed that the grafts had fused with the original bone in the talus, and the medial malleolus had achieved anatomic union Fig. 4. Open in a new tab Case2, female, 41y, osteochondral lesions of left talus. A - C : preoperative imaging (X - ray and CT) supported the diagnosis; D - E : the lesion was exposed through the medial malleolus triplane",
+    "_file": "talus_oat_rehab",
+    "_pos": 44,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Knee donor-site morbidity after mosaicplasty — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5095115/",
+    "chunk_idx": 5,
+    "text": "according to the Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA) statement, which aims to improve the standard of reporting of systematic reviews and meta-analyses (Liberati et al. 2009 ). The protocol used was a priori registered at the International Prospective Register of Systematic Reviews (PROSPERO) ( http://www.crd.york.ac.uk/prospero/ ; ID: CRD42016032861). A comprehensive database search using Pubmed, Cochrane Library, SPORTDiscus and Cumulative Index of Nursing and Allied Health (CINAHL) was carried out. We included original articles that assessed the occurrence of morbidity associated with the mosaicplasty surgical procedure. All searches were performed up to October 10, 2016. Two investigators (R.A., S.V.) performed the search independently, and results were confronted to check for overlapping; any disagreement was discussed until consensus was reached, involving the senior authors. The reference list of the most relevant original studies was scanned for additional studies. The search strategy combined the following search terms: mosaicplasty; OATS; “osteochondral autograft”; “osteochondral transfer”; “osteochondral transplant”; morbidity; “donor-site”; harvest; “postoperative complications”. Study selection All the titles and abstracts obtained from the databases were screened for relevant articles. The potential relevant",
+    "_file": "donor_knee",
+    "_pos": 5,
+    "_reasons": [
+      "search strategy (7 markers)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Knee donor-site morbidity after mosaicplasty — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5095115/",
+    "chunk_idx": 9,
+    "text": "; Ahmad & Jones 2015 ; Al-Shaikh et al. 2002 ; Atik et al. 2005 ; Baltzer & Arnold 2005 ; de l'Escalopier et al. 2015 ; Gautier et al. 2002 ; Hangody et al. 2001a ; Hangody et al. 2008 ; Jakob et al. 2002 ; Kim et al. 2012 ; Kock et al. 2010 ; Koulalis et al. 2004 ; Lee et al. 2003 ; Quarch et al. 2014 ; Reverte-Vinaixa et al. 2013 ; Valderrabano et al. 2009 ; Clavé et al. 2016 ) were eligible for inclusion in the systematic review, which were further subgrouped into knee and ankle joints. All studies concerning mosaicplasty procedure performed in the upper limb have been excluded based on the initially established criteria, including: immature population (Vezeridis & Bae 2016 ; Lyons et al. 2015 ; Nishimura et al. 2011 ; Iwasaki et al. 2007 ; Iwasaki et al. 2009 ; Shimada et al. 2005 ); single case-study (Zelent & Neese 2005 ); non-English language (Braun et al. 2012 ); case series under 10 participants (Han et al. 2012 ;",
+    "_file": "donor_knee",
+    "_pos": 9,
+    "_reasons": [
+      "reference list (26 citations, 5 verbs)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Knee donor-site morbidity after mosaicplasty — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5095115/",
+    "chunk_idx": 10,
+    "text": "Tsuda et al. 2005 ). Search strategy steps and reasons for inclusion can be seen at the PRISMA flow chart (Fig. 1 ). Table 1. Example of search strategy for Pubmed database Search Search term(s) Results #1 Search mosaicplasty 259 #2 Search OATS 4 816 #3 Search “osteochondral autograft” 268 #4 Search “osteochondral transfer” 29 #5 Search “osteochondral transplant” 16 #6 Search (#1 OR #2 OR #3 OR #4 OR #5) 5 292 #7 Search morbidity 2 200 564 #8 Search “donor site” 10 680 #9 Search harvest 18 740 #10 Search “postoperative complications” 333 798 #11 Search (#7 OR #8 OR #9 OR #10) 2 465 489 #12 Search (#6 AND #11) 369 Open in a new tab Fig. 1. Open in a new tab Preferred Reporting Items for Systematic Reviews and Meta-Analyses (PRISMA) flow chart for the database search Population characteristics Characteristics of the sample population and articular cartilage / osteochondral defects from the 21 included original studies are depicted in Table 2 . Overall, a total of 1726 patients (1472 and 254 patients underwent knee and ankle",
+    "_file": "donor_knee",
+    "_pos": 10,
+    "_reasons": [
+      "search strategy (17 markers)",
+      "figure/table captions (8)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Knee donor-site morbidity after mosaicplasty — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5095115/",
+    "chunk_idx": 11,
+    "text": "mosaicplasty, respectively) with a mean age of 33.2 years and 34.8 years old for the knee and ankle joints cohorts, respectively. The original included studies comprised mostly small sample sizes (between 11 and 30 participants) (Reddy et al. 2007 ; Gudas et al. 2005 ; Ahmad & Jones 2015 ; Al-Shaikh et al. 2002 ; Atik et al. 2005 ; Gautier et al. 2002 ; Kock et al. 2010 ; Lee et al. 2003 ; Quarch et al. 2014 ; Reverte-Vinaixa et al. 2013 ; Valderrabano et al. 2009 ; Clavé et al. 2016 ), a few moderate samples sizes (between 31 and 48 participants) (Espregueira-Mendes et al. 2012 ; Baltzer & Arnold 2005 ; de l'Escalopier et al. 2015 ; Hangody et al. 2001a ; Jakob et al. 2002 ; Kim et al. 2012 ) and two large scale retrospective studies(303 and 967 participants) (Hangody et al. 2010 ; Hangody et al. 2008 ). Table 2. Population and articular cartilage / osteochondral defects characteristics First author (year) Population M : F Age (years) Defect location Defect size mean (range)",
+    "_file": "donor_knee",
+    "_pos": 11,
+    "_reasons": [
+      "reference list (20 citations, 1 verbs)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Donor-site morbidity after OAT (capitellum) — review & meta-analysis",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5489608/",
+    "chunk_idx": 5,
+    "text": "in English. Case reports, reviews, and cadaveric studies were excluded. Donor-site morbidity was defined as the presence of persistent symptoms (≥1 year) after graft harvesting, as well as the need for subsequent intervention to treat complications related to the donor site. Search strategy A literature search was performed in the following databases up to November 6, 2016: PubMed/MEDLINE, Embase, and the Cochrane Library. The PubMed/MEDLINE search strategy was adjusted into similar search strategies for other databases (Online Appendix 1). Reference lists of retrieved studies were manually searched for additional studies potentially meeting the inclusion criteria. Study selection Study selection was independently performed by two authors. First, title and abstract were screened to identify potentially relevant papers (R.B. and P.O.). These results were verified by two senior authors (L.O. and M.v.d.B.). Subsequently, manuscripts were retrieved when title or abstract revealed insufficient information to determine the appropriateness for inclusion. Disagreement was resolved by discussion or with arbitration when necessary by the senior authors (L.O. and M.v.d.B.) when differences remained. Data extraction The main outcome of interest was the presence or absence of",
+    "_file": "donor_knee",
+    "_pos": 17,
+    "_reasons": [
+      "search strategy (6 markers)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Donor-site morbidity after OAT (capitellum) — review & meta-analysis",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5489608/",
+    "chunk_idx": 9,
+    "text": "34 – Superolateral FC Contralateral 2.1 (1–3) 6–8 – Bone graft from capitellum Kosaka 2013 19 14 59 – None-weight bearing areas FC – – – – No Maruyama 2014 33 14 28 Arthrotomy Superolateral FC Ipsilateral 1.8 (1–3) 7 (5–9) 14 (9–20) No Weigelt 2015 14 18 84 Arthrotomy Superolateral FC Ipsilateral 1 8–11 – No Lyons 2015 11 15 23 Arthrotomy Lateral trochlear ridge FC Ipsilateral – – – Tru-Fit plug if diameter > 10 mm or 2 × 8 mm Rib-to-elbow Osteochondral Autologous Transplantation (N = 62) Sato 2008 14 16 22 Open 5th/6th costal-osteochondral junction Ipsilateral 1–2 – – No Shimada 2012 26 16 36 Open 5th/6th costal-osteochondral junction Ipsilateral 1–1.5 – 18 No Nishinaka 2014 22 14 27 Open 6th costal-osteochondral junction ‘Right side’ – – 20 No Open in a new tab PF patellofemoral, FC femoral condyle Fig. 1. Open in a new tab Flowchart of search strategy following PRISMA (preferred reporting items for systematic reviews and meta-analyses) guidelines The knee served as the donor site in 128 patients across eight studies (Table 1",
+    "_file": "donor_knee",
+    "_pos": 21,
+    "_reasons": [
+      "figure/table captions (5)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Long-term results of OAT of the talus (knee donor, 10+ yr)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7607963/",
+    "chunk_idx": 6,
+    "text": "at an adequate angle regardless of the size of the defect (Figures 1 and 2a-e). Figure 1. Stages of modified medial malleolar osteotomy technique. Red arrow: Removal of triangular prism-shaped bone block and oblique view of transfer of osteochondral autograft transfer plug. Black circle: Red dotted line shows oblique medial malleolar osteotomy line. Open in a new tab Figure 2. (a) Perioperative pictures of talar lesion area (black arrow) after malleolar osteotomy is performed. (b) Black arrow shows sulcus after groove osteotomy is performed. (c) Demonstration of ability to have an adequate angle to reach lesion. (d) Visualization of area after implantation of osteochondral plug. (e) Black arrow shows joint congruency in lateral view after implantation of osteochondral autograft transfer plug. Open in a new tab This method provides better exposure of the talus, better handling of the recipient tool, and accurate insertion of the plug. The osteochondral plug, which is taken from the medial femoral condyle of the ipsilateral knee, is inserted, and the triangular block is fixed to its original location without a fixation device. The medial malleolar",
+    "_file": "donor_knee",
+    "_pos": 30,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Long-term results of OAT of the talus (knee donor, 10+ yr)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7607963/",
+    "chunk_idx": 7,
+    "text": "osteosynthesis is created by inserting two 4.5 mm cannulated screws in the predrilled holes, and the periosteum is sutured over the tibia (Figures 3 and 4). Figure 3. (a) Postoperative (10 years) anteroposterior and (b) lateral X-ray views of a 34-year-old male patient. Open in a new tab Figure 4. (a) Sagittal and (b) coronal magnetic resonance imaging views of left ankle demonstrate a centro-medial osteochondral defect of talar. Open in a new tab Statistical analysis The descriptive statistics were calculated as the mean±standard deviation. The principal dependent variables of the clinical outcomes were the VAS, AOFAS, Tegner-Lysholm scores at the last follow-up. Improvement in preoperative functions and the last control values were evaluated using a paired t-test. The statistical analysis was conducted using the SPSS version 13.0.1 software (SPSS Inc., Chicago, IL, USA), and significance was defined as p≤0.05. Results According to the radiology reports and Bristol classification, type 3 was identified in 12 (57%) ankles, type 4 was identified in seven (33.3%) ankles, and type 5 was identified in two (9.6%) ankles. Among the 20 patients, one was",
+    "_file": "donor_knee",
+    "_pos": 31,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Long-term results of OAT of the talus (knee donor, 10+ yr)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7607963/",
+    "chunk_idx": 9,
+    "text": "10-11, 10-11 2 133 58 88 None 5 42/F Medial 36 20x11 5 13-12, 10-9 2 146 48 60 Postoperative 6 th year arthrodesis 6 42/M Medial 24 10x10 3 10 1 124 65 90 None 7 33/F Medial 10 18x9 3 8-9, 9-10 2 148 70 94 None 8 41/M Medial 24 16x9 4 8-9, 8-9 2 130 60 85 None 9 19/M Medial 8 9x9 3 10 1 156 62 88 None 10 19/F Central 48 9x9 4 10 1 121 65 92 None 11 25/M Medial 6 18x10 3 9-10, 9-10 2 133 60 90 None 12 42/M Medial 10 9x9 3 10 1 120 61 85 None 13 40/M Medial 12 9x9 3 10 1 140 60 90 None 14 26/M Medial 18 19x10 3 9-10, 10-11 2 151 66 88 None 15 32/F Medial 18 8x8 3 9 1 136 65 84 Knee pain 16 23/F Medial 48 8 8 3 9 1 127 60 90 None 17 51/F Medial 48 15x9 3 8-9, 8-9 2 166 62 94 None 18 38/F Medial 12 15x8",
+    "_file": "donor_knee",
+    "_pos": 33,
+    "_reasons": [
+      "data table (digits 56%, numeric tokens 74%)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 4,
+    "text": "this systematic review and meta-analysis was to evaluate the current evidence for the use of OATS in the management of OLT. Review Materials and methods Search Strategy This systematic review was carried out in accordance with the updated Preferred Reporting Items for Systematic Reviews (PRISMA) guidelines [ 26 ]. A comprehensive search of the literature was performed using the databases PubMed, EMBASE, Scopus, and the Cochrane Library. As recommended in the literature, four databases were chosen to improve the sensitivity of the search [ 15 , 27 ]. The search terms used were: '(OATS OR osteochondral autograft transfer system OR osteochondral autografting OR mosaicplasty OR autologous osteochondral transplant)’ AND ‘(ankle OR talus OR “osteochondral lesion of the talus’ OR OLT). These search terms were developed in line with international expert consensus on terminology for OLT [ 6 ]. Databases were searched for articles published between 1st June 2012 and 31st May 2022 to ensure the most current research was included. Reference lists of included studies were also manually searched. Inclusion and exclusion criteria are specified in Table 1 . Search",
+    "_file": "donor_knee",
+    "_pos": 40,
+    "_reasons": [
+      "search strategy (8 markers)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 5,
+    "text": "results of each database were exported to the systematic review manager Rayyan ( http://rayyan.qcri.org ) for the title and abstract screening [ 28 ]. Titles and abstracts were screened and following screening and removal of duplicates, the remaining articles were retrieved for full-text review and compared to the inclusion and exclusion criteria. Articles that did not meet inclusion criteria were excluded. Table 1. Inclusion and Exclusion Criteria. OLT: Osteochondral lesions of the talus; OATS: Osteochondral autograft transfer system Inclusion Criteria Evidence level I-IV studies evaluating the clinical outcomes of OATS procedure for OLT. Minimum sample size of 10 patients. Minimum follow-up period of 6 months. Published in a peer-reviewed journal between 1 st June 2012 and 31 st May 2022. Published in the English language. Exclusion Criteria Systematic review or level V study. Published outside of the timeframe specified above. Published in a language other than English. Open in a new tab Data Extraction The following details of interest were extracted from each study: name of authors, year of publication, study type, level of evidence, number of patients, number of",
+    "_file": "donor_knee",
+    "_pos": 41,
+    "_reasons": []
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 8,
+    "text": "the reference lists of full-text articles yielded no additional articles. A total of 23 articles including 797 patients were included in this study (Figure 1 ). Figure 1. PRISMA Flow Chart . Open in a new tab PRISMA: Preferred Reporting Items for Systematic Reviews Demographic Data and Patient History Demographic data are summarised in Table 2 . Across the 23 studies, a total of 797 patients were included in this review. Of the 797 patients, 527 (66.1%) were male, while 270 (33.9%) were female. The mean age was 36.2±7.06 years (range 25.4 - 55.4). The mean duration of symptoms prior to surgery, reported in 14 studies, was 21.66±13.94 months. The mean area of OLT, as reported in 13 studies, was 135.5±45.85mm 2 (range 85 - 249mm 2 ). Out of 12 studies on 470 patients, 344 (73.2%) reported a history of trauma. One study (4.3%) reported that no patients included had prior ankle surgery before undergoing OATS, while nine studies (39.1%) did not provide this data. Across the remaining 13 studies, 243 of 476 (51%) patients had undergone ankle surgery",
+    "_file": "donor_knee",
+    "_pos": 44,
+    "_reasons": [
+      "figure/table captions (5)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 9,
+    "text": "prior to OATS. Table 2. Patient Demographics and Patient History. M = Male; F = Female; NR = not reported Author Gender Mean Age (years) Mean Duration of Symptoms (months) History of Trauma [n (%)] Mean Area of Lesion (mm 2 ) Prior Ankle Surgery [n (%)] Guney et al. [ 3 ] M = 32; F = 22 40.1 8.9 43 (80) NR NR Haleem et al. [ 12 ] M = 24; F = 18 43.7 31.8 29 (69) 118 NR Shimozono et al. [ 13 ] M = 19; F = 22 38.4 28.1 NR 116.2 16 (39) Adanas and Ozkan [ 15 ] M = 15; F = 8 32.3 13 17 (73.9) Diameter Only NR Bai et al. [ 16 ] M = 14; F = 5 33 NR NR NR NR Basal and Aslan [ 17 ] M = 8; F = 3 31.7 6 5 (45) Diameter Only No de L’Escalopier et al. (2021) [ 18 ] M = 37; F = 19 34 21 42 (75) Diameter Only 11 (20) Kim and",
+    "_file": "donor_knee",
+    "_pos": 45,
+    "_reasons": [
+      "data table (digits 20%, numeric tokens 50%)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 10,
+    "text": "Haskell [ 20 ] M = 11; F = 21 48.6 NR NR 86.2 3 (9) Li et al. [ 21 ] M = 6; F = 7 55.4 NR 6 (46) 135.9 NR Toker et al. [ 22 ] M = 11; F = 9 33.5 21.9 NR Diameter Only 4 (20) Park et al. [ 24 ] M = 31; F = 15 34.2 NR NR 194.9 28 (61) Ahmad and Jones [ 34 ] M = 21; F = 15 41.3 NR NR 160 27 (75) Yoon et al. [ 35 ] M = 33; F = 11 37.1 59.9 26 (59) 152.9 44 (100) Petersen et al. [ 36 ] M = 12; F = 8 25.4 NR NR Diameter Only 20 (100) de L’Escalopier et al. (2015) [ 37 ] M = 29; F = 8 33 29 31 (84) 85 8 (22) Flynn et al. [ 38 ] M = 55; F = 30 36.7 29.6 52 (59.8) 104.2 NR Nguyen et al. [ 39 ] M = 38; F = 0 26 9.7",
+    "_file": "donor_knee",
+    "_pos": 46,
+    "_reasons": [
+      "data table (digits 38%, numeric tokens 65%)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "Effectiveness of OAT for osteochondral lesions of the talus",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9741491/",
+    "chunk_idx": 11,
+    "text": "NR 249 13 (34) Georgiannos et al. [ 40 ] M = 37; F = 9 36.2 12 46 (100) NR 46 (100) Wan et al. [ 41 ] M = 16; F = 8 39.1 19.6 NR NR 17 (70.8) Zhang et al. [ 42 ] M = 14; F = 9 31.4 12.7 16 (70) 113.2 NR Sabaghzadeh et al. [ 43 ] M = 11; F = 8 43 NR NR NR NR Fraser et al. [ 44 ] M = 24; F = 12 31 NR 31 (86) 133 6 (17) Emre et al. [ 45 ] M = 29; F = 3 27.5 NR NR 113 NR Open in a new tab Study Design Of the 23 studies included, 17 (73.9%) were level IV studies, while four (17.4%) were level III and two (8.7%) were level II studies (Table 3 ). The mean duration of follow-up across all studies was 47.7±32.68 months (range 12 - 143.5 months). The mean effective percentage of follow-up was 96.46% (range 76 - 100%). All 23 studies (100%) adequately described",
+    "_file": "donor_knee",
+    "_pos": 47,
+    "_reasons": [
+      "data table (digits 24%, numeric tokens 52%)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "OAT with ipsilateral lateral talar autograft (avoiding knee donor)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11262937/",
+    "chunk_idx": 6,
+    "text": "normal (slight areas of hyperintensity) Abnormal (large areas of hyperintensity) Absent Effusion Absent Mild Moderate Severe Bone marrow edema Absent Mild Moderate Severe Open in a new tab MRI: magnetic resonance imaging. Clinical outcomes were evaluated using the American Orthopaedic Foot and Ankle Society (AOFAS) ankle-hindfoot scale and a visual analog scale (VAS). Preoperatively, simple weight-bearing ankle radiography and ankle MRI were performed. Weight-bearing ankle radiographs were obtained postoperatively and at 1 year after surgery. The Foot and Ankle Outcome Score (FAOS) was evaluated at 1 year after surgery. Surgical Protocol All procedures were performed under general or spinal anesthesia using a thigh pneumatic tourniquet. Unstable lesions on the medial talar domes were detected on arthroscopic images. All lesions were located on the medial talar dome ( Fig. 1 ). A longitudinal incision was made over the medial malleolus. After predrilling of the medial malleolus, a chevron-shaped medial malleolar osteotomy was performed, and the medial malleolus was retracted downward. The OLT was exposed, excised, and prepared. Fig. 1. Gross intraoperative images of osteochondral autologous transplantation with lateral talar autograft. (A)",
+    "_file": "donor_knee",
+    "_pos": 54,
+    "_reasons": []
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "OAT with ipsilateral lateral talar autograft (avoiding knee donor)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11262937/",
+    "chunk_idx": 9,
+    "text": "and all lesions included subchondral cysts. The average depth of lesions was 7.3 mm (range, 6.2–9.1 mm). Graft sizes ranged from 8 to 10 mm in diameter (8 mm, n = 1; 10 mm, n = 10) ( Table 2 ). Two out of eleven patients had a history of arthroscopic microfracture before OAT. Table 2. Demographic Data of Patients. No. Sex Age (yr) BMI (kg/m 2 ) Duration of symptom (mo) Lesion size (coronal × sagittal, mm) Lesion area (mm 2 ) Depth (mm) Graft diameter size (mm) Previous operation history 1 M 68 19.7 48 7.0 × 9.5 52.5 7.3 8 - 2 F 60 26.6 36 7.1 × 8.0 44.9 6.7 10 AS microfracture 3 F 63 28.4 36 7.0 × 8.1 44.8 9.0 10 - 4 M 51 28.0 7 6.0 × 9.6 45.5 6.8 10 - 5 M 41 26.6 36 9.6 × 9.5 72.0 8.5 10 AS microfracture 6 F 23 19.5 24 5.0 × 8.5 33.6 7.1 10 - 7 F 63 20.0 12 6.2 × 8.0 39.2 6.3 10 - 8 M",
+    "_file": "donor_knee",
+    "_pos": 57,
+    "_reasons": [
+      "data table (digits 24%, numeric tokens 58%)"
+    ]
+  },
+  {
+    "topic": "donor_knee",
+    "source_title": "OAT with ipsilateral lateral talar autograft (avoiding knee donor)",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11262937/",
+    "chunk_idx": 11,
+    "text": "visual analog scale (VAS; A) and American Orthopaedic Foot and Ankle Society (AOFAS; B) scores. * Statistical significance, p < 0.05. Open in a new tab Fig. 3. Average Foot and Ankle Outcome Score (FAOS), including 5 subscales and total scores at the final follow-up. Open in a new tab Fig. 4. Serial ankle lateral simple radiographs of the lateral talar articular donor site. Radiographs immediately after surgery (A), at 7 months after surgery (B), and at 12 months after surgery (C). Arrows indicate the lateral talar donor site. Open in a new tab Furthermore, no infections, neurovascular injuries, or other complications were noted at the graft and donor sites. In 4 of 11 cases, a follow-up ankle MRI was performed after removing 2 cannulated screws to fix the osteotomy at least 1 year after OAT ( Table 3 ). In the harvested area, the follow-up MRI revealed 50%–100% filling, mild-to-absent bone marrow edema, and mild-to-moderate joint effusion in the harvested area. Furthermore, in 3 out of the 4 patients, the signal of the harvested area on the follow-up MRI",
+    "_file": "donor_knee",
+    "_pos": 59,
+    "_reasons": [
+      "figure/table captions (6)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Vitamin C, collagen synthesis and bone healing — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6204628/",
+    "chunk_idx": 4,
+    "text": "reduced oxidative stress and accelerated tissue healing when compared with control groups. Methods Article Identification and Selection A systematic review of articles, using the PRISMA (Preferred Reporting Items for Systematic Meta-Analyses) guidelines, on the efficacy of vitamin C in promoting collagen synthesis, reducing inflammation, and improving bone/ligament/tendon healing after musculoskeletal injuries was performed using the Cochrane Database of Systematic Reviews, the Cochrane Central Register of Controlled Trials, PubMed (1980-2017), MEDLINE (1980-2017), and Embase (1980-2017); the queries were performed in November 2017. Registration of this systematic review was performed in January 2018 using the PROSPERO international prospective register of systematic reviews (CRD42018086378). The search terms utilized were “vitamin C” OR “ascorbic acid” AND “musculoskeletal injury”; “vitamin C” OR “ascorbic acid” AND “collagen cross-linking”; “vitamin C” OR “ascorbic acid” AND “orthopaedics”; “vitamin C” OR “ascorbic acid” AND “bone healing”; “vitamin C” OR “ascorbic acid” AND “ligament healing”; “vitamin C” OR “ascorbic acid” AND “tendon healing”; and “vitamin C” OR “ascorbic acid” AND “postoperative recovery.” The inclusion criteria consisted of English-language studies and both animal and human studies on vitamin C supplementation after",
+    "_file": "nutrition_supplements",
+    "_pos": 4,
+    "_reasons": [
+      "search strategy (7 markers)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Vitamin C, collagen synthesis and bone healing — systematic review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6204628/",
+    "chunk_idx": 6,
+    "text": "supplementation dosage, treatment details, follow-up, and subjective and objective patient outcomes were recorded for all clinical studies. For continuous variables (age, outcome scores, etc), the mean and range were obtained if reported. Results The literature search identified 286 studies from the aforementioned databases. After duplicates were removed, 264 articles were screened, and 10 articles met the inclusion criteria ( Figure 1 ). There were 7 studies that evaluated the effects of vitamin C supplementation in animal models: 4 after bone fractures (nonoperative treatment), 2 after tendon ruptures (nonoperative and surgical treatment), and 1 after anterior cruciate ligament (ACL) reconstruction (ACLR) ( Table 1 ). Six of the animal studies used a rat model, and 1 study used a chicken model. There were 3 studies that evaluated the effects of vitamin C supplementation in human models: 1 after ACLR and 2 after bone fractures (nonoperative and surgical treatment). Two of the clinical studies were level 1 evidence, while 1 study was level 2 evidence. Figure 1. Open in a new tab PRISMA (Preferred Reporting Items for Systematic Reviews and Meta-Analyses) flowchart",
+    "_file": "nutrition_supplements",
+    "_pos": 6,
+    "_reasons": [
+      "figure/table captions (5)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Clinical effect of vitamin C on bone healing — systematic review",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9054165/",
+    "chunk_idx": 5,
+    "text": "vitamins simultaneously were excluded. No restrictions were applied regarding the language and the year of publication. - Information sources and search strategy A systematic search in the Cochrane Library, Scopus and PubMed-MEDLINE databases was conducted in October 2020. The following search strategy was used: 1) PubMed-MEDLINE: (\"ascorbic acid\" [MH] OR \"acid, ascorbic\" [TIAB] OR \"L-ascorbic acid\" [TIAB] OR \"acid, L-ascorbic\" [TIAB] OR \"vitamin C\" [TIAB]) AND (\"bone regeneration\" [MH] OR \"osteoconduction\" [TIAB] OR \"bone transplantation\" [MH] OR \"bone grafting\" [TIAB] OR \"guided tissue regeneration\" [MH] OR \"bone remodeling\" [MH] OR \"fracture healing\" [MH] OR \"osseointegration\" [MH]). 2) Scopus: TITLE-ABS-KEY((“ascorbic acid\" OR \"vitamin C\") AND (\"bone regeneration\" OR \"fracture healing\" OR \"osseointegration\")). 3) Cochrane Library: (“ascorbic acid\" OR \"vitamin C\") AND (\"bone regeneration\" OR \"fracture healing\" OR \"osseointegration\"). Additionally, a cluster search and a manual search of articles published during the last 10 years in \"Journal of Clinical Periodontology\", \"Journal of Periodontal Research\", \"Clinical Oral investigations\", \"Journal of Oral and Maxillofacial Surgery\" \"Medicina Oral Patología Oral y Cirugía Bucal\", \"Oral Surgery Oral Medicine Oral Pathology Oral Radiology\", \"Journal of Dentistry\", \"The",
+    "_file": "nutrition_supplements",
+    "_pos": 17,
+    "_reasons": [
+      "search strategy (8 markers)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Clinical effect of vitamin C on bone healing — systematic review",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9054165/",
+    "chunk_idx": 9,
+    "text": "Fig. 1 shows the flow-chart of the study selection process. Figure 1. Open in a new tab Flow-chart of the review process following PRISMA statements. - Risk of bias and quality assessment of the included studies Regarding animal studies, one study has a high risk of bias and low quality of reporting ( 22 ) because it has attrition bias, another has an unclear risk of bias and low quality of reporting ( 27 ), other two studies have an unclear risk of bias and an unclear quality of reporting ( 23 , 28 ) and five studies have an unclear risk of bias but high quality of reporting ( 1 , 24 - 26 , 29 ) (Fig. 2 ). Figure 2. Open in a new tab Assessment of quality and risk of bias of included animal studies. Regarding human studies, both were classified as having high risk of bias. The study of Ekrol et al . ( 11 ) because it had an attrition bias, whereas the study of Li et al . ( 20 ) had a",
+    "_file": "nutrition_supplements",
+    "_pos": 21,
+    "_reasons": [
+      "figure/table captions (8)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Clinical effect of vitamin C on bone healing — systematic review",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9054165/",
+    "chunk_idx": 10,
+    "text": "high risk of bias due mainly to performance, attrition and reporting bias (Fig. 3 ). Figure 3. Open in a new tab The Cochrane collaboration’s tool for assessing risk of bias for randomized. - Qualitative synthesis None of the included studies assessed bone gain or bone quality outcomes. Animal studies The nine animal studies included comprised 334 rats over a follow-up period ranging from 20 to 98 days. All the studies evaluated the effect of vitamin C in the following clinical scenarios: on bone healing after tibial fracture ( 22 , 23 , 27 ), on bone defects healing with the addition of pro-oxidant substances (zymosan and nicotine) ( 1 , 29 ), on alveolar bone resorption in rodents fed cholesterol-rich diets ( 24 , 25 ), in bone formation during the expansion of the inter-premaxillary suture ( 26 ) and in osteogenic differentiation and osteoclast formation in ovariectomized rats (a useful animal model for evaluating the effect of osteoporotic treatments on the skeletal system) ( 28 ) ( Table 1 ). Table 1. Description of the included animal studies.",
+    "_file": "nutrition_supplements",
+    "_pos": 22,
+    "_reasons": [
+      "figure/table captions (5)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Protein intake and bone health — umbrella review",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10382330/",
+    "chunk_idx": 4,
+    "text": "markers, total or site-specific bone mineral density (BMD), and fracture risk. In addition, the effect of the type of protein (animal or plant protein) was evaluated. Methods We conducted an umbrella review (PROSPERO: CRD42018082395) following the methodology published by Kroke et al. [ 15 ]. All methodological steps were conducted independently by two authors. Any disagreements were resolved by discussion to achieve consensus. Literature search A systematic literature search was conducted in PubMed, Embase, and Cochrane Database of Systematic Reviews for sytematic reviews (SRs) published between 1 November 2008 and 17 August 2021. The date of 1 November 2008 originates from the decision to cover a 10-year period; i.e., the initial database search was conducted on 16 November 2018, and the last update was made on 17 August 2021. The search strategy is presented in Supplementary Material S 1 . In addition to the database search, reference lists of included SRs were screened for further SR of relevance. Literature selection Titles and/or abstracts of retrieved studies were screened according to predefined inclusion and exclusion criteria [ 15 ] to identify",
+    "_file": "nutrition_supplements",
+    "_pos": 28,
+    "_reasons": []
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Smoking & alcohol on bone healing — meta-analysis",
+    "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8571530/",
+    "chunk_idx": 8,
+    "text": "and outcomes of the research as follows: (1) for bone healing, patients undergoing spinal fusion, arthrodesis, or osteotomy were included; and (2) for postoperative wound healing and wound complications, patients undergoing any surgery were included. This systematic review and meta-analysis was conducted according to the Meta-analysis of Observational Studies in Epidemiology (MOOSE) and Preferred Reporting Items for Systematic Reviews and Meta-Analysis (PRISMA) reporting guidelines. 19 , 20 The anonymous and public data from previous published studies was retrieved and analysed and the need for ethics approval and patient informed consent was therefore waived. Fig. 1. Open in a new tab PRISMA flow chart of study identification, screening, and selection for the impact of preoperative smoking cessation, nicotine replacement therapy, and vaping on fracture healing, surgical site infection and malunion. Search strategy A systematic search was conducted by a librarian by using the MEDLINE (via OvidSP), EMBASE, Cochrane Central Register of Controlled Trials (CENTRAL), CINAHL (via Ebsco), and AMED (via OvidSP) databases from the time of their inceptions until August 9th, 2021. A detailed search strategy is available in Appendices S2.1.1a",
+    "_file": "nutrition_supplements",
+    "_pos": 56,
+    "_reasons": [
+      "search strategy (8 markers)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Glucosamine and chondroitin for osteoarthritis — NCCIH (NIH)",
+    "source_url": "https://www.nccih.nih.gov/health/glucosamine-and-chondroitin-for-osteoarthritis-what-you-need-to-know",
+    "chunk_idx": 0,
+    "text": "Glucosamine and Chondroitin for Osteoarthritis | NCCIH Skip to main content Link to External Link Policy An official website of the United States government Here’s how you know Here’s how you know U.S. Department of Health and Human Services National Institutes of Health Información en Español National Center for Complementary and Integrative Health Health Info Health Info Home Topics A-Z What Is Complementary, Alternative, or Integrative Health? Pain Herbs at a Glance Know the Science Safety Information Resources for Health Care Professionals Tips on Complementary Health Statistics on Use Research Research Home Research Results by Date NCCIH Research Blog Division of Extramural Research Sponsored by NCCIH Division of Intramural Research Conducted at NCCIH Resources for Researchers Clinical Trials NIH Pain Research Center Grants & Funding Grants & Funding Home Overview: What NCCIH Funds Funding Opportunities Clinical Trial Funding Grant Policies & Guidance Application Resources Program Directors Clinical Research Toolbox Types of Grants and Contracts Small Business Research Grant Program (SBIR) General Award Mechanisms Training Training Home About Research Training and Career Development Awards & Opportunities Institutional Training Sites Training Grant",
+    "_file": "nutrition_supplements",
+    "_pos": 67,
+    "_reasons": [
+      "acknowledgements / back matter (4)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Glucosamine and chondroitin for osteoarthritis — NCCIH (NIH)",
+    "source_url": "https://www.nccih.nih.gov/health/glucosamine-and-chondroitin-for-osteoarthritis-what-you-need-to-know",
+    "chunk_idx": 1,
+    "text": "Application, Review, and Award Process More Training Resources CME/CEU and Online Lectures Online Continuing Education Series Distinguished Lecture Series Integrative Medicine Research Lecture Series News & Events News & Events Home Press Releases Alerts & Advisories Events Videos NCCIH Clinical Digest About NCCIH About NCCIH Home Organizational Structure Advisory Council Partnerships Director’s Page Strategic Plans & Reports Budget & Legislation Job Opportunities Get Involved Maps & Directions National Center for Complementary and Integrative Health Search Menu Search Search Health Info Health Info Home Topics A-Z What Is Complementary, Alternative, or Integrative Health? Pain Herbs at a Glance Know the Science Safety Information Resources for Health Care Professionals Tips on Complementary Health Statistics on Use Research Research Home Research Results by Date NCCIH Research Blog Division of Extramural Research Sponsored by NCCIH Division of Intramural Research Conducted at NCCIH Resources for Researchers Clinical Trials NIH Pain Research Center Grants & Funding Grants & Funding Home Overview: What NCCIH Funds Funding Opportunities Clinical Trial Funding Grant Policies & Guidance Application Resources Program Directors Clinical Research Toolbox Types of Grants and Contracts Small",
+    "_file": "nutrition_supplements",
+    "_pos": 68,
+    "_reasons": [
+      "acknowledgements / back matter (4)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Glucosamine and chondroitin for osteoarthritis — NCCIH (NIH)",
+    "source_url": "https://www.nccih.nih.gov/health/glucosamine-and-chondroitin-for-osteoarthritis-what-you-need-to-know",
+    "chunk_idx": 2,
+    "text": "Business Research Grant Program (SBIR) General Award Mechanisms Training Training Home About Research Training and Career Development Awards & Opportunities Institutional Training Sites Training Grant Application, Review, and Award Process More Training Resources CME/CEU and Online Lectures Online Continuing Education Series Distinguished Lecture Series Integrative Medicine Research Lecture Series News & Events News & Events Home Press Releases Alerts & Advisories Events Videos NCCIH Clinical Digest About NCCIH About NCCIH Home Organizational Structure Advisory Council Partnerships Director’s Page Strategic Plans & Reports Budget & Legislation Job Opportunities Get Involved Maps & Directions Home Health Information Glucosamine and Chondroitin for Osteoarthritis: What You Need To Know Glucosamine and Chondroitin for Osteoarthritis: What You Need To Know ©Thinkstock What is osteoarthritis? Osteoarthritis is a degenerative joint disease in which cartilage and other tissues within the joint break down or change in structure. Symptoms can include pain, joint stiffness, swelling, and difficulty in moving the joint. The joints most frequently affected by osteoarthritis include the knees, hips, and hands. More There is no cure for osteoarthritis, but a variety of treatments and self-management",
+    "_file": "nutrition_supplements",
+    "_pos": 69,
+    "_reasons": []
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "Vitamin C-enriched gelatin augments collagen synthesis",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5183725/",
+    "chunk_idx": 5,
+    "text": "ingestion of the supplement during which period 2 blood samples were taken (−30 min and 0 h). Subjects then completed 6 min of continuous rope skipping to load the musculoskeletal system. After completion of the exercise task, subjects were required to remain in the laboratory in a rested state for the subsequent 4 h, during which time a further 4 blood samples were collected. After the blood sample at 4 h, the cannula was removed, and subjects were allowed to leave the laboratory. On departure, they were provided with a skipping rope and instructed to complete a further 3 sessions/d of 6 min of continuous skipping with a minimum of 6 h between each bout of exercise. The subjects ingested their supplement, which was provided in a blinded manner, 1 h before each rope-skipping session. FIGURE 1. Open in a new tab Schematic timeline of the study. PINP, N -terminal peptide of pro-collagen I. Blood samples were drawn from the cannula at 8 time points throughout the acute testing session (at −1, −0.5, 0, 0.5, 1, 2, and 4 h)",
+    "_file": "nutrition_supplements",
+    "_pos": 84,
+    "_reasons": []
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "NSAIDs and fracture healing — systematic review/meta-analysis",
+    "source_url": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1428240/full",
+    "chunk_idx": 0,
+    "text": "Abstract Introduction Methods Results Discussion Conclusion Data availability statement Ethics statement Author contributions Funding Conflict of interest Publisher’s note Supplementary material References Figures and Tables Figure 1 View in article Figure 2 View in article Figure 3 View in article Figure 4 View in article Figure 5 View in article Table 1 Characteristics of the included studies. View in article SYSTEMATIC REVIEW article Front. Endocrinol. , 10 September 2024 Sec. Bone Research Volume 15 - 2024 | https://doi.org/10.3389/fendo.2024.1428240 Do NSAIDs affect bone healing rate, delay union, or cause non-union: an updated systematic review and meta-analysis P C Po-Yao Chuang 1,2 T Y Tien-Yu Yang 1,2 Y T Yao-Hung Tsai 1,2 K H Kuo-Chin Huang 1,2 * 1. Chang Gung University College of Medicine, Taoyuan, Taiwan 2. Department of Orthopaedic Surgery, Chiayi Chang Gung Memorial Hospital, Chiayi, Taiwan Article metrics View details Abstract Introduction: Nonsteroidal anti-inflammatory drugs (NSAIDs) may potentially delay or cause non-union of fractures by inhibiting prostaglandin synthesis. However, studies have shown conflicting results. This systematic review and meta-analysis aim to synthesize current evidence on the potential influence of",
+    "_file": "nutrition_supplements",
+    "_pos": 103,
+    "_reasons": [
+      "figure/table captions (6)",
+      "acknowledgements / back matter (6)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "NSAIDs and fracture healing — systematic review/meta-analysis",
+    "source_url": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1428240/full",
+    "chunk_idx": 6,
+    "text": "studies, as well as case-controlled studies (S). We excluded review articles, letters, commentaries, editorials, proceeding research, meeting abstracts, case reports, personal communications, non-English, and non-human studies. Eligibility of each study was confirmed by two independent reviewers, with a third reviewer consulted for uncertain cases. Main outcome measures and data extraction The outcomes of interest centered on the association between NSAID usage and non-union/delayed union and the association between NSAID usage and reoperation (i.e., revision surgery). From the eligible studies, we extracted the following information: the first author’s name, publication year, study design, total number of patients, type of NSAIDs, age, male (%), patient condition, and follow-up duration. Ethics statement The systematic review and meta-analysis conducted in this study did not utilize raw patient data or private information. As a result, there was no requirement for further approval or informed consent from study subjects by the Institutional Review Board. Quality assessment The quality of the included studies was assessed using the Newcastle–Ottawa scale (NOS), following the recommendations of the Cochrane Non-Randomized Studies Methods Working Group ( 15 ). The NOS assigns",
+    "_file": "nutrition_supplements",
+    "_pos": 109,
+    "_reasons": [
+      "acknowledgements / back matter (3)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "NSAIDs and fracture healing — systematic review/meta-analysis",
+    "source_url": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1428240/full",
+    "chunk_idx": 8,
+    "text": "analyses by age group (adults or children) and patient conditions were performed. All analyses were conducted using R Studio 4.3.2 with the packages “meta,” “dmetar,” and “metafor.” Results Study selection A flow diagram of the study selection process is shown in Figure 1 . A total of 37 full-text articles were assessed for eligibility, and 17 were excluded for no quantitative outcome of interest (n = 10), duplicate patient population (n = 2), and study objectives not consistent with the aims of our analysis (n = 5). Consequently, 20 studies ( 16 – 35 ) containing a total of 523,240 patients were included in the qualitative and quantitative analysis ( Figure 1 ). Figure 1 PRISMA flow diagram of study selection. The numbers of search hits corresponding to each step of the systematic literature search, qualitative review, and quantitative analysis are shown. The reasons for exclusion are described. Characteristics of included studies The study characteristics are summarized in Table 1 . All studies were of retrospective design. The mean patient age ranged from 6.7 to 77.0 years, and the follow-up",
+    "_file": "nutrition_supplements",
+    "_pos": 111,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "NSAIDs and fracture healing — systematic review/meta-analysis",
+    "source_url": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1428240/full",
+    "chunk_idx": 9,
+    "text": "duration ranged from 3 to 67 months ( Table 1 ). Table 1 Study Total number of patients Number of patients and type of NSAID Age, mean Male, % Patient condition Follow-up duration, months NOS Lindsay (2023) ( 35 ) 178,758 Non-user: 155,156 Miscellaneous NSAIDs: 23,602 61.7 43.3 Degenerative spine disease 50 6/9 George (2020) ( 33 ) 326,876 Non-user: 279,720 Miscellaneous NSAIDs: 22,590 54.8 34.9 Long bone fracture 12 6/9 Mohammed (2019) ( 34 ) 232 Non-user: 173 Ibuprofen: 59 Non-user: 170 Ketorolac: 62 53.7 60.8 Foot and ankle disease 3 7/9 DePeter (2017) ( 32 ) 808 Non-user: 470 Ibuprofen: 338 9.49 63.3 Extremity fractures NA 7/9 Donohue (2016) ( 31 ) 328 Non-user: 243 Ketorolac: 85 42.2 63.7 Femoral and tibial fractures 12 7/9 Blomquist (2014) ( 29 ) 477 Non-user: 322 Miscellaneous NSAIDs: 155 28.8 67.3 Shoulder instability 12 7/9 Jeffcoach (2014) ( 30 ) 1,901 Non-user: 1,670 Miscellaneous NSAIDs: 231 46.6 56.0 Long bone fracture 24 6/9 Schemitsch (2012) ( 28 ) 1,226 NA 39.5 NA Long-bone fracture (tibia) 12 7/9 Kay (2010) ( 27",
+    "_file": "nutrition_supplements",
+    "_pos": 112,
+    "_reasons": [
+      "data table (digits 26%, numeric tokens 55%)"
+    ]
+  },
+  {
+    "topic": "nutrition_supplements",
+    "source_title": "NSAIDs and fracture healing — systematic review/meta-analysis",
+    "source_url": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2024.1428240/full",
+    "chunk_idx": 10,
+    "text": ") 221 Non-user: 52 Ketorolac: 169 6.7 48.0 Unspecified fractures 6 7/9 Lumawig (2009) ( 26 ) 273 Non-user: 19 Diclofenac: 254 60.0 47.0 Local autogenous bone graft 24 7/9 Pradhan (2008) ( 24 ) 405 Non-user: 177 Toradol: 228 56.2 35.8 Degenerative spine disease 30 7/9 Sucato (2008) ( 25 ) 319 Non-user: 161 Ketorolac: 158 14.3 15.5 Adolescent idiopathic scoliosis 39 6/9 Bhattacharyya (2005) ( 21 ) 9,995 Non-user: 8,963 Miscellaneous NSAIDs: 1,032 77.0 NA Long bone fracture 12 6/9 Park (2005) ( 22 ) 88 Non-user: 58 Ketorolac: 30 52.7 32.6 Lumbar spinal degenerative disease 24 7/9 Reuben (2005) ( 23 ) 434 Non-user: 130 Rofecoxib: 124 Celecoxib: 60 Ketorolac: 120 46.1 58.5 Degenerative spine disease 12 7/9 Vitale (2003) ( 20 ) 208 Non-user: 148 Ketorolac: 60 13.4 28.9 Scoliosis 67 7/9 Bhandari M (2003) ( 18 ) 192 Non-user: 148 Miscellaneous NSAIDs: 44 38.0 73.0 Tibial shaft fracture 12 7/9 Burd (2003) ( 19 ) 112 Non-user: 74 Indomethacin: 38 38.6 NA Long bone fracture NA 6/9 Giannoudis (2000) ( 17 ) 99 Non-user: 70",
+    "_file": "nutrition_supplements",
+    "_pos": 113,
+    "_reasons": [
+      "data table (digits 29%, numeric tokens 64%)"
+    ]
+  },
+  {
+    "topic": "cartilage_longevity",
+    "source_title": "Role of body weight in osteoarthritis — Johns Hopkins Arthritis",
+    "source_url": "https://www.hopkinsarthritis.org/patient-corner/disease-management/role-of-body-weight-in-osteoarthritis/",
+    "chunk_idx": 0,
+    "text": "Osteoarthritis : Role of Body Weight in Osteoarthritis - Weight Management Skip to primary navigation Skip to main content Skip to primary sidebar Skip to secondary sidebar Skip to footer Johns Hopkins Arthritis Center Show Search Search this website Hide Search Disease Information Rheumatoid Arthritis Psoriatic Arthritis Ankylosing Spondylitis Osteoarthritis Gout Patient Corner RheumTV – Patient Education Video Library Our Research Patient-Centered Outcomes Research The Camille Julia Morgan Arthritis Research and Education Fund About Us Appointment Information Contact Us Our Faculty Our Staff Rheumatology Specialty Centers News & Updates Donate Home / Patient Corner / Managing Your Arthritis / Role of Body Weight in Osteoarthritis Role of Body Weight in Osteoarthritis Joint Pain is Strongly Associated with Body Weight Obesity Is a Risk Factor for Osteoarthritis The Benefits of Weight Loss Would My OA Patient Benefit from Losing Weight? Calculate your Body Mass Index (BMI) How Can I Help My Patients to Manage Their Weight More Effectively? What About Weight Loss Medications? What if My Patient Is Not Willing to Lose Weight? For More Information About Safe and Effective Methods",
+    "_file": "cartilage_longevity",
+    "_pos": 0,
+    "_reasons": [
+      "website navigation (6)"
+    ]
+  },
+  {
+    "topic": "cartilage_longevity",
+    "source_title": "Effect of body weight on knee joint biomechanics",
+    "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11178890/",
+    "chunk_idx": 7,
+    "text": "forces and three-dimensional motion of the lower limb were measured. Twenty-two spherical reflective markers, each with a diameter of 20 mm, were positioned on specific anatomical landmarks: the shoulder, the greater trochanter, the lateral malleolus, and the lateral epicondyle. Additionally, markers were placed on the foot, shank, thigh, and pelvis segments. These markers, along with virtual markers identified during quiet standing, were used to establish anatomical coordinate systems for each segment of the lower limb 56 . The data collection involved participants walking barefoot at a self-selected speed, with a minimum of five walking trials per participant. For more details, please see the supplementary material section. Table 1. Demographics of healthy weight, overweight, and obese subject groups. Healthy weight Mean (SD) Overweight Mean (SD) Obese Mean (SD) Age (years) 32.65 (3.93) 34.22 (5.27) 31.81 (5.34) Height (m) 1.78 (0.021) 1.76 (0.028) 1.73 (0.025) Mass (kg) 74.51 (5.29) 85.23 (4.89) 97.62 (5.03) BMI (kg/m 2 ) 21.78 (1.65) 27.57 (1.32) 32.87 (1.88) Open in a new tab Figure 1. Open in a new tab Workflow of the presented study. (I) Lower",
+    "_file": "cartilage_longevity",
+    "_pos": 31,
+    "_reasons": [
+      "figure/table captions (4)"
+    ]
+  },
+  {
+    "topic": "cartilage_longevity",
+    "source_title": "How fat affects osteoarthritis — Arthritis Foundation",
+    "source_url": "https://www.arthritis.org/health-wellness/about-arthritis/related-conditions/other-diseases/how-fat-affects-osteoarthritis",
+    "chunk_idx": 0,
+    "text": "Stay Informed | OA and Obesity Risks skip to main content 800-283-7800 Helpline Your Local Area Connect Groups Popular Search gout osteoarthritis ja cbd Suggested Content Article Rx for Access Online resource that helps patients better understand health coverage options, choose the right coverage, manage the denial process and reduce health care costs. Article Do I Have Arthritis? Think you may have arthritis? Learn about the four most common warning signs. Article Gout Gout is an inflammatory type of arthritis that can come and go. ES About Arthritis Toggle Menu Arthritis Types Explore Arthritis Types Axial Spondyloarthritis Gout Juvenile Arthritis Osteoarthritis Psoriatic Arthritis Rheumatoid Arthritis More About Arthritis Related Conditions Where It Hurts News & Stories Raising Arthritis Awareness Managing Arthritis Toggle Menu Healthy Living Arthritis Pain Relief Ease of Use Products Eating Healthy Emotional Well-being Long Covid & Arthritis Physical Activity Pregnancy & Parenting Recipes Treatments Biologics & Biosimilars Clinical Trials Complementary Therapies Drug Guide Joint Surgery Treatment Plan Resources Connect Groups E-books Find a Doctor Insurance Management Newly Diagnosed Podcasts Webinars Juvenile Arthritis Toggle Menu Living with JA",
+    "_file": "cartilage_longevity",
+    "_pos": 36,
+    "_reasons": [
+      "website navigation (5)"
+    ]
+  },
+  {
+    "topic": "cartilage_longevity",
+    "source_title": "How fat affects osteoarthritis — Arthritis Foundation",
+    "source_url": "https://www.arthritis.org/health-wellness/about-arthritis/related-conditions/other-diseases/how-fat-affects-osteoarthritis",
+    "chunk_idx": 1,
+    "text": "About Juvenile Arthritis Eating Healthy Emotional Well-being JA Treatment Managing JA Pain Medical Decisions Connections JA Camps JA Family Summit JA Power Packs Support for Families Research Toggle Menu Our Focus Osteoarthritis Rheumatoid Arthritis Juvenile Arthritis Workforce and Clinical Care What We're Doing At a Glance Clinical Trials Grant Opportunities Meetings & Symposia Partnerships Research News Advocacy Toggle Menu Advocacy 101 Be an Ambassador Legislator Lookup For Providers Toggle Menu Our Issue Briefs Fellowships HCP Newsletter Partners for Patients Get Involved Toggle Menu How to Help Advocacy Design for Ease of Use Fundraising Partnership Volunteer Ways to Give Connections Bike Events Connect Groups Events Helpline Jingle Bell Run Walk to Cure Arthritis Arthritis Foundation About Us Careers News & Stories Donate Monthly Donate Now Donate Back How Fat Affects Osteoarthritis Excess weight can make OA worse and increase your risk for other health problems. OA has always been the most common type of arthritis, but today, rates are higher than ever. They've risen right along with increases in obesity, according to Stephen Messier, PhD, who directs the JB Snow Biomechanics",
+    "_file": "cartilage_longevity",
+    "_pos": 37,
+    "_reasons": [
+      "website navigation (9)"
+    ]
+  }
+]

@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
 """
-Curated tier: the author's own knowledge base (corpus/kb/*.json), compiled from
-published sources while recovering from talus OAT (mosaicplasty). ~440 short
-notes: rehab phases, donor knee, micro-movement routine, nutrition and
-supplements, cartilage longevity, scenario predictions, FAQ.
+Curated tier: the author's own knowledge base (corpus/kb/*.json), put together
+while recovering from talus OAT (mosaicplasty). Three kinds of entry (`kind`):
 
-It is NOT a clinical protocol — it is reviewed notes with source links, ranked
-ABOVE the raw paper chunks because it is specific to this surgery.
+- curated  — a note the author wrote herself (no source page to open):
+             micro-movement routine, scenarios, FAQ, nutrition / exercise notes;
+- excerpt  — a verbatim passage of a published article the author picked
+             (has source_url + chunk_idx): rehab papers, donor knee, nutrition
+             and supplement reviews, cartilage longevity;
+- personal — the author's own n=1 experience, never evidence.
+
+It is NOT a clinical protocol. It is ranked ABOVE the raw paper tier because
+it is specific to this surgery. tool/kb_lint.py keeps the excerpt files free of
+search strategies, data tables, reference lists and captions.
 
 The notes are mixed Russian / English, so this tier is embedded with a
 MULTILINGUAL model served by Nebius Token Factory (Qwen3-Embedding-8B via the
 OpenAI embeddings API) — the local MiniLM used for the English papers does not
-cross languages. ~440 notes → one-off build cached under corpus/index_kb/.
+cross languages. A few hundred notes → one-off build cached under corpus/index_kb/.
 """
 from __future__ import annotations
 
@@ -43,13 +49,30 @@ FACETS = {
     "author_experience": "author's experience (n=1)",
 }
 
+# Topics (or whole files) that are the author's own n=1 experience.
+PERSONAL = {"author_experience", "ocd_talus_personal"}
+KINDS = ("curated", "excerpt", "personal")
+_SCHEMA = "kind-v1"   # bump when the note dict changes, so a cached index is rebuilt
+
 _index = None
 _store = None
+
+
+def note_kind(c: dict, stem: str) -> str:
+    """curated = hand-written by the author (no url); excerpt = a passage of a published article
+    the author picked (url + chunk_idx); personal = the author's own experience (n=1)."""
+    if stem in PERSONAL or (c.get("topic") or "") in PERSONAL:
+        return "personal"
+    if (c.get("source_url") or "").strip():
+        return "excerpt"
+    return "curated"
 
 
 def _notes() -> list[dict]:
     notes = []
     for f in sorted(KB_DIR.glob("*.json")):
+        if f.name.startswith("_"):          # _removed_*.json backups are not knowledge
+            continue
         for i, c in enumerate(json.load(open(f, encoding="utf-8"))):
             text = (c.get("text") or "").strip()
             if len(text) < 40:
@@ -61,13 +84,15 @@ def _notes() -> list[dict]:
                 "topic": c.get("topic") or f.stem,
                 "facet": FACETS.get(f.stem, f.stem),
                 "file": f.stem,
+                "kind": note_kind(c, f.stem),
             })
     return notes
 
 
 def _fingerprint() -> str:
-    sizes = "|".join(f"{f.name}:{f.stat().st_size}" for f in sorted(KB_DIR.glob("*.json")))
-    return f"{EMBED_MODEL}|{sizes}"
+    sizes = "|".join(f"{f.name}:{f.stat().st_size}" for f in sorted(KB_DIR.glob("*.json"))
+                     if not f.name.startswith("_"))
+    return f"{EMBED_MODEL}|{_SCHEMA}|{sizes}"
 
 
 def embed(texts: list[str]) -> np.ndarray:
@@ -123,6 +148,14 @@ def _load_locked() -> None:
 
 def count() -> int:
     return len(_store["notes"]) if _store else 0
+
+
+def count_by_kind() -> dict[str, int]:
+    """{'curated': N, 'excerpt': M, 'personal': P} — the honest split behind "N notes"."""
+    out = {k: 0 for k in KINDS}
+    for n in (_store["notes"] if _store else []):
+        out[n.get("kind", "curated")] = out.get(n.get("kind", "curated"), 0) + 1
+    return out
 
 
 def retrieve(embedder, queries: list[str], k: int = 4, facets: list[str] | None = None) -> list[dict]:

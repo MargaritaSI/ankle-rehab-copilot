@@ -116,7 +116,7 @@ ui.inject()
 
 
 # ----------------------------------------------------------------- helpers
-_PERSONAL = {"author_experience", "ocd_talus_rehab", "ocd_talus"}
+_PERSONAL = {"author_experience", "ocd_talus_personal"}
 
 
 @st.cache_resource(show_spinner=False)
@@ -153,14 +153,20 @@ def tag_name(tag: str) -> str:
 
 
 def note_kind(n: dict) -> str:
-    if n.get("file") in _PERSONAL or n.get("topic") in _PERSONAL:
-        return L["nk_personal"]
-    if not (n.get("url") or "").strip():
-        return L["nk_summary"]
-    return L["curated"]
+    """Honest label for a curated-tier note: `kind` comes from endpoint/kb.py (curated = the author's
+    own hand-written note, excerpt = a passage of a published article the author picked,
+    personal = n=1 experience). Older evidence without `kind` falls back to the same rule."""
+    kind = n.get("kind")
+    if not kind:
+        if n.get("file") in _PERSONAL or n.get("topic") in _PERSONAL:
+            kind = "personal"
+        else:
+            kind = "excerpt" if (n.get("url") or "").strip() else "curated"
+    return L.get(f"nk_{kind}", L["nk_curated"])
 
 
-_CITE_GROUP = re.compile(r"\[((?:KB-\d+|PMC\d+|WEB-\d+)(?:\s*[,;]\s*(?:KB-\d+|PMC\d+|WEB-\d+))*)\]")
+_SRC_ID = r"(?:KB-\d+|PMC\d+|WEB-\d+|PHASE)"
+_CITE_GROUP = re.compile(rf"\[({_SRC_ID}(?:\s*[,;]\s*{_SRC_ID})*)\]")
 _CYR = re.compile(r"[А-Яа-яЁё]")
 
 
@@ -179,9 +185,25 @@ def _pmc_url(sid: str) -> str:
     return f"https://pmc.ncbi.nlm.nih.gov/articles/{sid}/"
 
 
+def _phase_card(ph: dict) -> dict:
+    """The [PHASE] source: the typical phase for the person's week, from the app's own timeline
+    (endpoint/phase.py). No external link — it is not a study and says so on the card."""
+    ru = L.get("phase_ru", {}).get(ph.get("name"), {})
+    name = ru.get("name") or ph.get("name", "")
+    focus = ru.get("focus") or ph.get("focus", "")
+    caution = ru.get("caution") or ph.get("caution", "")
+    end = L["phase_onwards"] if ph.get("end") is None else str(ph.get("end"))
+    return {"id": "PHASE", "kind": L["phase_kind"], "chips": [L["phase_chip"]],
+            "title": L["phase_title"].format(w=ph.get("weeks"), name=name, start=ph.get("start"), end=end),
+            "excerpt": L["phase_excerpt"].format(focus=focus, caution=caution),
+            "link_label": "", "url": None}
+
+
 def _source_cards(ev: dict) -> dict[str, dict]:
-    """id → card for every retrieved source (notes, papers, web), in the UI language."""
+    """id → card for every retrieved source (phase, notes, papers, web), in the UI language."""
     cards: dict[str, dict] = {}
+    if ev.get("phase"):
+        cards["PHASE"] = _phase_card(ev["phase"])
     for n in ev.get("notes", []):
         chips = [(n.get("facet_ru") if RU else None) or n.get("facet")]
         cyr = bool(_CYR.search((n.get("title") or "") + (n.get("text") or "")[:200]))
@@ -258,7 +280,7 @@ def render_sources(ev: dict, answer_text: str = ""):
 def _render_tiers(ev: dict):
     """Fallback grouping by tier when an answer carries no citation ids at all."""
     cards = _source_cards(ev)
-    notes = [cards[n["id"]] for n in ev.get("notes", [])]
+    notes = ([cards["PHASE"]] if "PHASE" in cards else []) + [cards[n["id"]] for n in ev.get("notes", [])]
     papers = [cards[e["id"]] for e in ev.get("papers", [])]
     webs = [cards[w["id"]] for w in ev.get("web", [])]
     if notes:

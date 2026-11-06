@@ -39,7 +39,7 @@ T = {
   "hint_date": "Add your surgery date to unlock Today's routine and week-specific answers.",
   "hint_optional": "Optional: sex, age, repeat operation, circulation — make answers more specific.", "budget": "Demo budget today: {pct}% · {n} calls",
   "budget_warn": "Close to today's token budget — the app pauses at 100% until tomorrow.",
-  "lib_caption": "Library: {p} open-access papers ({c:,} chunks) + {n} curated notes · local FAISS · generation on NVIDIA Nemotron via Nebius Token Factory",
+  "lib_caption": "Library: {p} open-access papers ({c:,} chunks) + {n} curated-tier notes (author's notes + paper excerpts) · local FAISS · generation on NVIDIA Nemotron via Nebius Token Factory",
   "lib_error": "The paper library could not be loaded yet ({e}). Reload the page in a minute.",
   "lib_loading": "Loading the library (first open after an update takes ~20 s)…",
   "try_one": "Try one", "your_q": "Your question (any language)",
@@ -61,22 +61,30 @@ T = {
   "spinner": "Nemotron Nano routes the question · Nemotron Super reads the evidence…",
   "no_key": "NEBIUS_API_KEY is not set. Add it to .env (see .env.example).",
   "failed": "Model call failed: {e}",
-  "src_notes": "Author's notes · {n} (from published sources, plus own summaries)",
+  "src_notes": "Curated tier · {n} (the author's own notes and paper excerpts she picked)",
   "src_papers": "Open-access papers · {n} (PubMed Central)",
   "src_web": "Web sources · {n} (Tavily, medical domains — not from the library)",
-  "curated": "curated", "paper": "paper", "web": "web", "source": "source ↗", "open_pmc": "open on PMC ↗",
+  "paper": "paper", "web": "web", "source": "source ↗", "open_pmc": "open on PMC ↗",
   "pt_guideline": "guideline / consensus", "pt_review": "review", "pt_study": "study", "pt_abstract": "conference abstract",
-  "nk_summary": "author's summary · no link", "nk_personal": "personal experience · n=1",
+  "nk_curated": "author's note · no link", "nk_excerpt": "paper excerpt (author's pick)",
+  "nk_personal": "personal experience · n=1",
+  "phase_kind": "typical phase · from the app's timeline", "phase_chip": "not a study",
+  "phase_title": "Week {w}: {name} (weeks {start}–{end})", "phase_onwards": "onwards",
+  "phase_excerpt": "Typical focus: {focus}. Typical cautions: {caution}. Typical windows across published OAT / mosaicplasty protocols, not a study — your surgeon's protocol overrides them.",
+  "phase_ru": {},
   "legend_h": "What the source labels mean",
   "legend": ("- **paper** — an open-access article from PubMed Central. Its type (from the PubMed record) shows how much weight it carries: "
              "**guideline / consensus** and **review** sum up many studies; a **study** is one piece of research; "
              "a **conference abstract** is a short report, weaker than a full paper.\n"
-             "- **curated** — a note I compiled from a published source; the link opens the original.\n"
-             "- **author's summary · no link** — my own short summary of several sources, without one original to open. "
+             "- **paper excerpt (author's pick)** — a verbatim passage from a published article that I selected for this library; "
+             "the link opens the original. The words are the paper's, the choice is mine.\n"
+             "- **author's note · no link** — a note I wrote myself from several sources, without one original to open. "
              "Useful as orientation; check it against the papers or with your clinician.\n"
              "- **personal experience · n=1** — what happened to me after this surgery. One person, not evidence.\n"
+             "- **typical phase · from the app's timeline** — the recovery phase for your week, from the app's own table of typical "
+             "windows across published protocols. Not a study; your surgeon's protocol overrides it.\n"
              "- **web** — medical websites, used only when the library has nothing on the question.\n\n"
-             "One answer can mix all of these: the id after each sentence (`KB-…`, `PMC…`, `WEB-…`) shows which one backs it."),
+             "One answer can mix all of these: the id after each sentence (`KB-…`, `PMC…`, `WEB-…`, `PHASE`) shows which one backs it."),
   "reasoning": "reasoning", "via": "via Nebius Token Factory", "routine_lang": "English",
   "sex": "Sex", "age": "Age",
   "sex_opts": {"na": "prefer not to say", "female": "female", "male": "male"},
@@ -93,7 +101,7 @@ T = {
   "anat_credit": "Public-domain plates from Gray's Anatomy (1918) via Wikimedia Commons.",
   "eyebrow": "Ankle cartilage recovery · evidence with sources",
   "stat_week": "Week", "stat_since": "since surgery", "stat_phase": "Typical phase", "stat_focus": "Focus now",
-  "stat_library": "Library", "stat_papers": "papers", "stat_lib_sub": "+ {n} curated notes · {c:,} chunks · local FAISS",
+  "stat_library": "Library", "stat_papers": "papers", "stat_lib_sub": "+ {n} curated-tier notes (author's + excerpts) · {c:,} chunks · local FAISS",
   "no_date_short": "No date yet", "no_date_hint": "Add your surgery date in the sidebar and the answers lock onto your week.",
   "timeline_h": "Recovery timeline", "now_badge": "now",
   "depth_short_opts": ["Standard", "Deep"],
@@ -148,7 +156,7 @@ T = {
   "hint_date": "Укажите дату операции — откроется «Рутина на сегодня» и ответы под вашу неделю.",
   "hint_optional": "Необязательно: пол, возраст, повторная операция, кровообращение — ответы станут точнее.", "budget": "Бюджет демо сегодня: {pct}% · {n} вызовов",
   "budget_warn": "Почти исчерпан дневной бюджет токенов — на 100% приложение встанет до завтра.",
-  "lib_caption": "Библиотека: {p} открытых статей ({c:,} фрагментов) + {n} кураторских заметок · локальный FAISS · генерация на NVIDIA Nemotron через Nebius Token Factory",
+  "lib_caption": "Библиотека: {p} открытых статей ({c:,} фрагментов) + {n} заметок кураторского яруса (авторские + фрагменты статей) · локальный FAISS · генерация на NVIDIA Nemotron через Nebius Token Factory",
   "lib_error": "Библиотека статей ещё не загрузилась ({e}). Обновите страницу через минуту.",
   "lib_loading": "Загружаю библиотеку (первое открытие после обновления занимает ~20 с)…",
   "try_one": "Примеры", "your_q": "Ваш вопрос (на любом языке)",
@@ -170,22 +178,45 @@ T = {
   "spinner": "Nemotron Nano разбирает вопрос · Nemotron Super читает источники…",
   "no_key": "NEBIUS_API_KEY не задан. Добавьте его в .env (см. .env.example).",
   "failed": "Не удалось обратиться к модели: {e}",
-  "src_notes": "Заметки автора · {n} (по опубликованным источникам и собственные сводки)",
+  "src_notes": "Кураторский ярус · {n} (собственные заметки автора и отобранные ею фрагменты статей)",
   "src_papers": "Открытые статьи · {n} (PubMed Central)",
   "src_web": "Источники из интернета · {n} (Tavily, медицинские сайты — не из библиотеки)",
-  "curated": "заметка", "paper": "статья", "web": "интернет", "source": "источник ↗", "open_pmc": "открыть в PMC ↗",
+  "paper": "статья", "web": "интернет", "source": "источник ↗", "open_pmc": "открыть в PMC ↗",
   "pt_guideline": "рекомендации / консенсус", "pt_review": "обзор", "pt_study": "исследование", "pt_abstract": "тезисы конференции",
-  "nk_summary": "сводка автора · без ссылки", "nk_personal": "личный опыт · n=1",
+  "nk_curated": "заметка автора · без ссылки", "nk_excerpt": "фрагмент статьи (подбор автора)",
+  "nk_personal": "личный опыт · n=1",
+  "phase_kind": "типичная фаза · из таймлайна приложения", "phase_chip": "не исследование",
+  "phase_title": "Неделя {w}: {name} (недели {start}–{end})", "phase_onwards": "и далее",
+  "phase_excerpt": "Типичный фокус: {focus}. Типичные ограничения: {caution}. Типичные окна по опубликованным протоколам OAT / мозаикопластики, не исследование — протокол вашего хирурга важнее.",
+  "phase_ru": {
+    "Protection": {"name": "Защита", "focus": "уход за раной, возвышенное положение и контроль отёка, «насос» стопой, изометрика; обычно без опоры на ногу",
+                   "caution": "без нагрузки на трансплантат; донорское колено — только мягкая амплитуда"},
+    "Early motion": {"name": "Раннее движение", "focus": "амплитуда без нагрузки, CPM-тренажёр, если назначен, частичная опора только с разрешения хирурга",
+                     "caution": "отёк после активности обычен; удары и скручивания исключены"},
+    "Progressive weight-bearing": {"name": "Постепенная нагрузка", "focus": "пошаговый переход к полной опоре, переобучение походки, укрепление икры / малоберцовых / бедра, баланс",
+                                   "caution": "боль или отёк, которые держатся до следующего утра, значат, что шаг был слишком большим"},
+    "Strength and control": {"name": "Сила и контроль", "focus": "баланс на одной ноге, сила в закрытой цепи, велотренажёр, плавание; квадрицепс донорского колена",
+                             "caution": "бег и прыжки ещё рано; глубокие приседания с весом обычно ждут"},
+    "Impact preparation": {"name": "Подготовка к ударной нагрузке", "focus": "прогрессивная нагрузка, низкоударное кардио, подскоки только с разрешения хирурга",
+                           "caution": "возвращение к бегу обычно обсуждают с 6–9 месяцев, иногда позже"},
+    "Return to sport": {"name": "Возвращение в спорт", "focus": "спортивно-специфические упражнения, постепенный возврат к бегу и поворотам, если разрешено",
+                        "caution": "созревание трансплантата по МРТ различается; допуск индивидуален"},
+    "Long-term joint care": {"name": "Долгосрочная забота о суставе", "focus": "пожизненная низкоударная сила, контроль веса, разнообразие нагрузки; беречь донорское колено",
+                             "caution": "обострения после непривычной нагрузки обычны и обычно проходят после короткой разгрузки"},
+  },
   "legend_h": "Что значат метки источников",
   "legend": ("- **статья** — открытая статья из PubMed Central. Тип (из карточки PubMed) показывает её вес: "
              "**рекомендации / консенсус** и **обзор** обобщают много исследований; **исследование** — одна работа; "
              "**тезисы конференции** — короткое сообщение, слабее полной статьи.\n"
-             "- **заметка** — моя выжимка из опубликованного источника; ссылка открывает оригинал.\n"
-             "- **сводка автора · без ссылки** — моё короткое обобщение нескольких источников, без одного оригинала. "
+             "- **фрагмент статьи (подбор автора)** — дословный отрывок опубликованной статьи, который я отобрала для этой библиотеки; "
+             "ссылка открывает оригинал. Слова — статьи, выбор — мой.\n"
+             "- **заметка автора · без ссылки** — заметка, которую я написала сама по нескольким источникам, без одного оригинала. "
              "Годится для ориентира; сверяйте со статьями или с врачом.\n"
              "- **личный опыт · n=1** — что было со мной после этой операции. Один человек, не доказательство.\n"
+             "- **типичная фаза · из таймлайна приложения** — фаза восстановления для вашей недели из таблицы типичных окон по опубликованным "
+             "протоколам. Не исследование; протокол вашего хирурга важнее.\n"
              "- **интернет** — медицинские сайты, только когда в библиотеке нет ответа.\n\n"
-             "В одном ответе могут смешиваться все типы: метка после каждой фразы (`KB-…`, `PMC…`, `WEB-…`) показывает, на что она опирается."),
+             "В одном ответе могут смешиваться все типы: метка после каждой фразы (`KB-…`, `PMC…`, `WEB-…`, `PHASE`) показывает, на что она опирается."),
   "reasoning": "рассуждение", "via": "через Nebius Token Factory", "routine_lang": "Russian",
   "sex": "Пол", "age": "Возраст",
   "sex_opts": {"na": "не указывать", "female": "женский", "male": "мужской"},
@@ -202,7 +233,7 @@ T = {
   "anat_credit": "Иллюстрации из «Анатомии Грея» (1918), общественное достояние, Wikimedia Commons.",
   "eyebrow": "Восстановление хряща голеностопа · доказательства с источниками",
   "stat_week": "Неделя", "stat_since": "после операции", "stat_phase": "Типичная фаза", "stat_focus": "Фокус сейчас",
-  "stat_library": "Библиотека", "stat_papers": "статей", "stat_lib_sub": "+ {n} кураторских заметок · {c:,} фрагментов · локальный FAISS",
+  "stat_library": "Библиотека", "stat_papers": "статей", "stat_lib_sub": "+ {n} заметок кураторского яруса (авторские + фрагменты) · {c:,} фрагментов · локальный FAISS",
   "no_date_short": "Даты пока нет", "no_date_hint": "Укажите дату операции слева — и ответы привяжутся к вашей неделе.",
   "timeline_h": "Путь восстановления", "now_badge": "сейчас",
   "depth_short_opts": ["Обычная", "Глубокая"],

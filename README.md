@@ -35,10 +35,13 @@ for week 22, not in general.
 
 **Honesty rules baked in**
 
-- Two knowledge tiers, labelled in the UI: **curated notes** (438 reviewed notes compiled by the
-  author from published sources while recovering from this exact surgery — ranked first, but
-  explicitly *not* a clinical protocol) and **1,564 open-access papers** from Europe PMC / PubMed
-  Central (161,183 chunks, local FAISS).
+- Two knowledge tiers, labelled in the UI: a **curated tier** of 395 entries put together by the
+  author while recovering from this exact surgery — **157 notes she wrote herself**, **234
+  passages of published papers she picked** (labelled *paper excerpt (author's pick)*, never as
+  her own notes) and 4 n=1 personal-experience notes — ranked first, but explicitly *not* a
+  clinical protocol; and **1,564 open-access papers** from Europe PMC / PubMed Central (161,183
+  chunks, local FAISS). The person's recovery phase is a source of its own (`[PHASE]`, "from the
+  app's timeline, not a study"), so the model cannot pin it on a random paper.
 - Every factual sentence carries a source id (`[KB-3]`, `[PMC12368451]`, `[WEB-1]`); the
   evidence panel shows the excerpt and the link.
 - When sources disagree the answer has a **"Where protocols differ"** section with the range and
@@ -129,7 +132,10 @@ python eval/eval_edge.py      # 20 edge + adversarial cases across all four mode
 app/app.py          Streamlit UI (tabs, profile sidebar, evidence panel)
 endpoint/rag.py     orchestration: analyze → retrieve (2 tiers) → answer / routine / compare / questions
 endpoint/llm.py     Nemotron tiers on Token Factory, reasoning toggle, call log
-endpoint/kb.py      curated tier: Token Factory multilingual embeddings + FAISS
+endpoint/kb.py      curated tier: Token Factory multilingual embeddings + FAISS; note kind
+                    (curated / excerpt / personal)
+tool/kb_lint.py     lint for the paper-excerpt files (tables, search strategies, references,
+                    captions, short fragments) → review list, --apply removes with a backup
 endpoint/phase.py   surgery date → week → typical phase (context for prompts)
 endpoint/web.py     Tavily fallback (medical domains only)
 corpus/             fetch.py (Europe PMC), topics.py, kb/*.json, index_kb/ (shipped), index/ (downloaded)
@@ -145,8 +151,11 @@ submission period it was rebuilt into this product:
 
 - generation moved to **NVIDIA Nemotron 3 (Nano / Super / Ultra) on Nebius Token Factory**, with
   a tiered routing design and per-call reasoning control;
-- a second, **curated knowledge tier** (438 notes) added above the papers, embedded with
-  Token Factory's multilingual model;
+- a second, **curated knowledge tier** (395 entries: 157 author's notes + 234 paper excerpts
+  the author picked + 4 personal) added above the papers, embedded with Token Factory's
+  multilingual model; `tool/kb_lint.py` keeps the excerpt files free of search strategies,
+  data tables, reference lists and captions (44 such fragments removed, backup in
+  `corpus/kb/_removed_2026_11.json`);
 - **recovery-phase context** (surgery date → week → phase) in every answer;
 - new modes: **Today's routine**, **Compare**, **Before your appointment**;
 - **scope check** (no guessing outside the library) and **Tavily** web fallback;

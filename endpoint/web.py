@@ -6,9 +6,11 @@ the answer still cites checkable sources. Results are labelled as web sources.
 """
 from __future__ import annotations
 
+import json
 import os
 import pathlib
 import sys
+import time
 
 import requests
 from dotenv import load_dotenv
@@ -22,6 +24,40 @@ DOMAINS = [
 ]
 
 
+# Spend guard for the web tier. The Tavily "Researcher" plan is 1,000 credits a month with no
+# card on file and no pay-as-you-go, so the account itself cannot be charged — but a bot hammering
+# the public demo could burn the month in an afternoon. One basic search = 1 credit; the cap
+# below keeps a single day under a third of the month.
+WEB_DAILY_CAP = int(os.environ.get("WEB_DAILY_CAP", "300"))
+_USAGE_FILE = pathlib.Path(__file__).resolve().parent.parent / ".web_usage.json"
+
+
+def _usage() -> dict:
+    today = time.strftime("%Y-%m-%d")
+    try:
+        d = json.loads(_USAGE_FILE.read_text())
+        if d.get("date") == today:
+            return d
+    except Exception:
+        pass
+    return {"date": today, "calls": 0}
+
+
+def usage_today() -> dict:
+    u = _usage()
+    u["cap"] = WEB_DAILY_CAP
+    return u
+
+
+def _record() -> None:
+    u = _usage()
+    u["calls"] += 1
+    try:
+        _USAGE_FILE.write_text(json.dumps(u))
+    except Exception:
+        pass
+
+
 def available() -> bool:
     return bool(os.environ.get("TAVILY_API_KEY"))
 
@@ -29,6 +65,10 @@ def available() -> bool:
 def search(query: str, max_results: int = 5) -> list[dict]:
     if not available():
         return []
+    if WEB_DAILY_CAP and _usage()["calls"] >= WEB_DAILY_CAP:
+        print(f"[web] daily cap of {WEB_DAILY_CAP} Tavily searches reached — skipping", file=sys.stderr)
+        return []
+    _record()
     last_err = None
     for attempt in range(2):                      # one retry on a transient failure
         try:

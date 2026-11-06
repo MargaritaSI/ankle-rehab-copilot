@@ -90,6 +90,23 @@ button[data-baseweb="tab"][aria-selected="true"] p{color:var(--teal);}
 [data-testid="stButtonGroup"] button[kind="segmented_controlActive"]{background:var(--teal) !important; border-color:var(--teal) !important;}
 [data-testid="stButtonGroup"] button[kind="segmented_controlActive"] p{color:#fff !important;}
 [data-testid="stButtonGroup"] [data-baseweb="button-group"]{gap:6px; flex-wrap:wrap;}
+
+/* ---------- language switch: ONE joined pill, EN | RU, with inline-SVG flags (no emoji).
+   Pinned to the right of the hero and never allowed to wrap into two stacked pills. */
+.st-key-langsw [data-testid="stElementContainer"], .st-key-langsw [data-testid="stButtonGroup"]{display:flex; justify-content:flex-end;}
+.st-key-langsw [data-baseweb="button-group"]{flex-wrap:nowrap !important; gap:0 !important; padding:3px; border-radius:999px;
+  background:var(--card); border:1px solid var(--line); box-shadow:var(--shadow); width:max-content;}
+.st-key-langsw button[kind^="segmented_control"]{min-height:36px !important; height:36px; padding:0 12px 0 9px !important;
+  border:none !important; border-radius:999px !important; background:transparent !important; box-shadow:none !important;}
+.st-key-langsw button[kind^="segmented_control"] p{display:inline-flex; align-items:center; gap:7px; font-size:.9rem; font-weight:800;
+  letter-spacing:.04em; color:var(--ink-2);}
+.st-key-langsw button[kind^="segmented_control"]:hover{background:var(--teal-wash) !important;}
+.st-key-langsw button[kind="segmented_controlActive"]{background:var(--teal) !important;}
+.st-key-langsw button[kind="segmented_controlActive"] p{color:#fff !important;}
+.st-key-langsw button[kind^="segmented_control"] p:before{content:""; width:20px; height:14px; border-radius:3px; flex:none;
+  background-size:cover; background-position:center; box-shadow:0 0 0 1px rgba(27,31,30,.12) inset;}
+.st-key-langsw button[kind^="segmented_control"]:nth-of-type(1) p:before{background-image:url("data:image/svg+xml;base64,__FLAG_EN__");}
+.st-key-langsw button[kind^="segmented_control"]:nth-of-type(2) p:before{background-image:url("data:image/svg+xml;base64,__FLAG_RU__");}
 [class*="st-key-lang_pick"]{margin-left:auto;}
 
 /* ---------- inputs */
@@ -189,7 +206,9 @@ figure.inl{margin:0;} figure.inl .imgcap{font-size:.9rem; line-height:1.45; colo
 .sh .cnt{font-size:.8rem; font-weight:800; background:var(--teal-wash); color:var(--teal); padding:3px 10px; border-radius:999px;}
 .srcgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(310px,1fr)); gap:14px; margin:.4rem 0 .2rem;}
 .src{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px;
-  display:flex; flex-direction:column; gap:8px; min-height:150px;}
+  display:flex; flex-direction:column; gap:8px; min-height:150px; scroll-margin-top:90px;}
+.src:target{border-color:var(--teal); box-shadow:0 0 0 3px var(--teal-soft);}
+.src.missing{border-style:dashed; background:var(--sand);}
 .src .top{display:flex; align-items:center; gap:8px; flex-wrap:wrap;}
 .src .id{font-weight:800; color:var(--teal); background:var(--teal-wash); border-radius:8px; padding:2px 9px; font-size:.86rem;}
 .src .kind{font-size:.74rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);}
@@ -242,8 +261,21 @@ figure.inl{margin:0;} figure.inl .imgcap{font-size:.9rem; line-height:1.45; colo
 
 
 # ----------------------------------------------------------------- plumbing
+_FLAG_EN = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'><clipPath id='t'><path d='M30,15h30v15zv15h-30zh-30v-15zv-15h30z'/></clipPath>"
+            "<path d='M0,0v30h60v-30z' fill='#012169'/><path d='M0,0L60,30M60,0L0,30' stroke='#fff' stroke-width='6'/>"
+            "<path d='M0,0L60,30M60,0L0,30' clip-path='url(#t)' stroke='#C8102E' stroke-width='4'/>"
+            "<path d='M30,0v30M0,15h60' stroke='#fff' stroke-width='10'/><path d='M30,0v30M0,15h60' stroke='#C8102E' stroke-width='6'/></svg>")
+_FLAG_RU = ("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6'><rect width='9' height='2' fill='#fff'/>"
+            "<rect y='2' width='9' height='2' fill='#0039A6'/><rect y='4' width='9' height='2' fill='#D52B1E'/></svg>")
+
+
+def _css() -> str:
+    return (CSS.replace("__FLAG_EN__", base64.b64encode(_FLAG_EN.encode()).decode())
+               .replace("__FLAG_RU__", base64.b64encode(_FLAG_RU.encode()).decode()))
+
+
 def inject() -> None:
-    st.html(f"<style>{CSS}</style>")
+    st.html(f"<style>{_css()}</style>")
 
 
 @st.cache_data(show_spinner=False)
@@ -357,8 +389,9 @@ def source_grid(cards: list[dict]) -> None:
         full = (f"<details class='full'><summary>{esc(c.get('full_label', ''))}</summary>"
                 f"<div class='ft'>{esc(full_txt)}</div></details>"
                 if full_txt and full_txt != (c.get("excerpt") or "").strip() else "")
+        cls = "src missing" if c.get("missing") else "src"
         out.append(
-            f"<div class='src'><div class='top'><span class='id'>[{esc(c['id'])}]</span>"
+            f"<div class='{cls}' id='src-{esc(str(c['id']).lower())}'><div class='top'><span class='id'>[{esc(c['id'])}]</span>"
             f"<span class='kind'>{esc(c['kind'])}</span></div>"
             f"<div class='t'>{esc(c['title'])}</div><div class='x'>{esc(c['excerpt'])}</div>{full}{chips}{link}</div>")
     st.html(f"<div class='srcgrid'>{''.join(out)}</div>")

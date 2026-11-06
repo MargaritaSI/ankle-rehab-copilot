@@ -84,8 +84,18 @@ importlib.reload(_i18n)
 ui = importlib.reload(ui)
 from i18n import PHASE_RU, SURGERY_RU, T  # noqa: E402
 
+def _browser_lang() -> str:
+    """First visit: follow the browser locale — a Russian browser opens RU, everyone else EN.
+    The person can still flip the switch in the header; the choice then sticks for the session."""
+    try:
+        loc = (st.context.locale or "").lower()
+    except Exception:
+        loc = ""
+    return "ru" if loc.startswith("ru") else "en"
+
+
 if "lang" not in st.session_state:
-    st.session_state["lang"] = "en"
+    st.session_state["lang"] = _browser_lang()
 L = T[st.session_state["lang"]]
 RU = st.session_state["lang"] == "ru"
 # One answer language: every model call gets the interface language, whatever language the
@@ -150,34 +160,116 @@ def note_kind(n: dict) -> str:
     return L["curated"]
 
 
-def render_sources(ev: dict):
-    notes, papers, webs = ev.get("notes", []), ev.get("papers", []), ev.get("web", [])
-    total = len(notes) + len(papers) + len(webs)
-    if not total:
+_CITE_GROUP = re.compile(r"\[((?:KB-\d+|PMC\d+|WEB-\d+)(?:\s*[,;]\s*(?:KB-\d+|PMC\d+|WEB-\d+))*)\]")
+_CYR = re.compile(r"[А-Яа-яЁё]")
+
+
+def _cited_ids(text: str) -> list[str]:
+    """Source ids in the order the answer first cites them ([KB-5, KB-9] counts as two)."""
+    seen, out = set(), []
+    for m in _CITE_GROUP.finditer(text or ""):
+        for sid in re.split(r"\s*[,;]\s*", m.group(1)):
+            if sid not in seen:
+                seen.add(sid)
+                out.append(sid)
+    return out
+
+
+def _pmc_url(sid: str) -> str:
+    return f"https://pmc.ncbi.nlm.nih.gov/articles/{sid}/"
+
+
+def _source_cards(ev: dict) -> dict[str, dict]:
+    """id → card for every retrieved source (notes, papers, web), in the UI language."""
+    cards: dict[str, dict] = {}
+    for n in ev.get("notes", []):
+        chips = [(n.get("facet_ru") if RU else None) or n.get("facet")]
+        cyr = bool(_CYR.search((n.get("title") or "") + (n.get("text") or "")[:200]))
+        if cyr and not RU:
+            chips.append(L["note_ru"])          # a Russian note shown under the English UI
+        elif not cyr and RU:
+            chips.append(L["note_en"])
+        cards[n["id"]] = {
+            "id": n["id"], "title": n["title"], "kind": note_kind(n), "chips": chips,
+            "full": n.get("text"), "full_label": L["show_full"],
+            "excerpt": n["excerpt"], "link_label": L["source"], "url": n.get("url")}
+    for e in ev.get("papers", []):
+        cards[e["id"]] = {
+            "id": e["id"], "title": e["title"],
+            "kind": f"{L['paper']} · {paper_type(e['id'], e['title'])} · {e.get('year', '')}",
+            "chips": [tag_name(x) for x in e.get("tags", [])], "excerpt": e["excerpt"],
+            "link_label": L["open_pmc"], "url": e.get("url")}
+    for w in ev.get("web", []):
+        cards[w["id"]] = {
+            "id": w["id"], "title": w["title"], "kind": L["web"], "chips": [],
+            "excerpt": (w.get("text") or "")[:300] + " …",
+            "link_label": (urlparse(w["url"]).netloc or w["url"]) + " ↗", "url": w["url"]}
+    return cards
+
+
+def link_citations(text: str, ev: dict) -> str:
+    """Every [KB-n] / [PMCxxxx] / [WEB-n] in the answer becomes a link: papers and web results open
+    the original (the title shows on hover), notes without a page jump to their card below."""
+    cards = _source_cards(ev)
+
+    def one(sid: str) -> str:
+        c = cards.get(sid, {})
+        url = c.get("url") or (_pmc_url(sid) if sid.startswith("PMC") else f"#src-{sid.lower()}")
+        title = (c.get("title") or "").replace('"', "'").strip()
+        return f'[{sid}]({url} "{title[:140]}")' if title else f"[{sid}]({url})"
+
+    def repl(m):
+        return "[" + ", ".join(one(s) for s in re.split(r"\s*[,;]\s*", m.group(1))) + "]"
+
+    return _CITE_GROUP.sub(repl, text or "")
+
+
+def render_sources(ev: dict, answer_text: str = ""):
+    """Sources under an answer. The ids the answer actually cites come first and open (in citation
+    order, whatever tier they are from); everything else retrieved sits folded under it. Before
+    this the cited papers hid under a collapsed expander while uncited notes stood open on top."""
+    cards = _source_cards(ev)
+    if not cards:
         return
-    ui.section_heading(L["sources_h"], total)
+    ui.section_heading(L["sources_h"], len(cards))
     with st.expander(L["legend_h"]):
         st.markdown(L["legend"])
+    cited = _cited_ids(answer_text)
+    if not cited:
+        _render_tiers(ev)
+        return
+    shown = []
+    for sid in cited:
+        c = cards.get(sid)
+        if c is None:                       # the model cited an id that was never retrieved
+            c = {"id": sid, "title": L["src_unknown"], "kind": L["unknown_kind"], "chips": [],
+                 "excerpt": "", "missing": True,
+                 "link_label": L["open_pmc"] if sid.startswith("PMC") else "",
+                 "url": _pmc_url(sid) if sid.startswith("PMC") else None}
+        shown.append(c)
+    with st.expander(L["src_cited"].format(n=len(shown)), expanded=True):
+        ui.source_grid(shown)
+    rest = [c for sid, c in cards.items() if sid not in set(cited)]
+    if rest:
+        with st.expander(L["src_more"].format(n=len(rest))):
+            ui.source_grid(rest)
+
+
+def _render_tiers(ev: dict):
+    """Fallback grouping by tier when an answer carries no citation ids at all."""
+    cards = _source_cards(ev)
+    notes = [cards[n["id"]] for n in ev.get("notes", [])]
+    papers = [cards[e["id"]] for e in ev.get("papers", [])]
+    webs = [cards[w["id"]] for w in ev.get("web", [])]
     if notes:
         with st.expander(L["src_notes"].format(n=len(notes)), expanded=True):
-            ui.source_grid([{
-                "id": n["id"], "title": n["title"], "kind": note_kind(n),
-                "chips": [(n.get("facet_ru") if RU else None) or n.get("facet")], "full": n.get("text"), "full_label": L["show_full"],
-                "excerpt": n["excerpt"], "link_label": L["source"], "url": n.get("url"),
-            } for n in notes])
+            ui.source_grid(notes)
     if papers:
         with st.expander(L["src_papers"].format(n=len(papers)), expanded=not notes):
-            ui.source_grid([{
-                "id": e["id"], "title": e["title"], "kind": f"{L['paper']} · {paper_type(e['id'], e['title'])} · {e.get('year', '')}",
-                "chips": [tag_name(x) for x in e.get("tags", [])], "excerpt": e["excerpt"], "link_label": L["open_pmc"], "url": e.get("url"),
-            } for e in papers])
+            ui.source_grid(papers)
     if webs:
         with st.expander(L["src_web"].format(n=len(webs)), expanded=True):
-            ui.source_grid([{
-                "id": w["id"], "title": w["title"], "kind": L["web"], "chips": [],
-                "excerpt": (w.get("text") or "")[:300] + " …",
-                "link_label": (urlparse(w["url"]).netloc or w["url"]) + " ↗", "url": w["url"],
-            } for w in webs])
+            ui.source_grid(webs)
 
 
 def render_calls(calls: list[dict]):
@@ -213,8 +305,10 @@ def show_result(key: str, img: str = "", text: str = ""):
     with st.container(key=f"card-answer-{key}", border=True):
         if res.get("source") == "web":
             st.info(L["web_info"])
-        st.markdown(res["answer"])
-    render_sources(res.get("evidence", {}))
+        elif res.get("source") == "library+web":
+            st.info(L["web_add_info"])
+        st.markdown(link_citations(res["answer"], res.get("evidence", {})))
+    render_sources(res.get("evidence", {}), res["answer"])
     render_calls(res.get("calls", []))
 
 
@@ -274,8 +368,11 @@ with st.sidebar:
     depth = st.segmented_control(L["depth"], L["depth_short_opts"], default=L["depth_short_opts"][0],
                                  help=L["depth_help"], width="stretch")
     tier = "deep" if depth == L["depth_short_opts"][1] else "strong"
-    allow_web = st.toggle(L["web_toggle"], value=web.available(), disabled=not web.available(),
-                          help=L["web_help"])
+    _web_opts = L["web_mode_opts"] if web.available() else [L["web_mode_opts"][2]]
+    _web_pick = st.segmented_control(L["web_mode"], _web_opts, default=_web_opts[0],
+                                     disabled=not web.available(), help=L["web_mode_help"], width="stretch")
+    web_mode = {L["web_mode_opts"][0]: "silent", L["web_mode_opts"][1]: "always",
+                L["web_mode_opts"][2]: "off"}.get(_web_pick, "silent")
     try:
         with st.spinner(L["lib_loading"], show_time=True), LIBRARY_LOCK:
             _tags = rag.all_tags()  # first call loads the index; later sessions wait, then hit the cache
@@ -306,16 +403,20 @@ with _t_txt:
 
 def _switch_lang():
     choice = st.session_state.get("lang_pick")
-    if choice:
-        st.session_state["lang"] = "ru" if choice == "RU" else "en"
+    if choice in ("en", "ru"):
+        st.session_state["lang"] = choice
         for k in ("ask_q", "preset_pick", "cmp_a", "cmp_b", "doc_topic"):
             st.session_state.pop(k, None)
 
 
 with _t_lang:
-    st.segmented_control(L["lang_label"], ["EN", "RU"], key="lang_pick",
-                         default="RU" if RU else "EN", on_change=_switch_lang,
-                         label_visibility="collapsed")
+    # One joined EN | RU switch with flags (ui.CSS `.st-key-langsw`): it never wraps into two
+    # stacked pills on narrow screens, and the flags come from inline SVG, not emoji.
+    with st.container(key="langsw"):
+        st.segmented_control(L["lang_label"], ["en", "ru"], key="lang_pick",
+                             format_func=lambda k: "EN" if k == "en" else "RU",
+                             default=st.session_state["lang"], on_change=_switch_lang,
+                             label_visibility="collapsed", width="content")
 
 ui.subtitle(L["subtitle"])
 ui.note(L["disclaimer"])
@@ -358,7 +459,7 @@ with tab_ask:
         q = st.text_area(L["your_q"], height=130, key="ask_q", placeholder=L["q_placeholder"], max_chars=1200)
         go = st.button(L["ask_btn"], type="primary", disabled=not q.strip(), icon=":material/arrow_forward:")
     if go:
-        run("ask_res", rag.answer, q, profile, tags=sel_tags or None, tier=tier, allow_web=allow_web, lang=UI_LANG)
+        run("ask_res", rag.answer, q, profile, tags=sel_tags or None, tier=tier, web_mode=web_mode, lang=UI_LANG)
     show_result("ask_res", "capy_king.png", L["ask_empty"])
 
 # ----------------------------------------------------------------- Today

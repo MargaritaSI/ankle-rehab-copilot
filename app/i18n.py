@@ -99,6 +99,16 @@ T = {
   "depth_short_opts": ["Standard", "Deep"],
   "depth_help": "Standard — Nemotron Super (fast, cites every sentence). Deep — Nemotron Ultra (slower, more thorough).",
   "sources_h": "Sources", "behind": "Behind this answer",
+  "src_cited": "Cited in this answer · {n}",
+  "src_more": "Also retrieved, not cited · {n}",
+  "src_unknown": "This id is not among the sources retrieved for this answer — treat the claim with care",
+  "unknown_kind": "not retrieved",
+  "note_ru": "note in Russian", "note_en": "note in English",
+  "web_mode": "Web search (Tavily, medical sites only)",
+  "web_mode_opts": ["when the library is silent", "always add", "off"],
+  "web_mode_help": "Web results come from a fixed list of medical domains and are labelled WEB-n. "
+                   "\"Always add\" runs one web search per question next to the library — useful when you want current web sources on every answer.",
+  "web_add_info": "Besides the library, **web sources** from medical domains (Tavily) were added to this answer — they carry WEB-n ids and are a starting point, not the curated tier.",
   "presets": {
     "Swelling after standing": "I'm 5 months after ankle cartilage surgery; the leg swells after 2 hours of standing or sitting in a car. What do studies say about why, and what helps?",
     "Protein per day": "How many grams of protein per day for muscle and bone recovery, and which foods are absorbed best?",
@@ -198,6 +208,16 @@ T = {
   "depth_short_opts": ["Обычная", "Глубокая"],
   "depth_help": "Обычная — Nemotron Super (быстро, источник у каждой фразы). Глубокая — Nemotron Ultra (медленнее, подробнее).",
   "sources_h": "Источники", "behind": "Как получен ответ",
+  "src_cited": "Цитируется в ответе · {n}",
+  "src_more": "Найдено, но не цитируется · {n}",
+  "src_unknown": "Этого источника нет среди найденных для ответа — к утверждению стоит отнестись осторожно",
+  "unknown_kind": "не найден",
+  "note_ru": "заметка на русском", "note_en": "заметка на английском",
+  "web_mode": "Поиск в интернете (Tavily, только медицинские сайты)",
+  "web_mode_opts": ["если библиотека молчит", "всегда добавлять", "выключен"],
+  "web_mode_help": "Результаты из интернета берутся с фиксированного списка медицинских сайтов и помечаются WEB-n. "
+                   "«Всегда добавлять» — один поиск на каждый вопрос в дополнение к библиотеке.",
+  "web_add_info": "Кроме библиотеки, в ответ добавлены **источники из интернета** с медицинских сайтов (Tavily) — у них метки WEB-n; это отправная точка, а не проверенный ярус.",
   "presets": {
     "Отёк после стояния": "Прошло 5 месяцев после операции на хряще голеностопа, нога отекает после 2 часов стоя или в машине. Что говорят исследования — почему так и что помогает?",
     "Белок в день": "Сколько граммов белка в день нужно для восстановления мышц и кости, и из какой еды он лучше усваивается?",

@@ -338,10 +338,30 @@ def _tidy(text: str) -> str:
     return _flag_unsourced(text.replace("【", "[").replace("】", "]"), guard.lang_of(text))
 
 
+_REF_NOISE = re.compile(r"\s*\[\s*\d+(?:\s*[,;–-]\s*\d+)*\s*\]|\(\s*(?:Fig(?:ure)?|Table|Tab)\.?\s*\d+[^)]*\)", re.I)
+_SENT_START = re.compile(r"(?<!\bal)(?<!\bvs)(?<!\be\.g)(?<!\bi\.e)[.!?]\)?\s+(?=[A-ZА-ЯЁ])")
+
+
+def _clean_chunk(text: str) -> str:
+    """Paper chunks start mid-sentence and carry reference markers ('[ 18 ]', '(Fig. 1 )').
+    Drop the markers and, when the chunk opens mid-sentence, start at the next full sentence."""
+    t = _REF_NOISE.sub("", text)
+    t = re.sub(r"\s+([.,;:)])", r"\1", t)
+    t = re.sub(r"[ \t]{2,}", " ", t).strip()
+    m = _SENT_START.search(t)
+    first = t[:m.end()] if m else t
+    # mid-sentence opening: lowercase start, or a ')' that closes a bracket we never saw
+    broken = bool(t) and (t[0].islower() or t[0] in ").,;:]" or (")" in first and "(" not in first))
+    if broken and m and len(t[m.end():].split()) >= 12:
+        t = t[m.end():]
+    return t
+
+
 def _excerpt(text: str, words: int = 60, min_words: int = 18) -> str:
     """A readable excerpt: up to `words` words, cut at the last full sentence when there is one,
     so cards don't end mid-phrase. Falls back to a word cut with an ellipsis."""
     body = text.split("\n\n", 1)[-1] if text.count("\n\n") and len(text.split("\n\n", 1)[0]) < 300 else text
+    body = _clean_chunk(body)
     tokens = body.split()
     if len(tokens) <= words:
         return " ".join(tokens)
@@ -619,10 +639,15 @@ def _context(notes: list[dict], hits: list[dict], webhits: list[dict]) -> str:
 # ------------------------------------------------------------------ modes
 def answer(question: str, profile: Profile | None = None, *, tags: list[str] | None = None,
            tier: str = "strong", allow_web: bool = True, k_papers: int = 6, k_notes: int = 4,
-           lang: str | None = None) -> dict:
+           lang: str | None = None, web_mode: str | None = None) -> dict:
     """Main Q&A. Returns answer + evidence (notes / papers / web) + routing info.
-    `lang` ("en"/"ru") forces the answer language (the UI's choice); default = the question's."""
+    `lang` ("en"/"ru") forces the answer language (the UI's choice); default = the question's.
+    `web_mode`: "silent" (default — Tavily only when the library has nothing or the answer admits a
+    gap), "always" (one web search per question, added next to the library, labelled WEB-n), "off"."""
     llm.reset_calls()
+    if web_mode == "off":
+        allow_web = False
+    force_web = web_mode == "always" and allow_web and web.available()
     _load()
     profile = profile or Profile()
     code = _lang_code(lang, question)
@@ -672,11 +697,19 @@ def answer(question: str, profile: Profile | None = None, *, tags: list[str] | N
                     "routing": a, "source": "none", "calls": list(llm.CALLS),
                     "disclaimer": DISCLAIMER}
 
+    if force_web and not webhits:
+        # "Always add": the web tier joins the library tier from the start, clearly labelled.
+        webhits = web.search(a["query_en"], max_results=4)
+        if webhits:
+            source = "library+web" if (notes or hits) else "web"
+    web_note = (" WEB fragments from medical domains are included next to the library: use library "
+                "fragments first; where only a web fragment answers, cite [WEB-n] and mark that part as "
+                "'from web sources outside the curated library'." if webhits else "")
     user = (f"PERSON'S CONTEXT: {profile.context()}\n"
             f"{_lang_rule(code)} Translate the final disclaimer line too.\n\n"
             f"FRAGMENTS:\n{_context(notes, hits, webhits)}\n\nQUESTION: {guard.wrap(question)}\n\n"
             f"REMINDER: every factual sentence ends with its source id in brackets, e.g. [KB-2] or "
-            f"[PMC12345678]; a sentence you cannot source must be dropped. Bold section headings. "
+            f"[PMC12345678]; a sentence you cannot source must be dropped. Bold section headings.{web_note} "
             f"Answer language: {LANG_NAME[code]}.")
     text = llm.chat([{"role": "system", "content": SYSTEM},
                      {"role": "user", "content": user}],

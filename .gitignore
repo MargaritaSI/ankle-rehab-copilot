@@ -13,6 +13,9 @@ venv/
 .DS_Store
 eval/_reports/run.log
 .usage.json
+.web_usage.json
 release_v1/
 release_v2/
 corpus/*.log
+video/*.mp4
+video/raw*/

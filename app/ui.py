@@ -400,3 +400,125 @@ def source_grid(cards: list[dict]) -> None:
 def calls_footer(label: str, parts: list[str], via: str) -> None:
     chips = "".join(f"<span class='chip'>{esc(p)}</span>" for p in parts)
     st.html(f"<div class='calls'><span class='lbl'>{esc(label)}</span>{chips}<span>{esc(via)}</span></div>")
+
+
+# ----------------------------------------------------------------- reference tab (static)
+REF_CSS = """
+/* ---------- reference tab: static badge, exercise cards, phase lines, the plate */
+.refbadge{display:inline-flex; align-items:center; gap:8px; font-size:.82rem; font-weight:800; letter-spacing:.06em;
+  text-transform:uppercase; color:var(--teal); background:var(--teal-wash); border-radius:999px; padding:6px 14px; margin:.2rem 0 1rem;}
+.refbadge:before{content:""; width:8px; height:8px; border-radius:50%; background:var(--teal);}
+.exgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(330px,1fr)); gap:14px; margin:.4rem 0 .6rem;}
+.ex{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:16px 18px 14px; display:flex; flex-direction:column; gap:8px;}
+.ex .n{font-weight:800; font-size:1.06rem; line-height:1.35; color:var(--ink);}
+.ex .row{display:grid; grid-template-columns:92px 1fr; gap:10px; font-size:.94rem; line-height:1.5; color:var(--ink-2);}
+.ex .row .k{font-size:.72rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); padding-top:3px;}
+.ex .row.stop .k{color:var(--caramel);}
+.ex .cites{display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:6px;}
+a.cite{display:inline-block; font-weight:800; font-size:.8rem; color:var(--teal); background:var(--teal-wash); border-radius:8px; padding:2px 8px; text-decoration:none;}
+a.cite:hover{text-decoration:underline;}
+.phfocus{font-size:.98rem; line-height:1.55; color:var(--ink-2); margin:.2rem 0 .8rem;}
+.phline{display:grid; grid-template-columns:140px 1fr; gap:12px; font-size:.95rem; line-height:1.55; color:var(--ink-2);
+  padding:12px 14px; border-radius:var(--r-sm); background:var(--sand); border:1px solid var(--sand-line); margin:.5rem 0 0;}
+.phline.avoid{background:#FBF1EA; border-color:#F0DCCB;}
+.phline .k{font-size:.74rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--teal); padding-top:3px;}
+.phline.avoid .k{color:var(--caramel);}
+.phline .cites{display:inline-flex; flex-wrap:wrap; gap:6px; margin-left:6px; vertical-align:middle;}
+.plate{display:grid; grid-template-columns:300px 1fr; gap:26px; align-items:start; margin:.6rem 0 1rem;}
+.wheel{position:relative; width:280px; height:280px; margin:10px auto 0;}
+.wheel .disc{width:100%; height:100%; border-radius:50%; border:10px solid var(--card); box-shadow:var(--shadow), 0 0 0 1px var(--line);
+  background:conic-gradient(#9DBE9A 0 50%, #E7A98A 50% 75%, #E4CF9A 75% 100%);}
+.wheel .lab{position:absolute; width:120px; text-align:center; font-weight:800; font-size:.86rem; line-height:1.3; color:var(--ink);}
+.wheel .lab b{display:block; font-size:1.5rem; line-height:1.1; letter-spacing:-.02em;}
+.wheel .l1{right:12px; top:50%; transform:translateY(-50%);}
+.wheel .l2{left:14px; bottom:26px;}
+.wheel .l3{left:14px; top:26px;}
+.plate .parts{display:grid; gap:12px;}
+.part{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; display:grid; grid-template-columns:52px 1fr; gap:12px;}
+.part .k{font-size:1.9rem; font-weight:800; letter-spacing:-.03em; color:var(--teal); line-height:1;}
+.part.c1 .k{color:#5E8A5A;} .part.c2 .k{color:#C47A52;} .part.c3 .k{color:#A98B3D;}
+.part .n{font-weight:800; font-size:1.02rem; line-height:1.35; color:var(--ink); margin-bottom:4px;}
+.part .f{font-size:.95rem; line-height:1.55; color:var(--ink-2);}
+.part .e{font-size:.92rem; line-height:1.55; color:var(--ink-2); margin-top:6px; padding-top:6px; border-top:1px dashed var(--line);}
+.part .e b{color:var(--teal); font-size:.74rem; letter-spacing:.1em; text-transform:uppercase; margin-right:6px;}
+.part .cites{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.plus{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:12px; margin:.2rem 0 .8rem;}
+.plus .part{grid-template-columns:1fr;}
+.lim{display:grid; grid-template-columns:repeat(auto-fit, minmax(300px,1fr)); gap:12px; margin:.2rem 0 .8rem;}
+.lim .box{background:var(--sand); border:1px solid var(--sand-line); border-radius:var(--r-md); padding:14px 16px;}
+.lim .box.caveat{background:var(--teal-wash); border-color:var(--teal-soft);}
+.lim .n{font-size:.76rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--caramel); margin-bottom:6px;}
+.lim .box.caveat .n{color:var(--teal);}
+.lim ul{margin:0; padding-left:18px;} .lim li{font-size:.94rem; line-height:1.55; color:var(--ink-2); margin:4px 0;}
+.lim .cites{display:flex; flex-wrap:wrap; gap:6px; margin-top:8px;}
+.dayc{background:var(--card); border:1px solid var(--line); border-radius:var(--r-md); padding:14px 16px; margin:0 0 .4rem;}
+.dayc .n{font-size:.76rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:6px;}
+.dayc .f{font-size:.96rem; line-height:1.6; color:var(--ink-2);}
+@media (max-width:900px){.plate{grid-template-columns:1fr;} .wheel{margin-bottom:6px;}}
+@media (max-width:700px){
+  .ex .row{grid-template-columns:1fr; gap:2px;} .phline{grid-template-columns:1fr; gap:4px;}
+  .wheel{width:240px; height:240px;} .wheel .lab{width:100px; font-size:.78rem;} .wheel .lab b{font-size:1.25rem;}
+  .wheel .l1{right:4px;} .wheel .l2{left:8px; bottom:18px;} .wheel .l3{left:8px; top:18px;}
+}
+"""
+CSS += REF_CSS
+
+
+def _cite_links(cites: list[tuple]) -> str:
+    """cites: (label, href, external[, title]) → the same [KB-n]/[PMCxxxx] chips the answers use."""
+    out = []
+    for label, href, ext, *rest in cites:
+        tgt = " target='_blank' rel='noopener'" if ext else ""
+        title = f" title='{esc(rest[0][:140])}'" if rest and rest[0] else ""
+        out.append(f"<a class='cite' href='{esc(href)}'{tgt}{title}>[{esc(label)}]</a>")
+    return "".join(out)
+
+
+def ref_badge(text: str) -> None:
+    st.html(f"<div class='refbadge'>{esc(text)}</div>")
+
+
+def phase_focus(text: str) -> None:
+    st.html(f"<div class='phfocus'>{esc(text)}</div>")
+
+
+def exercise_cards(items: list[dict], labels: dict) -> None:
+    """items: {n, t, h, w, s, cites: [(label, href, external)]}; labels: {t, h, w, s}."""
+    out = []
+    for it in items:
+        rows = "".join(
+            f"<div class='row{' stop' if key == 's' else ''}'><div class='k'>{esc(labels[key])}</div><div>{esc(it[key])}</div></div>"
+            for key in ("t", "h", "w", "s") if it.get(key))
+        out.append(f"<div class='ex'><div class='n'>{esc(it['n'])}</div>{rows}"
+                   f"<div class='cites'>{_cite_links(it.get('cites', []))}</div></div>")
+    st.html(f"<div class='exgrid'>{''.join(out)}</div>")
+
+
+def phase_line(label: str, text: str, cites: list[tuple[str, str, bool]], avoid: bool = False) -> None:
+    st.html(f"<div class='phline{' avoid' if avoid else ''}'><div class='k'>{esc(label)}</div>"
+            f"<div>{esc(text)}<span class='cites'>{_cite_links(cites)}</span></div></div>")
+
+
+def plate(wheel: list[str], parts: list[dict], plus: list[dict], limits: list[dict], day: dict | None, ev_label: str) -> None:
+    """One anti-inflammatory plate. parts: the three portions {k, n, f, e, cites}; plus: extras {n, f, e, cites};
+    limits: boxes {n, items: [...], cites, caveat: bool}; day: {n, f, cites}."""
+    def part_html(p: dict, cls: str = "") -> str:
+        k = f"<div class='k'>{esc(p['k'])}</div>" if p.get("k") else ""
+        e = f"<div class='e'><b>{esc(ev_label)}</b>{esc(p['e'])}</div>" if p.get("e") else ""
+        return (f"<div class='part {cls}'>{k}<div><div class='n'>{esc(p['n'])}</div><div class='f'>{esc(p['f'])}</div>{e}"
+                f"<div class='cites'>{_cite_links(p.get('cites', []))}</div></div></div>")
+
+    labs = (f"<div class='lab l1'><b>½</b>{esc(wheel[0])}</div><div class='lab l2'><b>¼</b>{esc(wheel[1])}</div>"
+            f"<div class='lab l3'><b>¼</b>{esc(wheel[2])}</div>")
+    main = "".join(part_html(p, f"c{i}") for i, p in enumerate(parts, 1))
+    st.html(f"<div class='plate'><div class='wheel'><div class='disc'></div>{labs}</div><div class='parts'>{main}</div></div>")
+    st.html(f"<div class='plus'>{''.join(part_html(p) for p in plus)}</div>")
+    boxes = []
+    for b in limits:
+        lis = "".join(f"<li>{esc(x)}</li>" for x in b.get("items", []))
+        boxes.append(f"<div class='box{' caveat' if b.get('caveat') else ''}'><div class='n'>{esc(b['n'])}</div><ul>{lis}</ul>"
+                     f"<div class='cites'>{_cite_links(b.get('cites', []))}</div></div>")
+    st.html(f"<div class='lim'>{''.join(boxes)}</div>")
+    if day:
+        st.html(f"<div class='dayc'><div class='n'>{esc(day['n'])}</div><div class='f'>{esc(day['f'])}</div>"
+                f"<div class='cites'>{_cite_links(day.get('cites', []))}</div></div>")

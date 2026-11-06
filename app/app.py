@@ -82,6 +82,8 @@ import i18n as _i18n  # noqa: E402
 # The strings module is a plain dict literal, so reloading it on every run is free and safe.
 importlib.reload(_i18n)
 ui = importlib.reload(ui)
+import reference as _ref  # noqa: E402  (static Reference tab: notes resolved by content, no model call)
+_ref = importlib.reload(_ref)
 from i18n import PHASE_RU, SURGERY_RU, T  # noqa: E402
 
 def _browser_lang() -> str:
@@ -218,7 +220,7 @@ def _source_cards(ev: dict) -> dict[str, dict]:
     for e in ev.get("papers", []):
         cards[e["id"]] = {
             "id": e["id"], "title": e["title"],
-            "kind": f"{L['paper']} · {paper_type(e['id'], e['title'])} · {e.get('year', '')}",
+            "kind": " · ".join(x for x in (L["paper"], paper_type(e["id"], e["title"]), str(e.get("year") or "")) if x),
             "chips": [tag_name(x) for x in e.get("tags", [])], "excerpt": e["excerpt"],
             "link_label": L["open_pmc"], "url": e.get("url")}
     for w in ev.get("web", []):
@@ -246,10 +248,11 @@ def link_citations(text: str, ev: dict) -> str:
     return _CITE_GROUP.sub(repl, text or "")
 
 
-def render_sources(ev: dict, answer_text: str = ""):
+def render_sources(ev: dict, answer_text: str = "", expanded: bool = True):
     """Sources under an answer. The ids the answer actually cites come first and open (in citation
     order, whatever tier they are from); everything else retrieved sits folded under it. Before
-    this the cited papers hid under a collapsed expander while uncited notes stood open on top."""
+    this the cited papers hid under a collapsed expander while uncited notes stood open on top.
+    `expanded=False` folds the cited list too (the static Reference tab cites ~60 notes at once)."""
     cards = _source_cards(ev)
     if not cards:
         return
@@ -269,7 +272,7 @@ def render_sources(ev: dict, answer_text: str = ""):
                  "link_label": L["open_pmc"] if sid.startswith("PMC") else "",
                  "url": _pmc_url(sid) if sid.startswith("PMC") else None}
         shown.append(c)
-    with st.expander(L["src_cited"].format(n=len(shown)), expanded=True):
+    with st.expander(L["src_cited"].format(n=len(shown)), expanded=expanded):
         ui.source_grid(shown)
     rest = [c for sid, c in cards.items() if sid not in set(cited)]
     if rest:
@@ -466,7 +469,7 @@ if stats:
                   "s": L["stat_lib_sub"].format(n=stats["notes"], c=stats["paper_chunks"])})
 ui.stat_grid(tiles)
 
-tab_ask, tab_today, tab_cmp, tab_doc = st.tabs(L["tabs"])
+tab_ask, tab_today, tab_cmp, tab_doc, tab_ref = st.tabs(L["tabs"])
 
 # ----------------------------------------------------------------- Ask
 with tab_ask:
@@ -522,6 +525,62 @@ with tab_doc:
     if go:
         run("doc_res", rag.specialist_questions, topic, profile, lang=UI_LANG)
     show_result("doc_res", "capy_frog.png", L["doc_empty"])
+
+# ----------------------------------------------------------------- Reference (static: no model call)
+with tab_ref:
+    with st.container(key="lead-ref"):
+        st.markdown(L["ref_intro"])
+    ui.ref_badge(L["ref_static"])
+
+    def _cite(ids: list[str], ev: dict) -> list[tuple[str, str, bool, str]]:
+        """Display ids → (label, href, external, title): notes jump to their card below (the browser
+        unfolds the sources expander on the way), papers open PMC; the title shows on hover."""
+        titles = {c["id"]: c["title"] for c in ev.get("notes", []) + ev.get("papers", [])}
+        return [(i, _pmc_url(i) if i.startswith("PMC") else f"#src-{i.lower()}", i.startswith("PMC"), titles.get(i, ""))
+                for i in ids]
+
+    # -- 1. exercises by phase: one evidence set for the whole section, KB-1… in order of first use
+    ui.section_heading(L["ref_ex_h"])
+    st.markdown(L["ref_ex_intro"])
+    _cur = profile.phase["name"] if profile.phase else None
+    if _cur is None:
+        st.info(L["ref_no_date"])
+    _groups, _order = [], []
+    for _s, _e, _name, _focus, _ in PHASES:
+        for _iid, _srcs in _ref.PHASE_ITEMS[_name]:
+            _groups.append(_srcs)
+            _order.append(("item", _name, _iid))
+        for _kind in ("also", "avoid"):
+            _groups.append(_ref.PHASE_LINES[_name][_kind])
+            _order.append((_kind, _name, None))
+    _ev_ex, _cites_ex, _next_kb = _ref.build_evidence(_groups)
+    _by = dict(zip(_order, _cites_ex))
+    _cols = {"t": L["ref_col_target"], "h": L["ref_col_how"], "w": L["ref_col_when"], "s": L["ref_col_stop"]}
+    for _s, _e, _name, _focus, _ in PHASES:
+        _n, _f = phase_text(_name, _focus)
+        _label = f"{_n} · {week_range(_s, _e)}" + (f" · {L['now_badge']}" if _name == _cur else "")
+        with st.expander(_label, expanded=(_name == _cur)):
+            ui.phase_focus(_f)
+            ui.exercise_cards([dict(L["ref_items"][_iid], cites=_cite(_by[("item", _name, _iid)], _ev_ex))
+                               for _iid, _ in _ref.PHASE_ITEMS[_name]], _cols)
+            _lines = L["ref_phase_lines"][_name]
+            ui.phase_line(L["ref_also"], _lines["also"], _cite(_by[("also", _name, None)], _ev_ex))
+            ui.phase_line(L["ref_avoid"], _lines["avoid"], _cite(_by[("avoid", _name, None)], _ev_ex), avoid=True)
+    render_sources(_ev_ex, _ref.cite_text(_cites_ex), expanded=False)
+
+    # -- 2. the plate: numbering continues, so the two sections never share an anchor
+    ui.section_heading(L["ref_plate_h"])
+    st.markdown(L["ref_plate_intro"])
+    _ev_pl, _cites_pl, _ = _ref.build_evidence([srcs for _, srcs in _ref.PLATE_PARTS], start=_next_kb)
+    _pc = {pid: _cite(c, _ev_pl) for (pid, _), c in zip(_ref.PLATE_PARTS, _cites_pl)}
+    _P = L["ref_plate"]
+    ui.plate(L["ref_wheel"],
+             [dict(_P[k], cites=_pc[k]) for k in ("half_veg", "quarter_protein", "quarter_grains")],
+             [dict(_P[k], cites=_pc[k]) for k in ("plus_oil", "plus_turmeric", "plus_nuts_water")],
+             [dict(_P["limit"], cites=_pc["limit"]), dict(_P["caveat"], cites=_pc["caveat"], caveat=True)],
+             dict(_P["day"], cites=_pc["day"]), L["ref_plate_ev"])
+    render_sources(_ev_pl, _ref.cite_text(_cites_pl), expanded=False)
+    ui.note(L["disclaimer"])
 
 # ----------------------------------------------------------------- Telegram companion (page footer)
 ui.telegram_card(TELEGRAM_BOT_URL, L["tg_title"], L["tg_body"], L["tg_open"])
